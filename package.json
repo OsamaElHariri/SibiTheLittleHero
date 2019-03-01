@@ -1,0 +1,18 @@
+{
+  "name": "sibithelittlehero",
+  "version": "1.0.0",
+  "description": "Phaser game where Sibi saves the day!",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "parcel index.html"
+  },
+  "author": "Osama El Hariri",
+  "license": "ISC",
+  "dependencies": {
+    "phaser": "^3.16.2"
+  },
+  "devDependencies": {
+    "typescript": "^3.3.3333"
+  }
+}
