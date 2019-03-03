@@ -1,19 +1,28 @@
 import { KeyGroup } from "./keyGroup";
 
 export class InputKeys {
-    private static instance: InputKeys;
-
-    static getKeys(): InputKeys {
-        return this.instance || new InputKeys();
-    }
-
+    private keyboard: Phaser.Input.Keyboard.KeyboardPlugin;
+    
     private up: KeyGroup;
     private down: KeyGroup;
     private right: KeyGroup;
     private left: KeyGroup;
 
-    private constructor() {
+    constructor(keyboard: Phaser.Input.Keyboard.KeyboardPlugin) {
+        this.keyboard = keyboard;
         this.clear();
+        this.addUpKeys(
+            keyboard.addKey('UP'),
+            keyboard.addKey('W'),
+          );
+          this.addLeftKeys(
+            keyboard.addKey('LEFT'),
+            keyboard.addKey('A'),
+          );
+          this.addRightKeys(
+            keyboard.addKey('RIGHT'),
+            keyboard.addKey('D'),
+          );
     }
 
     clear(): void {
@@ -21,6 +30,7 @@ export class InputKeys {
         this.down = new KeyGroup();
         this.right = new KeyGroup();
         this.left = new KeyGroup();
+        this.keyboard.removeAllListeners();
     }
 
     addUpKeys(...keys: Phaser.Input.Keyboard.Key[]): void {
