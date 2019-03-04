@@ -7,6 +7,8 @@ export class Sibi extends Phaser.Physics.Arcade.Sprite {
     super(params.scene, params.x, params.y, 'SibiIdle');
 
     this.setupPhysics();
+    this.body.setSize(this.body.width * 0.6, this.body.height * 0.8);
+    this.body.setOffset(this.body.offset.x, this.body.offset.y + 10);
     this.keyboardInputs = params.inputs;
     this.scene.add.existing(this);
 

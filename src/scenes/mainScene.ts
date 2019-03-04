@@ -35,8 +35,12 @@ export class MainScene extends Phaser.Scene {
       runChildUpdate: true
     });
 
-    // this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
     this.cameraZoomTriggers.add(new CameraZoomInZone({ scene: this, x: 300, y: 450, camTarget: this.cameraTarget }));
+
+    let rect: Phaser.GameObjects.Rectangle = this.add.rectangle(300, 400, 20,20, 0xff9821);
+    this.physics.world.enable(rect);
+    this.physics.add.collider(rect, this.platformGroup);
+    this.physics.add.collider(rect, this.player);
   }
 
   createPlatforms(): void {
@@ -57,8 +61,6 @@ export class MainScene extends Phaser.Scene {
       y: 450,
       inputs: this.cursors
     }).setScale(0.5);
-    
-
   }
 
   setupKeyboard(): void {
