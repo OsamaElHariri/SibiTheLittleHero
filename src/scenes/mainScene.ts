@@ -1,14 +1,14 @@
 import { InputKeys } from '../helpers/inputKeys/inputKeys';
-import { Sibi } from '../entities/player/sibi';
 import { PlatformGroup } from '../entities/physicsGroups/platforms/platformGroup';
 import { CameraZoomInZone } from '../helpers/camera/cameraZoomInZone';
 import { CameraTarget } from '../helpers/camera/cameraTarget';
+import { BurrowingSibi } from '../entities/player/burrowingSibi';
 
 export class MainScene extends Phaser.Scene {
-  private platformGroup: Phaser.GameObjects.Group;
+  private platformGroup: PlatformGroup;
   private cameraZoomTriggers: Phaser.GameObjects.Group;
   private cameraTarget: CameraTarget;
-  player: Sibi;
+  player: BurrowingSibi;
   cursors: InputKeys;
 
   constructor() {
@@ -22,15 +22,16 @@ export class MainScene extends Phaser.Scene {
     this.load.image('OrangeRect', '../Assets/Sprites/Platforms/OrangeRect.png');
     this.load.image('YellowSquare', '../Assets/Sprites/Platforms/YellowSquare.png');
     this.load.image("SibiHead", "../Assets/Sprites/Sibi/Head.png");
+    this.load.image("UndergroundSibi", "../Assets/Sprites/Sibi/UndergroundSibi.png");
     this.load.spritesheet("SibiIdle", "../Assets/Sprites/Sibi/SpriteSheets/Idle.png",
-      { frameWidth: 300 / 4, frameHeight: 1064 / 8 });
+      { frameWidth: 148 / 4, frameHeight: 396 / 6 });
   }
 
   create(): void {
     this.setupKeyboard();
+    this.createPlatforms();
     this.createPlayer();
     this.cameraTarget = new CameraTarget(this, this.player.body);
-    this.createPlatforms();
     this.cameraZoomTriggers = this.add.group({
       runChildUpdate: true
     });
@@ -50,17 +51,18 @@ export class MainScene extends Phaser.Scene {
   createPlayer() {
     this.anims.create({
       key: 'Idle',
-      frames: this.anims.generateFrameNumbers('SibiIdle', { start: 0, end: 64 }),
+      frames: this.anims.generateFrameNumbers('SibiIdle', { start: 0, end: 24 }),
       frameRate: 20,
       repeat: -1
     });
 
-    this.player = new Sibi({
+    this.player = new BurrowingSibi({
       scene: this,
       x: 100,
-      y: 450,
-      inputs: this.cursors
-    }).setScale(0.5);
+      y: -100,
+      inputs: this.cursors,
+      platforms: this.platformGroup
+    });
   }
 
   setupKeyboard(): void {

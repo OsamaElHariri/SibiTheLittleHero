@@ -19,7 +19,6 @@ export class WelcomeScene extends Phaser.Scene {
       });
       this.phaserSprite = this.add.sprite(400, 300, "logo");
       this.helloText = this.add.text(100, 200, 'I am a Text!',{color: 'blue'});
-
       
 
       this.scene.start('MainScene');

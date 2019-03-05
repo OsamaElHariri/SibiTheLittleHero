@@ -1,26 +1,24 @@
-import { MainScene } from '../../scenes/mainScene';
 import { InputKeys } from '../../helpers/inputKeys/inputKeys';
 export class Sibi extends Phaser.Physics.Arcade.Sprite {
   private keyboardInputs: InputKeys;
 
-  constructor(params: { scene: MainScene, x: number, y: number, frame?: string | integer, inputs: InputKeys }) {
+  constructor(params: { scene: Phaser.Scene, x: number, y: number, frame?: string | integer, inputs: InputKeys }) {
     super(params.scene, params.x, params.y, 'SibiIdle');
 
-    this.setupPhysics();
+    this.scene.physics.world.enable(this);
     this.body.setSize(this.body.width * 0.6, this.body.height * 0.8);
-    this.body.setOffset(this.body.offset.x, this.body.offset.y + 10);
+    this.body.setOffset(this.body.offset.x, this.body.offset.y + 7);
+    
     this.keyboardInputs = params.inputs;
     this.scene.add.existing(this);
-
     this.anims.play('Idle', true);
-
-  }
-
-  setupPhysics(): void {
-    this.scene.physics.world.enable(this);
   }
 
   update(): void {
+    this.overGroundMovement();
+  }
+
+  overGroundMovement() {
     if (this.keyboardInputs.leftPressed()) {
       this.setVelocityX(-160);
       this.setFlipX(true);
