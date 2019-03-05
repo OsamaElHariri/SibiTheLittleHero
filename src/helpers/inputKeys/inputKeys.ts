@@ -2,13 +2,22 @@ import { KeyGroup } from "./keyGroup";
 
 export class InputKeys {
     private keyboard: Phaser.Input.Keyboard.KeyboardPlugin;
+    private static singleton: InputKeys;
     
     private up: KeyGroup;
     private down: KeyGroup;
     private right: KeyGroup;
     private left: KeyGroup;
 
-    constructor(keyboard: Phaser.Input.Keyboard.KeyboardPlugin) {
+    static setKeyboard(keyboard: Phaser.Input.Keyboard.KeyboardPlugin):void {
+        InputKeys.singleton = new InputKeys(keyboard);
+    }
+
+    static getInstance():InputKeys {
+        return this.singleton;
+    }
+
+    private constructor(keyboard: Phaser.Input.Keyboard.KeyboardPlugin) {
         this.keyboard = keyboard;
         this.clear();
         this.addUpKeys(

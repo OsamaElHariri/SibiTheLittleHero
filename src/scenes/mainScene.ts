@@ -60,13 +60,12 @@ export class MainScene extends Phaser.Scene {
       scene: this,
       x: 100,
       y: -100,
-      inputs: this.cursors,
       platforms: this.platformGroup
     });
   }
 
   setupKeyboard(): void {
-    this.cursors = new InputKeys(this.input.keyboard);
+    InputKeys.setKeyboard(this.input.keyboard);
   }
 
   update(): void {

@@ -13,7 +13,7 @@ export class BurrowingSibi extends Sibi {
     rightTrack: UndergroundTrack;
     leftTrack: UndergroundTrack;
 
-    constructor(params: { scene: Phaser.Scene, x: number, y: number, frame?: string | integer, inputs: InputKeys, platforms: PlatformGroup }) {
+    constructor(params: { scene: Phaser.Scene, x: number, y: number, frame?: string | integer, platforms: PlatformGroup }) {
         super(params);
         params.scene.physics.add.collider(this, params.platforms, this.onCollisionWithPlatforms, null, this);
     }
