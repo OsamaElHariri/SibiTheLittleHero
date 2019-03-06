@@ -12,6 +12,12 @@ export class KeyGroup {
         return false;
     }
 
+    hasKeyJustPressed(): boolean {
+        for (let i = 0; i < this.keys.length; i++)
+            if (Phaser.Input.Keyboard.JustDown(this.keys[i])) return true;
+        return false;
+    }
+
     addKeys(newKeys: Phaser.Input.Keyboard.Key[]): void {
         newKeys.forEach(key => {
             this.addKey(key);

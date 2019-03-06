@@ -1,5 +1,5 @@
 import { InputKeys } from '../../helpers/inputKeys/inputKeys';
-export class Sibi extends Phaser.Physics.Arcade.Sprite {
+export class Sibi extends Phaser.GameObjects.Sprite {
   private keyboardInputs: InputKeys;
 
   constructor(params: { scene: Phaser.Scene, x: number, y: number, frame?: string | integer}) {
@@ -21,17 +21,17 @@ export class Sibi extends Phaser.Physics.Arcade.Sprite {
   overGroundMovement() {
 
     if (this.keyboardInputs.leftPressed()) {
-      this.setVelocityX(-160);
+      this.body.setVelocityX(-160);
       this.setFlipX(true);
     } else if (this.keyboardInputs.rightPressed()) {
-      this.setVelocityX(160);
+      this.body.setVelocityX(160);
       this.setFlipX(false);
     } else {
-      this.setVelocityX(0);
+      this.body.setVelocityX(0);
     }
 
     if (this.keyboardInputs.upPressed() && this.body.blocked.down) {
-      this.setVelocityY(-330);
+      this.body.setVelocityY(-330);
     }
   }
 }

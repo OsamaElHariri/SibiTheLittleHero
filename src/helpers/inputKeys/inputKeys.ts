@@ -32,6 +32,10 @@ export class InputKeys {
             keyboard.addKey('RIGHT'),
             keyboard.addKey('D'),
           );
+          this.addDownKeys(
+            keyboard.addKey('DOWN'),
+            keyboard.addKey('S'),
+          );
     }
 
     clear(): void {
@@ -69,6 +73,22 @@ export class InputKeys {
 
     leftPressed(): boolean {
         return this.left.hasKeyDown();
+    }
+
+    upJustPressed(): boolean {
+        return this.up.hasKeyJustPressed();
+    }
+
+    downJustPressed(): boolean {
+        return this.down.hasKeyJustPressed();
+    }
+
+    rightJustPressed(): boolean {
+        return this.right.hasKeyJustPressed();
+    }
+
+    leftJustPressed(): boolean {
+        return this.left.hasKeyJustPressed();
     }
 
 }
