@@ -3,9 +3,11 @@ import { PlatformGroup } from '../entities/physicsGroups/platforms/platformGroup
 import { CameraZoomInZone } from '../helpers/camera/cameraZoomInZone';
 import { CameraTarget } from '../helpers/camera/cameraTarget';
 import { BurrowingSibi } from '../entities/player/burrowingSibi';
+import { TrackIntersectionGroup } from '../entities/physicsGroups/intersection/trackIntersectionGroup';
 
 export class MainScene extends Phaser.Scene {
   private platformGroup: PlatformGroup;
+  private trackIntersectionGroup: TrackIntersectionGroup;
   private cameraZoomTriggers: Phaser.GameObjects.Group;
   private cameraTarget: CameraTarget;
   player: BurrowingSibi;
@@ -45,7 +47,8 @@ export class MainScene extends Phaser.Scene {
   }
 
   createPlatforms(): void {
-    this.platformGroup = new PlatformGroup(this);
+    this.trackIntersectionGroup = new TrackIntersectionGroup(this);
+    this.platformGroup = new PlatformGroup(this, this.trackIntersectionGroup);
   }
 
   createPlayer() {
@@ -60,7 +63,8 @@ export class MainScene extends Phaser.Scene {
       scene: this,
       x: 100,
       y: -100,
-      platforms: this.platformGroup
+      platforms: this.platformGroup,
+      trackIntersectionGroup: this.trackIntersectionGroup
     });
   }
 

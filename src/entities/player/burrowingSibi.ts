@@ -3,9 +3,10 @@ import { InputKeys } from '../../helpers/inputKeys/inputKeys';
 import { PlatformGroup } from '../physicsGroups/platforms/platformGroup';
 import { Platform } from '../physicsGroups/platforms/platform';
 import { UndergroundTrack } from "../../helpers/underground/undergroundTrack";
-import { DirectionTrack } from '../../helpers/underground/directionTrack';
-import { Direction } from "../../helpers/enums/direction";
+import { Direction } from '../../helpers/enums/direction';
 import { TrackHook } from '../../helpers/underground/trackHook';
+import { TrackIntersectionGroup } from '../physicsGroups/intersection/trackIntersectionGroup';
+import { TrackIntersection } from '../physicsGroups/intersection/trackIntersection';
 
 export class BurrowingSibi extends Sibi {
 
@@ -19,33 +20,53 @@ export class BurrowingSibi extends Sibi {
     isHooked: boolean = false;
 
     private inputKeys: InputKeys;
+    private collisionWithPlatforms: Phaser.Physics.Arcade.Collider;
 
-    constructor(params: { scene: Phaser.Scene, x: number, y: number, frame?: string | integer, platforms: PlatformGroup }) {
+    constructor(params: { scene: Phaser.Scene, x: number, y: number, platforms: PlatformGroup, trackIntersectionGroup?: TrackIntersectionGroup }) {
         super(params);
         this.inputKeys = InputKeys.getInstance();
-        params.scene.physics.add.collider(this, params.platforms, this.onCollisionWithPlatforms, null, this);
+        this.collisionWithPlatforms =
+            params.scene.physics.add.collider(this, params.platforms,
+                this.onCollisionWithPlatforms, null, this);
+
         this.trackHook = new TrackHook(this).clampOnEdges(true);
+
+        if (params.trackIntersectionGroup)
+            params.scene.physics.add.collider(this, params.trackIntersectionGroup,
+                this.onOverlapWithIntersection, null, this);
     }
 
     onCollisionWithPlatforms(self: BurrowingSibi, platform: Platform): void {
-        let directionTrack: DirectionTrack = platform.getTrack(self.body);
-        this.setTrack(directionTrack);
+        let track: UndergroundTrack = platform.getTrack(self.body);
+        this.setTrack(track);
     }
 
-    setTrack(DirectionTrack: DirectionTrack): void {
-        if (!DirectionTrack) return;
-        switch (DirectionTrack.platformTrackDirection) {
+    onOverlapWithIntersection(self: BurrowingSibi, intersection: TrackIntersection) {
+        let inputKeys: InputKeys = this.inputKeys;
+        if (inputKeys.upPressed() && intersection.topTrack)
+            self.trackHook.setTrack(intersection.topTrack)
+        else if (inputKeys.downPressed() && intersection.bottomTrack)
+            self.trackHook.setTrack(intersection.bottomTrack)
+        else if (inputKeys.rightPressed() && intersection.rightTrack)
+            self.trackHook.setTrack(intersection.rightTrack)
+        else if (inputKeys.leftPressed() && intersection.leftTrack)
+            self.trackHook.setTrack(intersection.leftTrack)
+    }
+
+    setTrack(track: UndergroundTrack): void {
+        if (!track) return;
+        switch (track.direction) {
             case Direction.Up:
-                this.bottomTrack = DirectionTrack.track
+                this.bottomTrack = track;
                 break;
             case Direction.Down:
-                this.topTrack = DirectionTrack.track
+                this.topTrack = track;
                 break;
             case Direction.Left:
-                this.rightTrack = DirectionTrack.track
+                this.rightTrack = track;
                 break;
             case Direction.Right:
-                this.leftTrack = DirectionTrack.track
+                this.leftTrack = track;
                 break;
         }
     }
@@ -57,7 +78,7 @@ export class BurrowingSibi extends Sibi {
         if (!this.body.blocked.left) this.leftTrack = null;
 
         if (!this.isHooked && this.inputKeys.downJustPressed() && this.bottomTrack) {
-            this.body.checkCollision.none = true;
+            this.collisionWithPlatforms.active = false;
             this.isHooked = true;
             this.trackHook.setTrack(this.bottomTrack);
             this.body.setAllowGravity(false);
@@ -81,7 +102,5 @@ export class BurrowingSibi extends Sibi {
             else if (this.inputKeys.downPressed())
                 this.trackHook.move();
         }
-
-
     }
 }

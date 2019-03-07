@@ -1,4 +1,5 @@
 import { Rectangle } from "../shapes/rectangle";
+import { Direction } from '../enums/direction';
 
 export class UndergroundTrack {
     readonly isVertical: boolean;
@@ -8,16 +9,19 @@ export class UndergroundTrack {
     readonly maxBound: number;
     readonly constantAxisPosition: number;
 
+    readonly direction: Direction;
+
     constructor(track: {
         minBound: number,
         maxBound: number,
         constantAxisPosition: number,
-        isVertical?: boolean
+        direction: Direction
     }) {
         this.minBound = track.minBound;
         this.maxBound = track.maxBound;
         this.constantAxisPosition = track.constantAxisPosition;
-        this.isVertical = track.isVertical;
+        this.direction = track.direction;
+        this.isVertical = track.direction == Direction.Left || track.direction == Direction.Right;
         this.isHorizontal = !this.isVertical;
     }
 

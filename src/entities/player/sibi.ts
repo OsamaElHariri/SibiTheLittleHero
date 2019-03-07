@@ -8,7 +8,7 @@ export class Sibi extends Phaser.GameObjects.Sprite {
     this.scene.physics.world.enable(this);
     this.body.setSize(this.body.width * 0.6, this.body.height * 0.8);
     this.body.setOffset(this.body.offset.x, this.body.offset.y + 7);
-    
+
     this.keyboardInputs = InputKeys.getInstance();
     this.scene.add.existing(this);
     this.anims.play('Idle', true);
