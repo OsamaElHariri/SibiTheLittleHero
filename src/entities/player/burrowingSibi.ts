@@ -7,6 +7,7 @@ import { Direction } from '../../helpers/enums/direction';
 import { TrackHook } from '../../helpers/underground/trackHook';
 import { TrackIntersectionGroup } from '../physicsGroups/intersection/trackIntersectionGroup';
 import { TrackIntersection } from '../physicsGroups/intersection/trackIntersection';
+import { TunnelerSibi } from "./tunnelerSibi";
 
 export class BurrowingSibi extends Sibi {
 
@@ -21,6 +22,8 @@ export class BurrowingSibi extends Sibi {
 
     private inputKeys: InputKeys;
     private collisionWithPlatforms: Phaser.Physics.Arcade.Collider;
+
+    private tunneler: TunnelerSibi;
 
     constructor(params: { scene: Phaser.Scene, x: number, y: number, platforms: PlatformGroup, trackIntersectionGroup?: TrackIntersectionGroup }) {
         super(params);
@@ -44,13 +47,13 @@ export class BurrowingSibi extends Sibi {
     onOverlapWithIntersection(self: BurrowingSibi, intersection: TrackIntersection) {
         let inputKeys: InputKeys = this.inputKeys;
         if (inputKeys.upPressed() && intersection.topTrack)
-            self.trackHook.setTrack(intersection.topTrack)
+            this.switchTracks(intersection.topTrack)
         else if (inputKeys.downPressed() && intersection.bottomTrack)
-            self.trackHook.setTrack(intersection.bottomTrack)
+            this.switchTracks(intersection.bottomTrack)
         else if (inputKeys.rightPressed() && intersection.rightTrack)
-            self.trackHook.setTrack(intersection.rightTrack)
+            this.switchTracks(intersection.rightTrack)
         else if (inputKeys.leftPressed() && intersection.leftTrack)
-            self.trackHook.setTrack(intersection.leftTrack)
+            this.switchTracks(intersection.leftTrack)
     }
 
     setTrack(track: UndergroundTrack): void {
@@ -71,6 +74,12 @@ export class BurrowingSibi extends Sibi {
         }
     }
 
+    switchTracks(track: UndergroundTrack): void {
+        this.trackHook.setTrack(track);
+        if (track && this.tunneler)
+            this.tunneler.updateDirection(track.direction);
+    }
+
     update(): void {
         if (!this.body.blocked.up) this.topTrack = null;
         if (!this.body.blocked.down) this.bottomTrack = null;
@@ -80,14 +89,23 @@ export class BurrowingSibi extends Sibi {
         if (!this.isHooked && this.inputKeys.downJustPressed() && this.bottomTrack) {
             this.collisionWithPlatforms.active = false;
             this.isHooked = true;
+            this.spawnTunneler(this.bottomTrack);
             this.trackHook.setTrack(this.bottomTrack);
             this.body.setAllowGravity(false);
+            this.setAlpha(0);
+            this.body.setVelocityX(0);
         }
 
         if (this.isHooked) {
             this.hookMovement();
+            this.moveTunneler();
         } else
             this.overGroundMovement();
+    }
+    
+    spawnTunneler(track: UndergroundTrack): void {
+        this.tunneler = new TunnelerSibi({ scene: this.scene, x: this.x, y: this.y });
+        this.tunneler.updateDirection(track.direction);
     }
 
     hookMovement(): void {
@@ -102,5 +120,11 @@ export class BurrowingSibi extends Sibi {
             else if (this.inputKeys.downPressed())
                 this.trackHook.move();
         }
+    }
+
+    moveTunneler(): void {
+        if (!this.tunneler) return;
+        this.tunneler.x = this.x;
+        this.tunneler.y = this.y;
     }
 }
