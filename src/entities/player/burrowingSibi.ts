@@ -45,6 +45,8 @@ export class BurrowingSibi extends Sibi {
     }
 
     onOverlapWithIntersection(self: BurrowingSibi, intersection: TrackIntersection) {
+        if (Math.abs(self.x - intersection.x) > 20 || Math.abs(self.y - intersection.y) > 20) return;
+
         let inputKeys: InputKeys = this.inputKeys;
         if (inputKeys.upPressed() && intersection.topTrack)
             this.switchTracks(intersection.topTrack)
@@ -75,12 +77,20 @@ export class BurrowingSibi extends Sibi {
     }
 
     switchTracks(track: UndergroundTrack): void {
-        this.trackHook.setTrack(track);
-        if (track && this.tunneler)
+        if (track == this.trackHook.track) return;
+        
+        if (track && this.tunneler) {
+            this.tunneler.duplicateHereAndShrink();
+            this.tunneler.playGrowAnim();
             this.tunneler.updateDirection(track.direction);
+        }
+        this.trackHook.setTrack(track);
     }
 
     update(): void {
+        if (this.tunneler)
+            this.tunneler.update();
+
         if (!this.body.blocked.up) this.topTrack = null;
         if (!this.body.blocked.down) this.bottomTrack = null;
         if (!this.body.blocked.right) this.rightTrack = null;
@@ -102,24 +112,35 @@ export class BurrowingSibi extends Sibi {
         } else
             this.overGroundMovement();
     }
-    
+
     spawnTunneler(track: UndergroundTrack): void {
         this.tunneler = new TunnelerSibi({ scene: this.scene, x: this.x, y: this.y });
         this.tunneler.updateDirection(track.direction);
     }
 
     hookMovement(): void {
+        let hasMoved: boolean = false;
         if (this.trackHook.track.isHorizontal) {
-            if (this.inputKeys.leftPressed())
+            if (this.inputKeys.leftPressed()) {
                 this.trackHook.moveReverse();
-            else if (this.inputKeys.rightPressed())
+                hasMoved = true;
+            } else if (this.inputKeys.rightPressed()) {
                 this.trackHook.move();
+                hasMoved = true;
+            }
         } else {
-            if (this.inputKeys.upPressed())
+            if (this.inputKeys.upPressed()) {
                 this.trackHook.moveReverse();
-            else if (this.inputKeys.downPressed())
+                hasMoved = true;
+            } else if (this.inputKeys.downPressed()) {
                 this.trackHook.move();
+                hasMoved = true;
+            }
         }
+        if (hasMoved)
+            this.tunneler.speedUpTween();
+        else
+            this.tunneler.normalSpeedTween();
     }
 
     moveTunneler(): void {

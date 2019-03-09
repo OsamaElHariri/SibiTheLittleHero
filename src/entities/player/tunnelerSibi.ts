@@ -1,4 +1,3 @@
-import { UndergroundTrack } from "../../helpers/underground/undergroundTrack";
 import { Direction } from "../../helpers/enums/direction";
 
 export class TunnelerSibi extends Phaser.GameObjects.Sprite {
@@ -6,17 +5,84 @@ export class TunnelerSibi extends Phaser.GameObjects.Sprite {
     private bodyWidth: number = 40;
     private bodyHeight: number = 30;
 
+    private hitBox: Phaser.GameObjects.Rectangle;
+    private breatheTween: Phaser.Tweens.Tween;
+
     constructor(params: { scene: Phaser.Scene, x: number, y: number, }) {
         super(params.scene, params.x, params.y, 'UndergroundSibi');
 
-        this.scene.physics.world.enable(this);
-        this.body.width = 40;
-        this.body.height = 30;
-        this.body.setAllowGravity(false);
+        this.hitBox = this.scene.add.rectangle(this.x, this.y, this.bodyWidth, this.bodyHeight);
+        this.scene.physics.world.enable(this.hitBox);
+        this.hitBox.body.setAllowGravity(false);
 
         this.setOrigin(0.5, 1);
 
         this.scene.add.existing(this);
+
+        this.breatheTween = this.scene.add.tween({
+            targets: [this],
+            ease: 'Sine.easeInOut',
+            duration: 600,
+            loop: -1,
+            loopDelay: 200,
+            yoyo: true,
+            scaleY: {
+                getStart: () => 1,
+                getEnd: () => 1.25,
+            },
+        });
+    }
+
+    speedUpTween() {
+        this.setTweenTimeScale(2.5);
+    }
+
+    normalSpeedTween() {
+        this.setTweenTimeScale(1);
+    }
+
+    setTweenTimeScale(timeScale: number) {
+        this.breatheTween.setTimeScale(timeScale);
+    }
+
+    duplicateHereAndShrink() {
+        let shrinkSprite:Phaser.GameObjects.Sprite = this.scene.add.sprite(this.x, this.y, 'UndergroundSibi').setOrigin(0.5, 1).setAngle(this.angle);
+
+        this.scene.add.tween({
+            targets: [shrinkSprite],
+            ease: 'Sine.easeInOut',
+            duration: 300,
+            scaleY: {
+                getStart: () => 1,
+                getEnd: () => 0,
+            },
+            onComplete: () => {
+                shrinkSprite.destroy();
+            }
+        });
+    }
+
+    playGrowAnim() {
+        this.breatheTween.pause();
+        this.scaleY = 0;
+        this.scene.add.tween({
+            targets: [this],
+            ease: 'Sine.easeInOut',
+            duration: 300,
+            scaleY: {
+                getStart: () => 0,
+                getEnd: () => 1,
+            },
+            onComplete: () => {
+                this.breatheTween.restart();
+            }
+        });
+    }
+
+
+    update() {
+        this.hitBox.x = this.x;
+        this.hitBox.y = this.y;
     }
 
     updateDirection(direction: Direction): void {
@@ -38,33 +104,33 @@ export class TunnelerSibi extends Phaser.GameObjects.Sprite {
 
     faceUp(): void {
         this.setAngle(0);
-        this.body.offset.y = 12;
-        this.body.offset.x = 0;
-        this.body.width = this.bodyWidth;
-        this.body.height = this.bodyHeight;
+        this.hitBox.body.offset.y = 12;
+        this.hitBox.body.offset.x = 0;
+        this.hitBox.body.width = this.bodyWidth;
+        this.hitBox.body.height = this.bodyHeight;
     }
 
     faceRight(): void {
         this.setAngle(90);
-        this.body.offset.y = -6;
-        this.body.offset.x = -10;
-        this.body.width = this.bodyHeight;
-        this.body.height = this.bodyWidth;
+        this.hitBox.body.offset.y = -3;
+        this.hitBox.body.offset.x = -10;
+        this.hitBox.body.width = this.bodyHeight;
+        this.hitBox.body.height = this.bodyWidth;
     }
 
     faceDown(): void {
         this.setAngle(180);
-        this.body.offset.y = -18;
-        this.body.offset.x = 0;
-        this.body.width = this.bodyWidth;
-        this.body.height = this.bodyHeight;
+        this.hitBox.body.offset.y = -16;
+        this.hitBox.body.offset.x = 0;
+        this.hitBox.body.width = this.bodyWidth;
+        this.hitBox.body.height = this.bodyHeight;
     }
 
     faceLeft(): void {
         this.setAngle(-90);
-        this.body.offset.y = -6;
-        this.body.offset.x = 20;
-        this.body.width = this.bodyHeight;
-        this.body.height = this.bodyWidth;
+        this.hitBox.body.offset.y = -3;
+        this.hitBox.body.offset.x = 20;
+        this.hitBox.body.width = this.bodyHeight;
+        this.hitBox.body.height = this.bodyWidth;
     }
 }
