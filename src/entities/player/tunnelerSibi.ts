@@ -133,4 +133,9 @@ export class TunnelerSibi extends Phaser.GameObjects.Sprite {
         this.hitBox.body.width = this.bodyHeight;
         this.hitBox.body.height = this.bodyWidth;
     }
+
+    destroy(): void {
+        this.hitBox.destroy();
+        super.destroy();
+    }
 }

@@ -21,16 +21,18 @@ export class Sibi extends Phaser.GameObjects.Sprite {
   }
 
   overGroundMovement() {
-    if (this.keyboardInputs.leftPressed()) {
-      this.facingRight = false;
-      this.body.setVelocityX(-160);
-      this.setFlipX(true);
-    } else if (this.keyboardInputs.rightPressed()) {
-      this.facingRight = true;
-      this.body.setVelocityX(160);
-      this.setFlipX(false);
-    } else {
-      this.body.setVelocityX(0);
+    if (Math.abs(this.body.velocity.x) <= 300 || this.body.blocked.down) {
+      if (this.keyboardInputs.leftPressed()) {
+        this.facingRight = false;
+        this.body.setVelocityX(-160);
+        this.setFlipX(true);
+      } else if (this.keyboardInputs.rightPressed()) {
+        this.facingRight = true;
+        this.body.setVelocityX(160);
+        this.setFlipX(false);
+      } else {
+        this.body.setVelocityX(0);
+      }
     }
 
     if (this.keyboardInputs.upPressed() && this.body.blocked.down) {

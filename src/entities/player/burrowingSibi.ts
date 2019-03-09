@@ -130,6 +130,10 @@ export class BurrowingSibi extends Sibi {
                 this.setCurledUpBody();
             }
         }
+
+        if (Math.abs(this.body.velocity.x) > 300) {
+            this.body.velocity.x += (this.body.velocity.x < 0 ? 1 : -1) * 4;
+        }
     }
 
     spawnTunneler(track: UndergroundTrack): void {
@@ -191,6 +195,28 @@ export class BurrowingSibi extends Sibi {
     launchSibi(): void {
         this.isBurrowing = false;
         this.removeLaunchHoldTween();
+        switch (this.trackHook.track.direction) {
+            case Direction.Up:
+                this.body.setVelocityY(-600);
+                break;
+            case Direction.Down:
+                this.body.setVelocityY(600);
+                break;
+            case Direction.Right:
+                this.body.setVelocityX(600);
+                break;
+            case Direction.Left:
+                this.body.setVelocityX(-600);
+                break;
+        }
+        this.tunneler.destroy();
+        this.isBurrowing = false;
+
+        this.collisionWithPlatforms.active = true;
+        this.body.setAllowGravity(true);
+        this.setAlpha(1);
+        this.setCurledUpBody();
+        this.collisionWithIntersections.active = false;
     }
 
     removeLaunchHoldTween(): void {
