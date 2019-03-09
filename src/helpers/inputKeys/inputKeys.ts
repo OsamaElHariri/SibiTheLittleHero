@@ -1,19 +1,20 @@
 import { KeyGroup } from "./keyGroup";
+import { Direction } from "../enums/direction";
 
 export class InputKeys {
     private keyboard: Phaser.Input.Keyboard.KeyboardPlugin;
     private static singleton: InputKeys;
-    
+
     private up: KeyGroup;
     private down: KeyGroup;
     private right: KeyGroup;
     private left: KeyGroup;
 
-    static setKeyboard(keyboard: Phaser.Input.Keyboard.KeyboardPlugin):void {
+    static setKeyboard(keyboard: Phaser.Input.Keyboard.KeyboardPlugin): void {
         InputKeys.singleton = new InputKeys(keyboard);
     }
 
-    static getInstance():InputKeys {
+    static getInstance(): InputKeys {
         return this.singleton;
     }
 
@@ -23,19 +24,19 @@ export class InputKeys {
         this.addUpKeys(
             keyboard.addKey('UP'),
             keyboard.addKey('W'),
-          );
-          this.addLeftKeys(
+        );
+        this.addLeftKeys(
             keyboard.addKey('LEFT'),
             keyboard.addKey('A'),
-          );
-          this.addRightKeys(
+        );
+        this.addRightKeys(
             keyboard.addKey('RIGHT'),
             keyboard.addKey('D'),
-          );
-          this.addDownKeys(
+        );
+        this.addDownKeys(
             keyboard.addKey('DOWN'),
             keyboard.addKey('S'),
-          );
+        );
     }
 
     clear(): void {
@@ -57,6 +58,16 @@ export class InputKeys {
     }
     addLeftKeys(...keys: Phaser.Input.Keyboard.Key[]): void {
         this.left.addKeys(keys);
+    }
+
+    isDirectionPressed(direction: Direction): boolean {
+        switch (direction) {
+            case Direction.Up: return this.upPressed();
+            case Direction.Down: return this.downPressed();
+            case Direction.Left: return this.leftPressed();
+            case Direction.Right: return this.rightPressed();
+            default: return false
+        }
     }
 
     upPressed(): boolean {

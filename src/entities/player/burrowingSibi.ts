@@ -18,10 +18,13 @@ export class BurrowingSibi extends Sibi {
 
     trackHook: TrackHook;
 
-    isHooked: boolean = false;
+    isBurrowing: boolean = false;
 
     private inputKeys: InputKeys;
     private collisionWithPlatforms: Phaser.Physics.Arcade.Collider;
+    private collisionWithIntersections: Phaser.Physics.Arcade.Collider;
+    private launchHoldTween: Phaser.Tweens.Tween;
+    private launchCameraZoom: number = 1.15;
 
     private tunneler: TunnelerSibi;
 
@@ -34,14 +37,17 @@ export class BurrowingSibi extends Sibi {
 
         this.trackHook = new TrackHook(this).clampOnEdges(true);
 
-        if (params.trackIntersectionGroup)
-            params.scene.physics.add.collider(this, params.trackIntersectionGroup,
+        if (params.trackIntersectionGroup) {
+            this.collisionWithIntersections = params.scene.physics.add.overlap(this, params.trackIntersectionGroup,
                 this.onOverlapWithIntersection, null, this);
+            this.collisionWithIntersections.active = false;
+        }
     }
 
     onCollisionWithPlatforms(self: BurrowingSibi, platform: Platform): void {
         let track: UndergroundTrack = platform.getTrack(self.body);
         this.setTrack(track);
+        this.setNormalBody();
     }
 
     onOverlapWithIntersection(self: BurrowingSibi, intersection: TrackIntersection) {
@@ -78,7 +84,7 @@ export class BurrowingSibi extends Sibi {
 
     switchTracks(track: UndergroundTrack): void {
         if (track == this.trackHook.track) return;
-        
+
         if (track && this.tunneler) {
             this.tunneler.duplicateHereAndShrink();
             this.tunneler.playGrowAnim();
@@ -96,21 +102,34 @@ export class BurrowingSibi extends Sibi {
         if (!this.body.blocked.right) this.rightTrack = null;
         if (!this.body.blocked.left) this.leftTrack = null;
 
-        if (!this.isHooked && this.inputKeys.downJustPressed() && this.bottomTrack) {
+        if (!this.isBurrowing && this.inputKeys.downJustPressed() && this.bottomTrack) {
             this.collisionWithPlatforms.active = false;
-            this.isHooked = true;
+            this.isBurrowing = true;
             this.spawnTunneler(this.bottomTrack);
             this.trackHook.setTrack(this.bottomTrack);
             this.body.setAllowGravity(false);
             this.setAlpha(0);
             this.body.setVelocityX(0);
+            this.collisionWithIntersections.active = true;
         }
 
-        if (this.isHooked) {
+        if (this.isCurledUp) {
+            this.angle += 4.5 * (this.facingRight ? 1 : -1);
+        }
+
+        if (this.isBurrowing) {
             this.hookMovement();
             this.moveTunneler();
-        } else
+            this.launchIfButtonIsHeld();
+        } else {
             this.overGroundMovement();
+            if (this.body.blocked.down && this.body.velocity.y > 0) {
+                this.setNormalBody();
+                this.angle = 0;
+            } else if (!this.body.blocked.down && this.body.velocity.y > 150) {
+                this.setCurledUpBody();
+            }
+        }
     }
 
     spawnTunneler(track: UndergroundTrack): void {
@@ -147,5 +166,38 @@ export class BurrowingSibi extends Sibi {
         if (!this.tunneler) return;
         this.tunneler.x = this.x;
         this.tunneler.y = this.y;
+    }
+
+    launchIfButtonIsHeld(): void {
+        let trackDirectionPressed: boolean = this.inputKeys.isDirectionPressed(this.trackHook.track.direction);
+        if (this.launchHoldTween && !trackDirectionPressed) {
+            this.removeLaunchHoldTween();
+        } else if (!this.launchHoldTween && trackDirectionPressed) {
+            this.launchHoldTween = this.scene.add.tween({
+                targets: [this.scene.cameras.main],
+                duration: 600,
+                delay: 400,
+                zoom: {
+                    getStart: () => 1,
+                    getEnd: () => this.launchCameraZoom,
+                },
+                onComplete: () => {
+                    this.launchSibi();
+                }
+            });
+        }
+    }
+
+    launchSibi(): void {
+        this.isBurrowing = false;
+        this.removeLaunchHoldTween();
+    }
+
+    removeLaunchHoldTween(): void {
+        if (this.launchHoldTween) {
+            this.launchHoldTween.stop();
+            this.launchHoldTween = null;
+            this.scene.cameras.main.zoomTo(1, 50, 'Linear', true);
+        }
     }
 }

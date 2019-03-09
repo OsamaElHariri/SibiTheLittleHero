@@ -25,6 +25,7 @@ export class MainScene extends Phaser.Scene {
     this.load.image('YellowSquare', '../Assets/Sprites/Platforms/YellowSquare.png');
     this.load.image("SibiHead", "../Assets/Sprites/Sibi/Head.png");
     this.load.image("UndergroundSibi", "../Assets/Sprites/Sibi/UndergroundSibi.png");
+    this.load.image("CurledSibi", "../Assets/Sprites/Sibi/CurledBall.png");
     this.load.spritesheet("SibiIdle", "../Assets/Sprites/Sibi/SpriteSheets/Idle.png",
       { frameWidth: 148 / 4, frameHeight: 396 / 6 });
   }

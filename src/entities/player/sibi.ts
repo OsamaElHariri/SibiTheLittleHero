@@ -2,12 +2,14 @@ import { InputKeys } from '../../helpers/inputKeys/inputKeys';
 export class Sibi extends Phaser.GameObjects.Sprite {
   private keyboardInputs: InputKeys;
 
-  constructor(params: { scene: Phaser.Scene, x: number, y: number, frame?: string | integer}) {
+  protected facingRight: boolean = true;
+  protected isCurledUp: boolean = false;
+
+  constructor(params: { scene: Phaser.Scene, x: number, y: number, frame?: string | integer }) {
     super(params.scene, params.x, params.y, 'SibiIdle');
 
     this.scene.physics.world.enable(this);
-    this.body.setSize(this.body.width * 0.6, this.body.height * 0.8);
-    this.body.setOffset(this.body.offset.x, this.body.offset.y + 7);
+    this.setNormalBody(true);
 
     this.keyboardInputs = InputKeys.getInstance();
     this.scene.add.existing(this);
@@ -19,11 +21,12 @@ export class Sibi extends Phaser.GameObjects.Sprite {
   }
 
   overGroundMovement() {
-
     if (this.keyboardInputs.leftPressed()) {
+      this.facingRight = false;
       this.body.setVelocityX(-160);
       this.setFlipX(true);
     } else if (this.keyboardInputs.rightPressed()) {
+      this.facingRight = true;
       this.body.setVelocityX(160);
       this.setFlipX(false);
     } else {
@@ -32,6 +35,29 @@ export class Sibi extends Phaser.GameObjects.Sprite {
 
     if (this.keyboardInputs.upPressed() && this.body.blocked.down) {
       this.body.setVelocityY(-330);
+      this.setCurledUpBody();
     }
+  }
+
+  setCurledUpBody(forceUpdate?: boolean): void {
+    if (this.isCurledUp && !forceUpdate) return;
+
+    this.isCurledUp = true;
+    this.anims.stop();
+    this.setTexture('CurledSibi');
+    this.body.setSize(25, 25);
+    this.body.setOffset(7.5, 14);
+  }
+
+  setNormalBody(forceUpdate?: boolean): void {
+    if (!this.isCurledUp && !forceUpdate) return;
+
+    this.isCurledUp = false;
+    this.angle = 0;
+    this.y -= 15;
+    this.setTexture('SibiIdle');
+    this.anims.play('Idle', true);
+    this.body.setSize(22.2, 52.8);
+    this.body.setOffset(7.5, 14);
   }
 }
