@@ -35,6 +35,7 @@ export class MainScene extends Phaser.Scene {
     this.createPlatforms();
     this.createPlayer();
     this.cameraTarget = new CameraTarget(this, this.player.body);
+    this.player.cameraTarget = this.cameraTarget;
     this.cameraZoomTriggers = this.add.group({
       runChildUpdate: true
     });

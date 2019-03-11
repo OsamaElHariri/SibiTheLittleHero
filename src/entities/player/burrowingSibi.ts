@@ -8,6 +8,8 @@ import { TrackHook } from '../../helpers/underground/trackHook';
 import { TrackIntersectionGroup } from '../physicsGroups/intersection/trackIntersectionGroup';
 import { TrackIntersection } from '../physicsGroups/intersection/trackIntersection';
 import { TunnelerSibi } from "./tunnelerSibi";
+import { AirbornSibi } from "./airbornSibi";
+import { CameraTarget } from "../../helpers/camera/cameraTarget";
 
 export class BurrowingSibi extends Sibi {
 
@@ -19,17 +21,22 @@ export class BurrowingSibi extends Sibi {
     trackHook: TrackHook;
 
     isBurrowing: boolean = false;
+    cameraTarget: CameraTarget;
 
     private inputKeys: InputKeys;
+    private platforms: PlatformGroup;
     private collisionWithPlatforms: Phaser.Physics.Arcade.Collider;
     private collisionWithIntersections: Phaser.Physics.Arcade.Collider;
     private launchHoldTween: Phaser.Tweens.Tween;
     private launchCameraZoom: number = 1.15;
 
+
     private tunneler: TunnelerSibi;
+    private airbornSibi: AirbornSibi;
 
     constructor(params: { scene: Phaser.Scene, x: number, y: number, platforms: PlatformGroup, trackIntersectionGroup?: TrackIntersectionGroup }) {
         super(params);
+        this.platforms = params.platforms;
         this.inputKeys = InputKeys.getInstance();
         this.collisionWithPlatforms =
             params.scene.physics.add.collider(this, params.platforms,
@@ -47,7 +54,6 @@ export class BurrowingSibi extends Sibi {
     onCollisionWithPlatforms(self: BurrowingSibi, platform: Platform): void {
         let track: UndergroundTrack = platform.getTrack(self.body);
         this.setTrack(track);
-        this.setNormalBody();
     }
 
     onOverlapWithIntersection(self: BurrowingSibi, intersection: TrackIntersection) {
@@ -96,26 +102,17 @@ export class BurrowingSibi extends Sibi {
     update(): void {
         if (this.tunneler)
             this.tunneler.update();
+        if (this.airbornSibi)
+            this.airbornSibi.update();
 
-        if (!this.body.blocked.up) this.topTrack = null;
-        if (!this.body.blocked.down) this.bottomTrack = null;
-        if (!this.body.blocked.right) this.rightTrack = null;
-        if (!this.body.blocked.left) this.leftTrack = null;
+        let objectToCheck = this.airbornSibi || this;
+        if (!objectToCheck.body.blocked.up) this.topTrack = null;
+        if (!objectToCheck.body.blocked.down) this.bottomTrack = null;
+        if (!objectToCheck.body.blocked.right) this.rightTrack = null;
+        if (!objectToCheck.body.blocked.left) this.leftTrack = null;
+        this.burrowIfPossible();
 
-        if (!this.isBurrowing && this.inputKeys.downJustPressed() && this.bottomTrack) {
-            this.collisionWithPlatforms.active = false;
-            this.isBurrowing = true;
-            this.spawnTunneler(this.bottomTrack);
-            this.trackHook.setTrack(this.bottomTrack);
-            this.body.setAllowGravity(false);
-            this.setAlpha(0);
-            this.body.setVelocityX(0);
-            this.collisionWithIntersections.active = true;
-        }
 
-        if (this.isCurledUp) {
-            this.angle += 4.5 * (this.facingRight ? 1 : -1);
-        }
 
         if (this.isBurrowing) {
             this.hookMovement();
@@ -123,16 +120,55 @@ export class BurrowingSibi extends Sibi {
             this.launchIfButtonIsHeld();
         } else {
             this.overGroundMovement();
-            if (this.body.blocked.down && this.body.velocity.y > 0) {
-                this.setNormalBody();
-                this.angle = 0;
-            } else if (!this.body.blocked.down && this.body.velocity.y > 150) {
-                this.setCurledUpBody();
+        }
+    }
+
+    overGroundMovement() {
+        if (!this.airbornSibi) {
+            if (this.inputKeys.leftPressed()) {
+                this.facingRight = false;
+                this.setFlipX(true);
+                this.body.setVelocityX(-160);
+            } else if (this.inputKeys.rightPressed()) {
+                this.facingRight = true;
+                this.setFlipX(false);
+                this.body.setVelocityX(160);
+            } else {
+                this.body.setVelocityX(0);
             }
         }
 
-        if (Math.abs(this.body.velocity.x) > 300) {
-            this.body.velocity.x += (this.body.velocity.x < 0 ? 1 : -1) * 4;
+        if (this.inputKeys.upPressed() && this.body.blocked.down) {
+            this.body.setVelocityY(-110);
+        }
+    }
+
+    burrowIfPossible(): void {
+        if (this.isBurrowing) return;
+
+        if (this.inputKeys.downPressed() && this.bottomTrack) {
+            this.burrow(this.bottomTrack);
+        } else if (this.inputKeys.leftPressed() && this.leftTrack) {
+            this.burrow(this.leftTrack);
+        } else if (this.inputKeys.rightPressed() && this.rightTrack) {
+            this.burrow(this.rightTrack);
+        } else if (this.inputKeys.upPressed() && this.topTrack) {
+            this.burrow(this.topTrack);
+        }
+    }
+
+    burrow(track: UndergroundTrack): void {
+        this.isBurrowing = true;
+        this.spawnTunneler(track);
+        this.trackHook.setTrack(track);
+        this.body.setAllowGravity(false);
+        this.setAlpha(0);
+        this.body.setVelocity(0, 0);
+        this.collisionWithIntersections.active = true;
+        this.collisionWithPlatforms.active = false;
+        if (this.airbornSibi) {
+            this.airbornSibi.destroy();
+            this.airbornSibi = null;
         }
     }
 
@@ -146,9 +182,11 @@ export class BurrowingSibi extends Sibi {
         if (this.trackHook.track.isHorizontal) {
             if (this.inputKeys.leftPressed()) {
                 this.trackHook.moveReverse();
+                this.facingRight = false;
                 hasMoved = true;
             } else if (this.inputKeys.rightPressed()) {
                 this.trackHook.move();
+                this.facingRight = true;
                 hasMoved = true;
             }
         } else {
@@ -195,27 +233,16 @@ export class BurrowingSibi extends Sibi {
     launchSibi(): void {
         this.isBurrowing = false;
         this.removeLaunchHoldTween();
-        switch (this.trackHook.track.direction) {
-            case Direction.Up:
-                this.body.setVelocityY(-600);
-                break;
-            case Direction.Down:
-                this.body.setVelocityY(600);
-                break;
-            case Direction.Right:
-                this.body.setVelocityX(600);
-                break;
-            case Direction.Left:
-                this.body.setVelocityX(-600);
-                break;
-        }
+        this.airbornSibi = new AirbornSibi({
+            scene: this.scene,
+            x: this.x,
+            y: this.y,
+            platforms: this.platforms,
+            sibi: this,
+            mainDirection: this.trackHook.track.direction
+        });
         this.tunneler.destroy();
         this.isBurrowing = false;
-
-        this.collisionWithPlatforms.active = true;
-        this.body.setAllowGravity(true);
-        this.setAlpha(1);
-        this.setCurledUpBody();
         this.collisionWithIntersections.active = false;
     }
 
@@ -225,5 +252,17 @@ export class BurrowingSibi extends Sibi {
             this.launchHoldTween = null;
             this.scene.cameras.main.zoomTo(1, 50, 'Linear', true);
         }
+    }
+
+    onLandOnGround(): void {
+        this.collisionWithPlatforms.active = true;
+        this.body.setAllowGravity(true);
+        this.setAlpha(1);
+        this.airbornSibi = null;
+
+        if (!this.facingRight)
+            this.setFlipX(true);
+        else
+            this.setFlipX(false);
     }
 }

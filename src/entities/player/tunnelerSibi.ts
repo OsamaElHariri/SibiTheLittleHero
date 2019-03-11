@@ -8,7 +8,7 @@ export class TunnelerSibi extends Phaser.GameObjects.Sprite {
     private hitBox: Phaser.GameObjects.Rectangle;
     private breatheTween: Phaser.Tweens.Tween;
 
-    constructor(params: { scene: Phaser.Scene, x: number, y: number, }) {
+    constructor(params: { scene: Phaser.Scene, x: number, y: number }) {
         super(params.scene, params.x, params.y, 'UndergroundSibi');
 
         this.hitBox = this.scene.add.rectangle(this.x, this.y, this.bodyWidth, this.bodyHeight);
@@ -46,7 +46,7 @@ export class TunnelerSibi extends Phaser.GameObjects.Sprite {
     }
 
     duplicateHereAndShrink() {
-        let shrinkSprite:Phaser.GameObjects.Sprite = this.scene.add.sprite(this.x, this.y, 'UndergroundSibi').setOrigin(0.5, 1).setAngle(this.angle);
+        let shrinkSprite: Phaser.GameObjects.Sprite = this.scene.add.sprite(this.x, this.y, 'UndergroundSibi').setOrigin(0.5, 1).setAngle(this.angle);
 
         this.scene.add.tween({
             targets: [shrinkSprite],

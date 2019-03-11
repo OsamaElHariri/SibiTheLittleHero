@@ -1,9 +1,11 @@
 import { InputKeys } from '../../helpers/inputKeys/inputKeys';
 export class Sibi extends Phaser.GameObjects.Sprite {
+  facingRight: boolean = true;
+  
+  protected isCurledUp: boolean = false;
+  
   private keyboardInputs: InputKeys;
 
-  protected facingRight: boolean = true;
-  protected isCurledUp: boolean = false;
 
   constructor(params: { scene: Phaser.Scene, x: number, y: number, frame?: string | integer }) {
     super(params.scene, params.x, params.y, 'SibiIdle');
@@ -14,6 +16,8 @@ export class Sibi extends Phaser.GameObjects.Sprite {
     this.keyboardInputs = InputKeys.getInstance();
     this.scene.add.existing(this);
     this.anims.play('Idle', true);
+    this.body.setSize(22.2, 52.8);
+    this.body.setOffset(7.5, 14);
   }
 
   update(): void {
@@ -24,12 +28,12 @@ export class Sibi extends Phaser.GameObjects.Sprite {
     if (Math.abs(this.body.velocity.x) <= 300 || this.body.blocked.down) {
       if (this.keyboardInputs.leftPressed()) {
         this.facingRight = false;
-        this.body.setVelocityX(-160);
         this.setFlipX(true);
+        this.body.setVelocityX(-160);
       } else if (this.keyboardInputs.rightPressed()) {
         this.facingRight = true;
-        this.body.setVelocityX(160);
         this.setFlipX(false);
+        this.body.setVelocityX(160);
       } else {
         this.body.setVelocityX(0);
       }
@@ -46,7 +50,7 @@ export class Sibi extends Phaser.GameObjects.Sprite {
 
     this.isCurledUp = true;
     this.anims.stop();
-    this.setTexture('CurledSibi');
+    // this.setTexture('CurledSibi');
     this.body.setSize(25, 25);
     this.body.setOffset(7.5, 14);
   }
@@ -56,8 +60,8 @@ export class Sibi extends Phaser.GameObjects.Sprite {
 
     this.isCurledUp = false;
     this.angle = 0;
-    this.y -= 15;
-    this.setTexture('SibiIdle');
+    this.y -= 25;
+    // this.setTexture('SibiIdle');
     this.anims.play('Idle', true);
     this.body.setSize(22.2, 52.8);
     this.body.setOffset(7.5, 14);

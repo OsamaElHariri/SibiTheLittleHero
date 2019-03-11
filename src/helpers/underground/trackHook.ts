@@ -21,6 +21,8 @@ export class TrackHook {
         if (!track) return;
         if (track.isHorizontal) this.dimensions.y = track.constantAxisPosition;
         else this.dimensions.x = track.constantAxisPosition;
+        if (this.shouldClamp)
+            this.clampToTrack()
         this.updateIsWithinBounds();
     }
 

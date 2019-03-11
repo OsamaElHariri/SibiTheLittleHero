@@ -70,6 +70,20 @@ export class InputKeys {
         }
     }
 
+    getVerticalAxis(): number {
+        let axis: number = 0;
+        if (this.upPressed) axis -= 1;
+        if (this.downPressed) axis += 1;
+        return axis;
+    }
+
+    getHorizontalAxis(): number {
+        let axis: number = 0;
+        if (this.leftPressed) axis -= 1;
+        if (this.rightPressed) axis += 1;
+        return axis;
+    }
+
     upPressed(): boolean {
         return this.up.hasKeyDown();
     }
