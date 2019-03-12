@@ -4,10 +4,12 @@ import { CameraZoomInZone } from '../helpers/camera/cameraZoomInZone';
 import { CameraTarget } from '../helpers/camera/cameraTarget';
 import { BurrowingSibi } from '../entities/player/burrowingSibi';
 import { TrackIntersectionGroup } from '../entities/physicsGroups/intersection/trackIntersectionGroup';
+import { DigSawGroup } from '../entities/physicsGroups/digSaw/digSawGroup';
 
 export class MainScene extends Phaser.Scene {
   private platformGroup: PlatformGroup;
   private trackIntersectionGroup: TrackIntersectionGroup;
+  private digSawGroup: DigSawGroup;
   private cameraZoomTriggers: Phaser.GameObjects.Group;
   private cameraTarget: CameraTarget;
   player: BurrowingSibi;
@@ -23,7 +25,7 @@ export class MainScene extends Phaser.Scene {
     this.load.image('BasicSquarePlatform', '../Assets/Sprites/Platforms/SimpleSquare.png');
     this.load.image('OrangeRect', '../Assets/Sprites/Platforms/OrangeRect.png');
     this.load.image('YellowSquare', '../Assets/Sprites/Platforms/YellowSquare.png');
-    this.load.image("SibiHead", "../Assets/Sprites/Sibi/Head.png");
+    this.load.image('DigSaw', '../Assets/Sprites/Enemies/DigSaw.png');
     this.load.image("UndergroundSibi", "../Assets/Sprites/Sibi/UndergroundSibi.png");
     this.load.image("CurledSibi", "../Assets/Sprites/Sibi/CurledBall.png");
     this.load.spritesheet("SibiIdle", "../Assets/Sprites/Sibi/SpriteSheets/Idle.png",
@@ -34,6 +36,7 @@ export class MainScene extends Phaser.Scene {
     this.setupKeyboard();
     this.createPlatforms();
     this.createPlayer();
+    this.createSaws();
     this.cameraTarget = new CameraTarget(this, this.player.body);
     this.player.cameraTarget = this.cameraTarget;
     this.cameraZoomTriggers = this.add.group({
@@ -42,7 +45,7 @@ export class MainScene extends Phaser.Scene {
 
     this.cameraZoomTriggers.add(new CameraZoomInZone({ scene: this, x: 300, y: 450, camTarget: this.cameraTarget }));
 
-    let rect: Phaser.GameObjects.Rectangle = this.add.rectangle(300, 400, 20,20, 0xff9821);
+    let rect: Phaser.GameObjects.Rectangle = this.add.rectangle(300, 400, 20, 20, 0xff9821);
     this.physics.world.enable(rect);
     this.physics.add.collider(rect, this.platformGroup);
     this.physics.add.collider(rect, this.player);
@@ -70,6 +73,10 @@ export class MainScene extends Phaser.Scene {
     });
   }
 
+  createSaws(): void {
+    this.digSawGroup = new DigSawGroup(this, this.platformGroup);
+  }
+
   setupKeyboard(): void {
     InputKeys.setKeyboard(this.input.keyboard);
   }
@@ -77,5 +84,8 @@ export class MainScene extends Phaser.Scene {
   update(): void {
     this.player.update();
     this.cameraTarget.update();
+    this.digSawGroup.children.entries.forEach(
+      (child) => { child.update(); }
+  )
   }
 }
