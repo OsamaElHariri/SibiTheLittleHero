@@ -8,10 +8,11 @@ export class DigSaw extends Phaser.GameObjects.Sprite {
     private currentDirection: Direction = Direction.Down;
 
     private nextDirection: (direction: Direction) => Direction;
+    private previousDirection: (direction: Direction) => Direction;
 
     private currentSpeed: number = 0;
     private maxSpeed: number = 600;
-    private acceleration: number = 2;
+    private accelerationFactor: number = 1.15;
 
     constructor(scene: Phaser.Scene, x: number, y: number, platforms: PlatformGroup, clockwise?: boolean) {
         super(scene, x, y, 'DigSaw');
@@ -19,6 +20,7 @@ export class DigSaw extends Phaser.GameObjects.Sprite {
         if (clockwise) this.clockwise = clockwise;
 
         this.nextDirection = this.clockwise ? DirectionUtil.counterClockWise : DirectionUtil.clockWise;
+        this.previousDirection = this.clockwise ? DirectionUtil.clockWise : DirectionUtil.counterClockWise;
 
         this.scene.add.existing(this);
         this.scene.physics.world.enable(this);
@@ -27,23 +29,17 @@ export class DigSaw extends Phaser.GameObjects.Sprite {
     }
 
     update(): void {
-        this.currentSpeed = Math.min(this.currentSpeed + this.acceleration, this.maxSpeed);
+        this.currentSpeed = this.currentSpeed || 1.1;
+        this.currentSpeed = Math.min(this.currentSpeed * this.accelerationFactor, this.maxSpeed);
 
-        this.setDirection();
-        switch (this.currentDirection) {
-            case Direction.Up:
-                this.body.setVelocityY(-this.currentSpeed);
-                break;
-            case Direction.Down:
-                this.body.setVelocityY(this.currentSpeed);
-                break;
-            case Direction.Right:
-                this.body.setVelocityX(this.currentSpeed);
-                break;
-            case Direction.Left:
-                this.body.setVelocityX(-this.currentSpeed);
-                break;
+        if (this.body.blocked.none) {
+            this.currentDirection = null;
+        } else {
+            this.setDirection();
+            this.applySpeedInDirection(this.currentSpeed, this.currentDirection);
+            if (this.currentDirection) this.applySpeedInDirection(50, this.previousDirection(this.currentDirection));
         }
+        this.body.setAllowGravity(this.body.blocked.none);
     }
 
     setDirection(): void {
@@ -74,27 +70,29 @@ export class DigSaw extends Phaser.GameObjects.Sprite {
     }
 
     private checkBlockedAndDirection(blockDirection: boolean, direction: Direction): boolean {
-        return blockDirection && (this.currentDirection == direction);
+        return blockDirection && (!this.currentDirection || this.currentDirection == direction);
     }
 
     changeDirection(direction: Direction): void {
+        this.body.setVelocity(0, 0);
         this.currentSpeed = 0;
         this.currentDirection = direction;
-        this.body.setVelocity(0, 0);
     }
 
-    isBlockedInDirection(direction: Direction): boolean {
+    applySpeedInDirection(speed: number, direction: Direction): void {
         switch (direction) {
             case Direction.Up:
-                return this.body.blocked.up;
+                this.body.setVelocityY(-speed);
+                break;
             case Direction.Down:
-                return this.body.blocked.down;
+                this.body.setVelocityY(speed);
+                break;
             case Direction.Right:
-                return this.body.blocked.right;
+                this.body.setVelocityX(speed);
+                break;
             case Direction.Left:
-                return this.body.blocked.left;
-            default:
-                return false;
+                this.body.setVelocityX(-speed);
+                break;
         }
     }
 }
