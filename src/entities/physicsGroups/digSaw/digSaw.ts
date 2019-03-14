@@ -1,6 +1,7 @@
 import { PlatformGroup } from "../platforms/platformGroup";
 import { Direction } from "../../../helpers/enums/direction";
 import { DirectionUtil } from "../../../helpers/directionUtil/directionUtil";
+import { FollowCollider } from "../utilColliders/followCollider";
 
 export class DigSaw extends Phaser.GameObjects.Sprite {
 
@@ -31,6 +32,12 @@ export class DigSaw extends Phaser.GameObjects.Sprite {
         this.scene.physics.add.collider(this, platforms);
         this.body.setSize(30, 30);
         this.body.setAllowGravity(false);
+        new FollowCollider(this.scene, this, {
+            isCircle: true,
+            width: 50,
+            xOffset: 13,
+            yOffset: 13
+        });
     }
 
     update(): void {

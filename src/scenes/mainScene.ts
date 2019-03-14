@@ -33,6 +33,7 @@ export class MainScene extends Phaser.Scene {
   }
 
   create(): void {
+    this.data.set('HostileGroup', this.add.group({runChildUpdate: true}))
     this.setupKeyboard();
     this.createPlatforms();
     this.createPlayer();
