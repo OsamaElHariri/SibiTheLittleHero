@@ -8,38 +8,42 @@ export class DigSaw extends Phaser.GameObjects.Sprite {
     private currentDirection: Direction = Direction.Down;
 
     private nextDirection: (direction: Direction) => Direction;
-    private previousDirection: (direction: Direction) => Direction;
 
     private currentSpeed: number = 0;
-    private maxSpeed: number = 600;
+    private maxSpeed: number = 550;
     private accelerationFactor: number = 1.15;
+    private rotationDirection: number = -1;
+    private maxRotationSpeed: number = 50;
 
     constructor(scene: Phaser.Scene, x: number, y: number, platforms: PlatformGroup, clockwise?: boolean) {
         super(scene, x, y, 'DigSaw');
+        this.depth = -1;
 
-        if (clockwise) this.clockwise = clockwise;
+        if (clockwise) {
+            this.clockwise = clockwise;
+            this.rotationDirection = 1;
+        }
 
         this.nextDirection = this.clockwise ? DirectionUtil.counterClockWise : DirectionUtil.clockWise;
-        this.previousDirection = this.clockwise ? DirectionUtil.clockWise : DirectionUtil.counterClockWise;
 
         this.scene.add.existing(this);
         this.scene.physics.world.enable(this);
-        this.body.setAllowGravity(false);
         this.scene.physics.add.collider(this, platforms);
+        this.body.setSize(30, 30);
+        this.body.setAllowGravity(false);
     }
 
     update(): void {
         this.currentSpeed = this.currentSpeed || 1.1;
         this.currentSpeed = Math.min(this.currentSpeed * this.accelerationFactor, this.maxSpeed);
 
-        if (this.body.blocked.none) {
-            this.currentDirection = null;
-        } else {
-            this.setDirection();
-            this.applySpeedInDirection(this.currentSpeed, this.currentDirection);
-            if (this.currentDirection) this.applySpeedInDirection(50, this.previousDirection(this.currentDirection));
-        }
-        this.body.setAllowGravity(this.body.blocked.none);
+        let maxRotationFraction: number = Math.abs(this.body.speed) / this.maxSpeed;
+
+        this.angle += Math.pow(maxRotationFraction, 1.2) * this.maxRotationSpeed * this.rotationDirection;
+
+        this.setDirection();
+        this.applySpeedInDirection(this.currentSpeed, this.currentDirection);
+
     }
 
     setDirection(): void {
@@ -70,7 +74,7 @@ export class DigSaw extends Phaser.GameObjects.Sprite {
     }
 
     private checkBlockedAndDirection(blockDirection: boolean, direction: Direction): boolean {
-        return blockDirection && (!this.currentDirection || this.currentDirection == direction);
+        return blockDirection && (this.currentDirection == direction);
     }
 
     changeDirection(direction: Direction): void {
