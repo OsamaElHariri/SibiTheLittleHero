@@ -22,6 +22,13 @@ export class MainScene extends Phaser.Scene {
   }
 
   preload(): void {
+    for (let i = 1; i <= 5; i++) {
+      this.load.image(`Rock${i}`, `../Assets/Sprites/Platforms/Rock${i}.png`);
+    }
+    this.load.image('PlatformEdge', '../Assets/Sprites/Platforms/Edge.png');
+    this.load.image('PlatformEdgeRotated', '../Assets/Sprites/Platforms/EdgeRotated.png');
+    this.load.image('PlatformCorner', '../Assets/Sprites/Platforms/Corner.png');
+    this.load.image('MetalBrace', '../Assets/Sprites/Platforms/MetalBrace.png');
     this.load.image('BasicSquarePlatform', '../Assets/Sprites/Platforms/SimpleSquare.png');
     this.load.image('OrangeRect', '../Assets/Sprites/Platforms/OrangeRect.png');
     this.load.image('YellowSquare', '../Assets/Sprites/Platforms/YellowSquare.png');

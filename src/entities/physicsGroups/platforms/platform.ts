@@ -2,7 +2,7 @@ import { UndergroundTrack } from '../../../helpers/underground/undergroundTrack'
 import { Rectangle } from '../../../helpers/shapes/rectangle';
 import { Direction } from '../../../helpers/enums/direction';
 import { TrackIntersectionGroup } from '../intersection/trackIntersectionGroup';
-export class Platform extends Phaser.GameObjects.TileSprite {
+export class Platform extends Phaser.GameObjects.Rectangle {
 
     static textureKey: string = 'OrangeRect';
     readonly topTrack: UndergroundTrack;
@@ -13,13 +13,18 @@ export class Platform extends Phaser.GameObjects.TileSprite {
     private intersectionWidths: number = 6;
     private intersectionHeight: number = 6;
 
+    private imageWidth: number = 64;
+
     constructor(scene: Phaser.Scene, x: number, y: number, width: number, height: number, intersectionsGroup?: TrackIntersectionGroup) {
-        super(scene, x, y, width, height, Platform.textureKey);
+        super(scene, x, y, width, height, 0x6d541d);
 
         this.topTrack = new UndergroundTrack({ minBound: x, maxBound: x + width, constantAxisPosition: y, direction: Direction.Up });
         this.bottomTrack = new UndergroundTrack({ minBound: x, maxBound: x + width, constantAxisPosition: y + height, direction: Direction.Down });
         this.rightTrack = new UndergroundTrack({ minBound: y, maxBound: y + height, constantAxisPosition: x + width, direction: Direction.Right });
         this.leftTrack = new UndergroundTrack({ minBound: y, maxBound: y + height, constantAxisPosition: x, direction: Direction.Left });
+        
+        this.setupEdgeSprites();
+        this.setupCornerSprites();
 
         if (intersectionsGroup)
             this.setupIntersections(intersectionsGroup);
@@ -28,6 +33,24 @@ export class Platform extends Phaser.GameObjects.TileSprite {
         this.setOrigin(0, 0);
         this.scene.add.existing(this);
         this.scene.physics.world.enable(this, Phaser.Physics.Arcade.STATIC_BODY);
+    }
+
+    setupCornerSprites(): void {
+        let cornerDepth: number = 1;
+        this.scene.add.sprite(this.x, this.y, 'PlatformCorner').setOrigin(0, 0).setDepth(cornerDepth);
+        this.scene.add.sprite(this.x + this.width, this.y, 'PlatformCorner').setOrigin(1, 0).setFlip(true, false).setDepth(cornerDepth);
+        this.scene.add.sprite(this.x, this.y + this.height, 'PlatformCorner').setOrigin(0, 1).setFlip(false, true).setDepth(cornerDepth);
+        this.scene.add.sprite(this.x + this.width, this.y + this.height, 'PlatformCorner').setOrigin(1, 1).setFlip(true, true).setDepth(cornerDepth);
+    }
+
+    setupEdgeSprites(): void {
+        let edgeDepth: number = 1;
+        this.scene.add.tileSprite(this.x, this.y, this.width, this.imageWidth, 'PlatformEdge').setOrigin(0, 0).setDepth(edgeDepth);
+        this.scene.add.tileSprite(this.x, this.y + this.height, this.width, this.imageWidth, 'PlatformEdge').setOrigin(0, 1).setDepth(edgeDepth).setFlipY(true);
+
+        this.scene.add.tileSprite(this.x, this.y, this.imageWidth, this.height, 'PlatformEdgeRotated').setOrigin(0, 0).setDepth(edgeDepth);
+        this.scene.add.tileSprite(this.x + this.width, this.y, this.imageWidth, this.height, 'PlatformEdgeRotated').setOrigin(1, 0).setDepth(edgeDepth).setFlipX(true);
+
     }
 
     setupIntersections(intersectionGroup: TrackIntersectionGroup): void {

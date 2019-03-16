@@ -11,11 +11,11 @@ export class PlatformGroup extends Phaser.Physics.Arcade.StaticGroup {
     }
 
     createDefaultPlatforms(): void {
-        this.createPlatform(0, 568, 800, 100);
-        this.createPlatform(600, 400, 400, 100);
-        this.createPlatform(50, 150, 400, 100);
-        this.createPlatform(-50, -50, 100, 200);
-        this.createPlatform(750, 220, 400, 100);
+        this.createPlatform(0, 568, 800, 150);
+        this.createPlatform(600, 400, 400, 150);
+        this.createPlatform(50, 150, 400, 150);
+        this.createPlatform(-50, -50, 150, 200);
+        this.createPlatform(750, 220, 400, 150);
     }
 
     createPlatform(x: number, y: number, width: number, height: number): Platform {

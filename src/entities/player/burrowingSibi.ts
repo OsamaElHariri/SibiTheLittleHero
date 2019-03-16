@@ -217,8 +217,8 @@ export class BurrowingSibi extends Sibi {
         } else if (!this.launchHoldTween && trackDirectionPressed) {
             this.launchHoldTween = this.scene.add.tween({
                 targets: [this.scene.cameras.main],
-                duration: 600,
-                delay: 400,
+                duration: 400,
+                delay: 200,
                 zoom: {
                     getStart: () => 1,
                     getEnd: () => this.launchCameraZoom,
