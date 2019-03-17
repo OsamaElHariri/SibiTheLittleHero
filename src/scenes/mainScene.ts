@@ -5,6 +5,7 @@ import { CameraTarget } from '../helpers/camera/cameraTarget';
 import { BurrowingSibi } from '../entities/player/burrowingSibi';
 import { TrackIntersectionGroup } from '../entities/physicsGroups/intersection/trackIntersectionGroup';
 import { DigSawGroup } from '../entities/physicsGroups/digSaw/digSawGroup';
+import { RockMelter } from '../entities/physicsGroups/rockMelter/rockMelter';
 
 export class MainScene extends Phaser.Scene {
   private platformGroup: PlatformGroup;
@@ -14,6 +15,7 @@ export class MainScene extends Phaser.Scene {
   private cameraTarget: CameraTarget;
   player: BurrowingSibi;
   cursors: InputKeys;
+  melter: RockMelter;
 
   constructor() {
     super({
@@ -36,7 +38,10 @@ export class MainScene extends Phaser.Scene {
     this.load.image("CurledSibi", "../Assets/Sprites/Sibi/CurledBall.png");
     this.load.spritesheet("SibiIdle", "../Assets/Sprites/Sibi/SpriteSheets/Idle.png",
       { frameWidth: 148 / 4, frameHeight: 396 / 6 });
-    
+
+
+    this.load.image("RockMelterCeilingSupport", "../Assets/Sprites/Enemies/RockMelter/CeilingSupport.png");
+    this.load.image("RockMelter", "../Assets/Sprites/Enemies/RockMelter/Melter.png");
     this.load.spritesheet("Smoke", "../Assets/Sprites/Enemies/RockMelter/Smoke.png",
       { frameWidth: 96 / 3, frameHeight: 296 / 4 });
   }
@@ -70,6 +75,7 @@ export class MainScene extends Phaser.Scene {
     });
     this.add.sprite(150, 100, 'Smoke').play('SmokeDance');
     this.add.sprite(200, 100, 'Smoke').setFlipX(true).setScale(1.2).play('SmokeDance', false, 6);
+    this.melter = new RockMelter(this, 200, 50);
   }
 
   createPlatforms(): void {
@@ -109,5 +115,6 @@ export class MainScene extends Phaser.Scene {
     this.digSawGroup.children.entries.forEach(
       (child) => { child.update(); }
     );
+    this.melter.update();
   }
 }
