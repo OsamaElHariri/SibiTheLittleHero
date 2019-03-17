@@ -36,6 +36,9 @@ export class MainScene extends Phaser.Scene {
     this.load.image("CurledSibi", "../Assets/Sprites/Sibi/CurledBall.png");
     this.load.spritesheet("SibiIdle", "../Assets/Sprites/Sibi/SpriteSheets/Idle.png",
       { frameWidth: 148 / 4, frameHeight: 396 / 6 });
+    
+    this.load.spritesheet("Smoke", "../Assets/Sprites/Enemies/RockMelter/Smoke.png",
+      { frameWidth: 96 / 3, frameHeight: 296 / 4 });
   }
 
   create(): void {
@@ -58,6 +61,15 @@ export class MainScene extends Phaser.Scene {
     this.physics.world.enable(rect);
     this.physics.add.collider(rect, this.platformGroup);
     this.physics.add.collider(rect, this.player);
+
+    this.anims.create({
+      key: 'SmokeDance',
+      frames: this.anims.generateFrameNumbers('Smoke', { start: 0, end: 12 }),
+      frameRate: 12,
+      repeat: -1
+    });
+    this.add.sprite(150, 100, 'Smoke').play('SmokeDance');
+    this.add.sprite(200, 100, 'Smoke').setFlipX(true).setScale(1.2).play('SmokeDance', false, 6);
   }
 
   createPlatforms(): void {
