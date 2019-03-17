@@ -22,17 +22,16 @@ export class MainScene extends Phaser.Scene {
   }
 
   preload(): void {
-    for (let i = 1; i <= 5; i++) {
-      this.load.image(`Rock${i}`, `../Assets/Sprites/Platforms/Rock${i}.png`);
-    }
     this.load.image('PlatformEdge', '../Assets/Sprites/Platforms/Edge.png');
     this.load.image('PlatformEdgeRotated', '../Assets/Sprites/Platforms/EdgeRotated.png');
     this.load.image('PlatformCorner', '../Assets/Sprites/Platforms/Corner.png');
+    for (let i = 1; i <= 5; i++) this.load.image(`Rock${i}`, `../Assets/Sprites/Platforms/Rock${i}.png`);
     this.load.image('MetalBrace', '../Assets/Sprites/Platforms/MetalBrace.png');
-    this.load.image('BasicSquarePlatform', '../Assets/Sprites/Platforms/SimpleSquare.png');
-    this.load.image('OrangeRect', '../Assets/Sprites/Platforms/OrangeRect.png');
+
     this.load.image('YellowSquare', '../Assets/Sprites/Platforms/YellowSquare.png');
+
     this.load.image('DigSaw', '../Assets/Sprites/Enemies/DigSaw.png');
+
     this.load.image("UndergroundSibi", "../Assets/Sprites/Sibi/UndergroundSibi.png");
     this.load.image("CurledSibi", "../Assets/Sprites/Sibi/CurledBall.png");
     this.load.spritesheet("SibiIdle", "../Assets/Sprites/Sibi/SpriteSheets/Idle.png",
@@ -40,7 +39,9 @@ export class MainScene extends Phaser.Scene {
   }
 
   create(): void {
-    this.data.set('HostileGroup', this.add.group({runChildUpdate: true}))
+    this.scene.launch('BackgroundScene');
+    this.scene.moveAbove('BackgroundScene', 'MainScene');
+    this.data.set('HostileGroup', this.add.group({ runChildUpdate: true }));
     this.setupKeyboard();
     this.createPlatforms();
     this.createPlayer();
@@ -51,7 +52,7 @@ export class MainScene extends Phaser.Scene {
       runChildUpdate: true
     });
 
-    this.cameraZoomTriggers.add(new CameraZoomInZone({ scene: this, x: 300, y: 450, camTarget: this.cameraTarget }));
+    // this.cameraZoomTriggers.add(new CameraZoomInZone({ scene: this, x: 300, y: 450, camTarget: this.cameraTarget }));
 
     let rect: Phaser.GameObjects.Rectangle = this.add.rectangle(300, 400, 20, 20, 0xff9821);
     this.physics.world.enable(rect);
@@ -90,10 +91,11 @@ export class MainScene extends Phaser.Scene {
   }
 
   update(): void {
+    this.registry.set('MainCameraPosition', { x: this.cameras.main.scrollX, y: this.cameras.main.scrollY });
     this.player.update();
     this.cameraTarget.update();
     this.digSawGroup.children.entries.forEach(
       (child) => { child.update(); }
-  )
+    );
   }
 }
