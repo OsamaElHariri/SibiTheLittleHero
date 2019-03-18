@@ -6,7 +6,7 @@ export class MineWall extends Phaser.GameObjects.TileSprite {
 
     private woodenPillars: Phaser.GameObjects.TileSprite;
 
-    constructor(scene: Phaser.Scene, y: number, xParallaxFactor: number, yParallaxFactor: number) {
+    constructor(scene: Phaser.Scene, y: number, xParallaxFactor: number, yParallaxFactor: number, scale?: number, tint?: number) {
         super(scene, 0, y, 800, 500, 'MineWall');
         this.setOrigin(0);
         this.scene.add.existing(this);
@@ -19,7 +19,15 @@ export class MineWall extends Phaser.GameObjects.TileSprite {
         this.woodenPillars.setOrigin(0);
         this.pillarsFlipped = Math.random() < 0.5;
         this.woodenPillars.flipX = this.pillarsFlipped;
-        this.woodenPillars.setTint(0xbbbbcf);
+
+        // if (scale) {
+        //     this.setScale(scale);
+        //     this.woodenPillars.setScale(scale);
+        // }
+        if (tint) {
+            this.setTint(tint);
+            this.woodenPillars.setTint(tint);
+        }
     }
 
     updateParallax(cameraPositionDelta: { x: number, y: number }) {
@@ -29,7 +37,7 @@ export class MineWall extends Phaser.GameObjects.TileSprite {
         if (this.pillarsFlipped) xDelta *= -1;
         this.woodenPillars.tilePositionX += xDelta;
 
-        
+
         let yDelta: number = cameraPositionDelta.y * this.yParallaxFactor;
         this.y += yDelta;
         this.woodenPillars.y += yDelta;

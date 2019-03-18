@@ -42,6 +42,8 @@ export class MainScene extends Phaser.Scene {
 
     this.load.image("RockMelterCeilingSupport", "../Assets/Sprites/Enemies/RockMelter/CeilingSupport.png");
     this.load.image("RockMelter", "../Assets/Sprites/Enemies/RockMelter/Melter.png");
+    this.load.image("MoltenPuddle", "../Assets/Sprites/Enemies/RockMelter/MoltenPuddle.png");
+    this.load.image("MoltenBall", "../Assets/Sprites/Enemies/RockMelter/MoltenBall.png");
     this.load.spritesheet("Smoke", "../Assets/Sprites/Enemies/RockMelter/Smoke.png",
       { frameWidth: 96 / 3, frameHeight: 296 / 4 });
   }
@@ -73,9 +75,7 @@ export class MainScene extends Phaser.Scene {
       frameRate: 12,
       repeat: -1
     });
-    this.add.sprite(150, 100, 'Smoke').play('SmokeDance');
-    this.add.sprite(200, 100, 'Smoke').setFlipX(true).setScale(1.2).play('SmokeDance', false, 6);
-    this.melter = new RockMelter(this, 200, 50);
+    this.melter = new RockMelter(this, 200, -100, this.platformGroup);
   }
 
   createPlatforms(): void {

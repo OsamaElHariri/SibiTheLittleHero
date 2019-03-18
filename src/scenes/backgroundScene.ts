@@ -18,9 +18,9 @@ export class BackgroundScene extends Phaser.Scene {
 
     create(): void {
         this.walls = [
-            new MineWall(this, -300, 0.7, 0.08),
-            new MineWall(this, 150, 0.8, 0.09),
-            new MineWall(this, 550, 0.9, 0.1),
+            new MineWall(this, -250, 0.7, 0.08, 0.8, 0xe7e7e7),
+            new MineWall(this, 150, 0.8, 0.09, 0.9, 0xf0f0f0),
+            new MineWall(this, 550, 0.9, 0.1, 0xf5f5f5),
         ];
     }
 
