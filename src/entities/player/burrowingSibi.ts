@@ -28,7 +28,7 @@ export class BurrowingSibi extends Sibi {
     private collisionWithPlatforms: Phaser.Physics.Arcade.Collider;
     private collisionWithIntersections: Phaser.Physics.Arcade.Collider;
     private launchHoldTween: Phaser.Tweens.Tween;
-    private launchCameraZoom: number = 1.15;
+    private launchCameraZoom: number = 1.05;
 
 
     private tunneler: TunnelerSibi;
@@ -42,7 +42,7 @@ export class BurrowingSibi extends Sibi {
             params.scene.physics.add.collider(this, params.platforms,
                 this.onCollisionWithPlatforms, null, this);
 
-        this.trackHook = new TrackHook(this).clampOnEdges(true);
+        this.trackHook = new TrackHook(this).clampOnEdges(true).setSpeed(5);
 
         if (params.trackIntersectionGroup) {
             this.collisionWithIntersections = params.scene.physics.add.overlap(this, params.trackIntersectionGroup,
@@ -217,8 +217,8 @@ export class BurrowingSibi extends Sibi {
         } else if (!this.launchHoldTween && trackDirectionPressed) {
             this.launchHoldTween = this.scene.add.tween({
                 targets: [this.scene.cameras.main],
-                duration: 400,
-                delay: 200,
+                duration: 150,
+                delay: 80,
                 zoom: {
                     getStart: () => 1,
                     getEnd: () => this.launchCameraZoom,

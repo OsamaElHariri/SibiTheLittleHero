@@ -57,7 +57,7 @@ export class AirbornSibi extends Phaser.GameObjects.Sprite {
             }
             this.sibi.x = this.x;
             this.sibi.y = this.y;
-            if (this.body.blocked.down) {
+            if (this.body.blocked.down && !this.inputKeys.downPressed()) {
                 this.sibi.facingRight = this.facingRight;
                 this.sibi.setPosition(this.x, this.y - 20);
                 this.sibi.onLandOnGround();

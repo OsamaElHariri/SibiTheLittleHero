@@ -23,8 +23,8 @@ export class TunnelerSibi extends Phaser.GameObjects.Sprite {
             targets: [this],
             ease: 'Sine.easeInOut',
             duration: 600,
-            loop: -1,
             loopDelay: 200,
+            loop: -1,
             yoyo: true,
             scaleY: {
                 getStart: () => 1,

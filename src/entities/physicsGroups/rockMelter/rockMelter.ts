@@ -47,8 +47,7 @@ export class RockMelter extends Phaser.GameObjects.Sprite {
         this.scene.add.tween({
             targets: [this.moltenball],
             ease: 'Sine.easeIn',
-            duration: 600,
-            loopDelay: 200,
+            duration: this.hasSpawnedPuddle ? 600 : 1,
             callbackScope: this,
             scaleX: {
                 getStart: () => 0,
@@ -79,7 +78,7 @@ export class RockMelter extends Phaser.GameObjects.Sprite {
 
     spawnMoltenPubble(x: number, y: number) {
         this.hasSpawnedPuddle = true;
-        let puddle: Phaser.GameObjects.Sprite = this.scene.add.sprite(x, y, 'MoltenPuddle').setDepth(2);
+        let puddle: Phaser.GameObjects.Sprite = this.scene.add.sprite(x, y + 2, 'MoltenPuddle').setDepth(2).play('MoltenPuddleMovement');
         let numberOfSmoke: number = Math.floor(Math.random() * 3 + 3);
         for (let i = 0; i < numberOfSmoke; i++) {
             let smokeX: number = puddle.getTopLeft().x + (i + 0.25) * (puddle.width / numberOfSmoke);

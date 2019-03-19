@@ -42,8 +42,9 @@ export class MainScene extends Phaser.Scene {
 
     this.load.image("RockMelterCeilingSupport", "../Assets/Sprites/Enemies/RockMelter/CeilingSupport.png");
     this.load.image("RockMelter", "../Assets/Sprites/Enemies/RockMelter/Melter.png");
-    this.load.image("MoltenPuddle", "../Assets/Sprites/Enemies/RockMelter/MoltenPuddle.png");
     this.load.image("MoltenBall", "../Assets/Sprites/Enemies/RockMelter/MoltenBall.png");
+    this.load.spritesheet("MoltenPuddle", "../Assets/Sprites/Enemies/RockMelter/MoltenPuddleSheet.png", 
+      {frameWidth: 135, frameHeight: 78 / 4 });
     this.load.spritesheet("Smoke", "../Assets/Sprites/Enemies/RockMelter/Smoke.png",
       { frameWidth: 96 / 3, frameHeight: 296 / 4 });
   }
@@ -74,6 +75,13 @@ export class MainScene extends Phaser.Scene {
       frames: this.anims.generateFrameNumbers('Smoke', { start: 0, end: 12 }),
       frameRate: 12,
       repeat: -1
+    });
+    this.anims.create({
+      key: 'MoltenPuddleMovement',
+      frames: this.anims.generateFrameNumbers('MoltenPuddle', { start: 0, end: 2 }),
+      frameRate: 7,
+      repeat: -1,
+      yoyo: true
     });
     this.melter = new RockMelter(this, 200, -100, this.platformGroup);
   }
