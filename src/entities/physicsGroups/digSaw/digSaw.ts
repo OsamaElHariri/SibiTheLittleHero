@@ -16,14 +16,17 @@ export class DigSaw extends Phaser.GameObjects.Sprite {
     private rotationDirection: number = -1;
     private maxRotationSpeed: number = 50;
 
-    constructor(scene: Phaser.Scene, x: number, y: number, platforms: PlatformGroup, clockwise?: boolean) {
+    constructor(scene: Phaser.Scene, x: number, y: number, platforms: PlatformGroup, 
+        config:{clockwise?: boolean, initialDirection: Direction}) {
         super(scene, x, y, 'DigSaw');
         this.depth = -1;
 
-        if (clockwise) {
-            this.clockwise = clockwise;
+        if (config.clockwise) {
+            this.clockwise = config.clockwise;
             this.rotationDirection = 1;
         }
+        this.currentDirection = config.initialDirection || Direction.Down;
+
 
         this.nextDirection = this.clockwise ? DirectionUtil.counterClockWise : DirectionUtil.clockWise;
 

@@ -6,6 +6,7 @@ import { BurrowingSibi } from '../entities/player/burrowingSibi';
 import { TrackIntersectionGroup } from '../entities/physicsGroups/intersection/trackIntersectionGroup';
 import { DigSawGroup } from '../entities/physicsGroups/digSaw/digSawGroup';
 import { RockMelter } from '../entities/physicsGroups/rockMelter/rockMelter';
+import { RockMelterGroup } from '../entities/physicsGroups/rockMelter/rockMelterGroup';
 
 export class MainScene extends Phaser.Scene {
   private platformGroup: PlatformGroup;
@@ -15,7 +16,7 @@ export class MainScene extends Phaser.Scene {
   private cameraTarget: CameraTarget;
   player: BurrowingSibi;
   cursors: InputKeys;
-  melter: RockMelter;
+  private rockMelterGroup: RockMelterGroup;
 
   constructor() {
     super({
@@ -43,8 +44,8 @@ export class MainScene extends Phaser.Scene {
     this.load.image("RockMelterCeilingSupport", "../Assets/Sprites/Enemies/RockMelter/CeilingSupport.png");
     this.load.image("RockMelter", "../Assets/Sprites/Enemies/RockMelter/Melter.png");
     this.load.image("MoltenBall", "../Assets/Sprites/Enemies/RockMelter/MoltenBall.png");
-    this.load.spritesheet("MoltenPuddle", "../Assets/Sprites/Enemies/RockMelter/MoltenPuddleSheet.png", 
-      {frameWidth: 135, frameHeight: 78 / 4 });
+    this.load.spritesheet("MoltenPuddle", "../Assets/Sprites/Enemies/RockMelter/MoltenPuddleSheet.png",
+      { frameWidth: 135, frameHeight: 78 / 4 });
     this.load.spritesheet("Smoke", "../Assets/Sprites/Enemies/RockMelter/Smoke.png",
       { frameWidth: 96 / 3, frameHeight: 296 / 4 });
   }
@@ -55,6 +56,7 @@ export class MainScene extends Phaser.Scene {
     this.data.set('HostileGroup', this.add.group({ runChildUpdate: true }));
     this.setupKeyboard();
     this.createPlatforms();
+    this.createRockMelters();
     this.createPlayer();
     this.createSaws();
     this.cameraTarget = new CameraTarget(this, this.player.body);
@@ -83,12 +85,14 @@ export class MainScene extends Phaser.Scene {
       repeat: -1,
       yoyo: true
     });
-    this.melter = new RockMelter(this, 200, -100, this.platformGroup);
   }
 
   createPlatforms(): void {
     this.trackIntersectionGroup = new TrackIntersectionGroup(this);
     this.platformGroup = new PlatformGroup(this, this.trackIntersectionGroup);
+  }
+  createRockMelters(): void {
+    this.rockMelterGroup = new RockMelterGroup(this, this.platformGroup);
   }
 
   createPlayer() {
@@ -123,6 +127,8 @@ export class MainScene extends Phaser.Scene {
     this.digSawGroup.children.entries.forEach(
       (child) => { child.update(); }
     );
-    this.melter.update();
+    this.rockMelterGroup.children.entries.forEach(
+      (child) => { child.update(); }
+    );
   }
 }

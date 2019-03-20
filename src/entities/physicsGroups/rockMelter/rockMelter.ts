@@ -11,6 +11,8 @@ export class RockMelter extends Phaser.GameObjects.Sprite {
     private smokeSprites: Phaser.GameObjects.Sprite[] = [];
     private moltenball: Phaser.GameObjects.Sprite;
 
+    private dropInterval = 600;
+
     constructor(scene: Phaser.Scene, x: number, y: number, platforms: PlatformGroup) {
         super(scene, x, y, 'RockMelterCeilingSupport');
         this.platforms = platforms;
@@ -33,7 +35,7 @@ export class RockMelter extends Phaser.GameObjects.Sprite {
 
     startMoltenballTimer(): void {
         this.scene.time.addEvent({
-            delay: 3000,
+            delay: this.dropInterval,
             callbackScope: this,
             callback: () => {
                 this.spawnMoltenball();
