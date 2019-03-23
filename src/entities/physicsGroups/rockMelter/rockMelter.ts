@@ -18,7 +18,7 @@ export class RockMelter extends Phaser.GameObjects.Sprite {
     constructor(scene: Phaser.Scene, x: number, y: number, platforms: PlatformGroup) {
         super(scene, x, y, 'RockMelterCeilingSupport');
         this.platforms = platforms;
-        this.sceneHostileGroup = this.scene.data.get('HostileGroup');
+        this.sceneHostileGroup = this.scene.data.get('OverGroundHostileGroup');
         this.scene.add.existing(this);
         this.melter = this.scene.add.sprite(this.x - 5, this.y + 44, 'RockMelter');
         this.initialMelterPos = {

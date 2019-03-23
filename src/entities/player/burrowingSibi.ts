@@ -28,6 +28,7 @@ export class BurrowingSibi extends Sibi {
     private launchHoldTween: Phaser.Tweens.Tween;
     private launchCameraZoom: number = 1.05;
 
+    private underGroundHostileGroup: Phaser.GameObjects.Group;
     private hostileGroup: Phaser.GameObjects.Group;
     private hostileGroupCollision: Phaser.Physics.Arcade.Collider;
 
@@ -51,7 +52,9 @@ export class BurrowingSibi extends Sibi {
             this.collisionWithIntersections.active = false;
         }
 
-        this.hostileGroup = this.scene.data.get('HostileGroup');
+        this.underGroundHostileGroup = this.scene.data.get('UnderGroundHostileGroup');
+
+        this.hostileGroup = this.scene.data.get('OverGroundHostileGroup');
         this.hostileGroupCollision = this.scene.physics.add.overlap(this, this.hostileGroup, this.kill, null, this);
     }
 
@@ -186,7 +189,7 @@ export class BurrowingSibi extends Sibi {
 
     spawnTunneler(track: UndergroundTrack): void {
         this.tunneler = new TunnelerSibi({ scene: this.scene, x: this.x, y: this.y });
-        this.scene.physics.add.overlap(this.tunneler.hitBox, this.hostileGroup, this.kill, null, this);
+        this.scene.physics.add.overlap(this.tunneler.hitBox, this.underGroundHostileGroup, this.kill, null, this);
         this.tunneler.updateDirection(track.direction);
     }
 

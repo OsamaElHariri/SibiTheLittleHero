@@ -52,7 +52,8 @@ export class MainScene extends Phaser.Scene {
   create(): void {
     this.scene.launch('BackgroundScene');
     this.scene.moveAbove('BackgroundScene', 'MainScene');
-    this.data.set('HostileGroup', this.add.group({ runChildUpdate: true }));
+    this.data.set('OverGroundHostileGroup', this.add.group({ runChildUpdate: true }));
+    this.data.set('UnderGroundHostileGroup', this.add.group({ runChildUpdate: true }));
     this.setupKeyboard();
     this.createPlatforms();
     this.createRockMelters();

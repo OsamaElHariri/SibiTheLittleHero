@@ -39,7 +39,9 @@ export class DigSaw extends Phaser.GameObjects.Sprite {
             isCircle: true,
             width: 50,
             xOffset: 13,
-            yOffset: 13
+            yOffset: 13,
+            isOverGroundHostile: true,
+            isUnderGroundHostile: true
         });
     }
 
