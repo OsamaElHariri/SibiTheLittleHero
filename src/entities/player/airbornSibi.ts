@@ -53,7 +53,10 @@ export class AirbornSibi extends Phaser.GameObjects.Sprite {
         if (this.active) {
             this.overGroundMovement();
             if (Math.abs(this.body.velocity.x) > 300) {
-                this.body.velocity.x += 8 * (this.body.velocity.x < 0 ? 1 : -1);
+                this.body.velocity.x *= 0.95;
+            }
+            if (!this.inputKeys.upPressed() && this.body.velocity.y > -400 && this.body.velocity.y < -50) {
+                this.body.velocity.y *= 0.9
             }
             this.sibi.x = this.x;
             this.sibi.y = this.y;
@@ -72,11 +75,11 @@ export class AirbornSibi extends Phaser.GameObjects.Sprite {
             if (this.inputKeys.leftPressed()) {
                 this.facingRight = false;
                 this.setFlipX(true);
-                this.body.setVelocityX(-160);
+                this.body.setVelocityX(-250);
             } else if (this.inputKeys.rightPressed()) {
                 this.facingRight = true;
                 this.setFlipX(false);
-                this.body.setVelocityX(160);
+                this.body.setVelocityX(250);
             } else {
                 this.body.setVelocityX(0);
             }

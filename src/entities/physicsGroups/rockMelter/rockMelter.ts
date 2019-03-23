@@ -13,9 +13,12 @@ export class RockMelter extends Phaser.GameObjects.Sprite {
 
     private dropInterval = 600;
 
+    private sceneHostileGroup: Phaser.GameObjects.Group;
+
     constructor(scene: Phaser.Scene, x: number, y: number, platforms: PlatformGroup) {
         super(scene, x, y, 'RockMelterCeilingSupport');
         this.platforms = platforms;
+        this.sceneHostileGroup = this.scene.data.get('HostileGroup');
         this.scene.add.existing(this);
         this.melter = this.scene.add.sprite(this.x - 5, this.y + 44, 'RockMelter');
         this.initialMelterPos = {
@@ -69,6 +72,7 @@ export class RockMelter extends Phaser.GameObjects.Sprite {
         this.scene.physics.world.enable(this.moltenball);
         this.moltenball.body.setCircle(10);
         this.moltenball.body.setOffset(5, 5);
+        this.sceneHostileGroup.add(this.moltenball);
         this.scene.physics.add.collider(this.moltenball, this.platforms,
             (moltenball: Phaser.GameObjects.Sprite) => {
                 if (!this.hasSpawnedPuddle) this.spawnMoltenPubble(moltenball.x, moltenball.y + 5);
@@ -93,5 +97,11 @@ export class RockMelter extends Phaser.GameObjects.Sprite {
                     .play('SmokeDance', false, Math.floor(Math.random() * 12));
             this.smokeSprites.push(smoke);
         }
+        this.scene.physics.world.enable(puddle, Phaser.Physics.Arcade.STATIC_BODY);
+        puddle.body.height *= 0.5;
+        let widthRatio: number = 0.8;
+        puddle.body.x += (puddle.body.width * (1 - widthRatio) / 2);
+        puddle.body.width *= 0.8;
+        this.sceneHostileGroup.add(puddle);
     }
 }

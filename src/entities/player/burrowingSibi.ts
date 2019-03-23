@@ -9,7 +9,6 @@ import { TrackIntersectionGroup } from '../physicsGroups/intersection/trackInter
 import { TrackIntersection } from '../physicsGroups/intersection/trackIntersection';
 import { TunnelerSibi } from "./tunnelerSibi";
 import { AirbornSibi } from "./airbornSibi";
-import { CameraTarget } from "../../helpers/camera/cameraTarget";
 
 export class BurrowingSibi extends Sibi {
 
@@ -21,7 +20,6 @@ export class BurrowingSibi extends Sibi {
     trackHook: TrackHook;
 
     isBurrowing: boolean = false;
-    cameraTarget: CameraTarget;
 
     private inputKeys: InputKeys;
     private platforms: PlatformGroup;
@@ -29,6 +27,9 @@ export class BurrowingSibi extends Sibi {
     private collisionWithIntersections: Phaser.Physics.Arcade.Collider;
     private launchHoldTween: Phaser.Tweens.Tween;
     private launchCameraZoom: number = 1.05;
+
+    private hostileGroup: Phaser.GameObjects.Group;
+    private hostileGroupCollision: Phaser.Physics.Arcade.Collider;
 
 
     private tunneler: TunnelerSibi;
@@ -49,6 +50,16 @@ export class BurrowingSibi extends Sibi {
                 this.onOverlapWithIntersection, null, this);
             this.collisionWithIntersections.active = false;
         }
+
+        this.hostileGroup = this.scene.data.get('HostileGroup');
+        this.hostileGroupCollision = this.scene.physics.add.overlap(this, this.hostileGroup, this.kill, null, this);
+    }
+
+    kill(): void {
+        if (this.tunneler) this.tunneler.destroy();
+        if (this.airbornSibi) this.airbornSibi.destroy();
+        this.scene.events.emit('PlayerDead');
+        this.destroy();
     }
 
     onCollisionWithPlatforms(self: BurrowingSibi, platform: Platform): void {
@@ -165,6 +176,7 @@ export class BurrowingSibi extends Sibi {
         this.setAlpha(0);
         this.body.setVelocity(0, 0);
         this.collisionWithIntersections.active = true;
+        this.hostileGroupCollision.active = false;
         this.collisionWithPlatforms.active = false;
         if (this.airbornSibi) {
             this.airbornSibi.destroy();
@@ -241,6 +253,7 @@ export class BurrowingSibi extends Sibi {
             sibi: this,
             mainDirection: this.trackHook.track.direction
         });
+        this.scene.physics.add.overlap(this.airbornSibi, this.hostileGroup, this.kill, null, this);
         this.tunneler.destroy();
         this.isBurrowing = false;
         this.collisionWithIntersections.active = false;
@@ -256,6 +269,7 @@ export class BurrowingSibi extends Sibi {
 
     onLandOnGround(): void {
         this.collisionWithPlatforms.active = true;
+        this.hostileGroupCollision.active = true;
         this.body.setAllowGravity(true);
         this.setAlpha(1);
         this.airbornSibi = null;

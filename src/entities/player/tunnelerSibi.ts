@@ -104,7 +104,7 @@ export class TunnelerSibi extends Phaser.GameObjects.Sprite {
 
     faceUp(): void {
         this.setAngle(0);
-        this.hitBox.body.offset.y = 12;
+        this.hitBox.body.offset.y = 18;
         this.hitBox.body.offset.x = 0;
         this.hitBox.body.width = this.bodyWidth;
         this.hitBox.body.height = this.bodyHeight;
@@ -113,14 +113,14 @@ export class TunnelerSibi extends Phaser.GameObjects.Sprite {
     faceRight(): void {
         this.setAngle(90);
         this.hitBox.body.offset.y = -3;
-        this.hitBox.body.offset.x = -10;
+        this.hitBox.body.offset.x = -12;
         this.hitBox.body.width = this.bodyHeight;
         this.hitBox.body.height = this.bodyWidth;
     }
 
     faceDown(): void {
         this.setAngle(180);
-        this.hitBox.body.offset.y = -16;
+        this.hitBox.body.offset.y = -18;
         this.hitBox.body.offset.x = 0;
         this.hitBox.body.width = this.bodyWidth;
         this.hitBox.body.height = this.bodyHeight;
@@ -129,7 +129,7 @@ export class TunnelerSibi extends Phaser.GameObjects.Sprite {
     faceLeft(): void {
         this.setAngle(-90);
         this.hitBox.body.offset.y = -3;
-        this.hitBox.body.offset.x = 20;
+        this.hitBox.body.offset.x = 22;
         this.hitBox.body.width = this.bodyHeight;
         this.hitBox.body.height = this.bodyWidth;
     }

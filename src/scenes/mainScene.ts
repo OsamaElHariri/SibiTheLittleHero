@@ -5,7 +5,6 @@ import { CameraTarget } from '../helpers/camera/cameraTarget';
 import { BurrowingSibi } from '../entities/player/burrowingSibi';
 import { TrackIntersectionGroup } from '../entities/physicsGroups/intersection/trackIntersectionGroup';
 import { DigSawGroup } from '../entities/physicsGroups/digSaw/digSawGroup';
-import { RockMelter } from '../entities/physicsGroups/rockMelter/rockMelter';
 import { RockMelterGroup } from '../entities/physicsGroups/rockMelter/rockMelterGroup';
 
 export class MainScene extends Phaser.Scene {
@@ -57,10 +56,8 @@ export class MainScene extends Phaser.Scene {
     this.setupKeyboard();
     this.createPlatforms();
     this.createRockMelters();
-    this.createPlayer();
+    this.spawnPlayer();
     this.createSaws();
-    this.cameraTarget = new CameraTarget(this, this.player.body);
-    this.player.cameraTarget = this.cameraTarget;
     this.cameraZoomTriggers = this.add.group({
       runChildUpdate: true
     });
@@ -85,6 +82,10 @@ export class MainScene extends Phaser.Scene {
       repeat: -1,
       yoyo: true
     });
+
+    this.events.on('PlayerDead', () => {
+      this.spawnPlayer();
+    });
   }
 
   createPlatforms(): void {
@@ -95,7 +96,7 @@ export class MainScene extends Phaser.Scene {
     this.rockMelterGroup = new RockMelterGroup(this, this.platformGroup);
   }
 
-  createPlayer() {
+  spawnPlayer() {
     this.anims.create({
       key: 'Idle',
       frames: this.anims.generateFrameNumbers('SibiIdle', { start: 0, end: 24 }),
@@ -110,6 +111,10 @@ export class MainScene extends Phaser.Scene {
       platforms: this.platformGroup,
       trackIntersectionGroup: this.trackIntersectionGroup
     });
+    if (!this.cameraTarget)
+      this.cameraTarget = new CameraTarget(this, this.player.body);
+    else
+      this.cameraTarget.setTarget(this.player);
   }
 
   createSaws(): void {
