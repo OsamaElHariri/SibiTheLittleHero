@@ -1,11 +1,11 @@
 import { Direction } from "../../helpers/enums/direction";
 
 export class TunnelerSibi extends Phaser.GameObjects.Sprite {
+    hitBox: Phaser.GameObjects.Rectangle;
 
     private bodyWidth: number = 40;
     private bodyHeight: number = 30;
 
-    private hitBox: Phaser.GameObjects.Rectangle;
     private breatheTween: Phaser.Tweens.Tween;
 
     constructor(params: { scene: Phaser.Scene, x: number, y: number }) {

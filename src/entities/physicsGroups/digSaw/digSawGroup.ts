@@ -11,9 +11,8 @@ export class DigSawGroup extends Phaser.Physics.Arcade.Group {
     }
 
     createDigSaw(x: number, y: number, clockWise?: boolean): DigSaw {
-        let digSaw: DigSaw = new DigSaw(this.scene, x, y, this.platformGroup, clockWise);
+        let digSaw: DigSaw = new DigSaw(this.scene, x, y, this.platformGroup, {clockwise: clockWise});
         this.add(digSaw);
         return digSaw;
     }
-
 }

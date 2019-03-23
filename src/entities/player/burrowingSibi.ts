@@ -186,6 +186,7 @@ export class BurrowingSibi extends Sibi {
 
     spawnTunneler(track: UndergroundTrack): void {
         this.tunneler = new TunnelerSibi({ scene: this.scene, x: this.x, y: this.y });
+        this.scene.physics.add.overlap(this.tunneler.hitBox, this.hostileGroup, this.kill, null, this);
         this.tunneler.updateDirection(track.direction);
     }
 
