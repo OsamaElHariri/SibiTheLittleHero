@@ -3,7 +3,7 @@ import { Direction } from "../../helpers/enums/direction";
 export class TunnelerSibi extends Phaser.GameObjects.Sprite {
     hitBox: Phaser.GameObjects.Rectangle;
 
-    private bodyWidth: number = 40;
+    private bodyWidth: number = 30;
     private bodyHeight: number = 30;
 
     private breatheTween: Phaser.Tweens.Tween;
@@ -112,7 +112,7 @@ export class TunnelerSibi extends Phaser.GameObjects.Sprite {
 
     faceRight(): void {
         this.setAngle(90);
-        this.hitBox.body.offset.y = -3;
+        this.hitBox.body.offset.y = 3;
         this.hitBox.body.offset.x = -12;
         this.hitBox.body.width = this.bodyHeight;
         this.hitBox.body.height = this.bodyWidth;
@@ -128,7 +128,7 @@ export class TunnelerSibi extends Phaser.GameObjects.Sprite {
 
     faceLeft(): void {
         this.setAngle(-90);
-        this.hitBox.body.offset.y = -3;
+        this.hitBox.body.offset.y = 3;
         this.hitBox.body.offset.x = 22;
         this.hitBox.body.width = this.bodyHeight;
         this.hitBox.body.height = this.bodyWidth;

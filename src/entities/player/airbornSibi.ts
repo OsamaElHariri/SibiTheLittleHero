@@ -53,7 +53,7 @@ export class AirbornSibi extends Phaser.GameObjects.Sprite {
         if (this.active) {
             this.overGroundMovement();
             if (Math.abs(this.body.velocity.x) > 300) {
-                this.body.velocity.x *= 0.95;
+                this.body.velocity.x *= 0.97;
             }
             if (!this.inputKeys.upPressed() && this.body.velocity.y > -400 && this.body.velocity.y < -50) {
                 this.body.velocity.y *= 0.9

@@ -6,6 +6,8 @@ import { BurrowingSibi } from '../entities/player/burrowingSibi';
 import { TrackIntersectionGroup } from '../entities/physicsGroups/intersection/trackIntersectionGroup';
 import { DigSawGroup } from '../entities/physicsGroups/digSaw/digSawGroup';
 import { RockMelterGroup } from '../entities/physicsGroups/rockMelter/rockMelterGroup';
+import { Direction } from '../helpers/enums/direction';
+import { DoubleDrillsGroup } from '../entities/physicsGroups/doubleDrills/doubleDrillsGroup';
 
 export class MainScene extends Phaser.Scene {
   private platformGroup: PlatformGroup;
@@ -16,6 +18,8 @@ export class MainScene extends Phaser.Scene {
   player: BurrowingSibi;
   cursors: InputKeys;
   private rockMelterGroup: RockMelterGroup;
+
+  private doubleDrillsGroup: DoubleDrillsGroup;
 
   constructor() {
     super({
@@ -47,9 +51,16 @@ export class MainScene extends Phaser.Scene {
       { frameWidth: 135, frameHeight: 78 / 4 });
     this.load.spritesheet("Smoke", "../Assets/Sprites/Enemies/RockMelter/Smoke.png",
       { frameWidth: 96 / 3, frameHeight: 296 / 4 });
+
+    this.load.spritesheet("Drill", "../Assets/Sprites/Enemies/DoubleDrills/Drill.png",
+      { frameWidth: 44 / 2, frameHeight: 64 / 2 });
+    this.load.image("DrillsStand", "../Assets/Sprites/Enemies/DoubleDrills/Stand.png");
+    this.load.image("DoubleDrillsGear", "../Assets/Sprites/Enemies/DoubleDrills/Gear.png");
+    this.load.image("DrillsSupport", "../Assets/Sprites/Enemies/DoubleDrills/DrillsSupport.png");
   }
 
   create(): void {
+    this.createAnims();
     this.scene.launch('BackgroundScene');
     this.scene.moveAbove('BackgroundScene', 'MainScene');
     this.data.set('OverGroundHostileGroup', this.add.group({ runChildUpdate: true }));
@@ -59,17 +70,19 @@ export class MainScene extends Phaser.Scene {
     this.createRockMelters();
     this.spawnPlayer();
     this.createSaws();
+    this.createDrills();
     this.cameraZoomTriggers = this.add.group({
       runChildUpdate: true
     });
 
     // this.cameraZoomTriggers.add(new CameraZoomInZone({ scene: this, x: 300, y: 450, camTarget: this.cameraTarget }));
 
-    let rect: Phaser.GameObjects.Rectangle = this.add.rectangle(300, 400, 20, 20, 0xff9821);
-    this.physics.world.enable(rect);
-    this.physics.add.collider(rect, this.platformGroup);
-    this.physics.add.collider(rect, this.player);
+    this.events.on('PlayerDead', () => {
+      this.spawnPlayer();
+    });
+  }
 
+  createAnims(): void {
     this.anims.create({
       key: 'SmokeDance',
       frames: this.anims.generateFrameNumbers('Smoke', { start: 0, end: 12 }),
@@ -83,9 +96,11 @@ export class MainScene extends Phaser.Scene {
       repeat: -1,
       yoyo: true
     });
-
-    this.events.on('PlayerDead', () => {
-      this.spawnPlayer();
+    this.anims.create({
+      key: 'DrillRotate',
+      frames: this.anims.generateFrameNumbers('Drill', { start: 0, end: 3 }),
+      frameRate: 20,
+      repeat: -1
     });
   }
 
@@ -122,6 +137,10 @@ export class MainScene extends Phaser.Scene {
     this.digSawGroup = new DigSawGroup(this, this.platformGroup);
   }
 
+  createDrills(): void {
+    this.doubleDrillsGroup = new DoubleDrillsGroup(this, this.platformGroup);
+  }
+
   setupKeyboard(): void {
     InputKeys.setKeyboard(this.input.keyboard);
   }
@@ -134,6 +153,9 @@ export class MainScene extends Phaser.Scene {
       (child) => { child.update(); }
     );
     this.rockMelterGroup.children.entries.forEach(
+      (child) => { child.update(); }
+    );
+    this.doubleDrillsGroup.children.entries.forEach(
       (child) => { child.update(); }
     );
   }

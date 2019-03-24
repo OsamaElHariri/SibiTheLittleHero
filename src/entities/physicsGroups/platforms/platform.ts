@@ -17,6 +17,7 @@ export class Platform extends Phaser.GameObjects.Rectangle {
 
     constructor(scene: Phaser.Scene, x: number, y: number, width: number, height: number, intersectionsGroup?: TrackIntersectionGroup) {
         super(scene, x, y, width, height, 0x6d541d);
+        this.depth = 1;
 
         this.topTrack = new UndergroundTrack({ minBound: x, maxBound: x + width, constantAxisPosition: y, direction: Direction.Up });
         this.bottomTrack = new UndergroundTrack({ minBound: x, maxBound: x + width, constantAxisPosition: y + height, direction: Direction.Down });
@@ -36,7 +37,7 @@ export class Platform extends Phaser.GameObjects.Rectangle {
     }
 
     setupCornerSprites(): void {
-        let cornerDepth: number = 1;
+        let cornerDepth: number = 2;
         this.scene.add.sprite(this.x, this.y, 'PlatformCorner').setOrigin(0, 0).setDepth(cornerDepth);
         this.scene.add.sprite(this.x + this.width, this.y, 'PlatformCorner').setOrigin(1, 0).setFlip(true, false).setDepth(cornerDepth);
         this.scene.add.sprite(this.x, this.y + this.height, 'PlatformCorner').setOrigin(0, 1).setFlip(false, true).setDepth(cornerDepth);
@@ -44,7 +45,7 @@ export class Platform extends Phaser.GameObjects.Rectangle {
     }
 
     setupEdgeSprites(): void {
-        let edgeDepth: number = 1;
+        let edgeDepth: number = 2;
         this.scene.add.tileSprite(this.x, this.y, this.width, this.imageWidth, 'PlatformEdge').setOrigin(0, 0).setDepth(edgeDepth);
         this.scene.add.tileSprite(this.x, this.y + this.height, this.width, this.imageWidth, 'PlatformEdge').setOrigin(0, 1).setDepth(edgeDepth).setFlipY(true);
 

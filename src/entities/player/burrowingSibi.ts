@@ -61,6 +61,7 @@ export class BurrowingSibi extends Sibi {
     kill(): void {
         if (this.tunneler) this.tunneler.destroy();
         if (this.airbornSibi) this.airbornSibi.destroy();
+        this.removeLaunchHoldTween();
         this.scene.events.emit('PlayerDead');
         this.destroy();
     }
