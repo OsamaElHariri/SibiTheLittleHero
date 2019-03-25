@@ -8,6 +8,7 @@ import { DigSawGroup } from '../entities/physicsGroups/digSaw/digSawGroup';
 import { RockMelterGroup } from '../entities/physicsGroups/rockMelter/rockMelterGroup';
 import { Direction } from '../helpers/enums/direction';
 import { DoubleDrillsGroup } from '../entities/physicsGroups/doubleDrills/doubleDrillsGroup';
+import { SpeechBubble } from '../entities/ui/speechBubble/speechBubble';
 
 export class MainScene extends Phaser.Scene {
   private platformGroup: PlatformGroup;
@@ -28,6 +29,10 @@ export class MainScene extends Phaser.Scene {
   }
 
   preload(): void {
+    this.load.image('SpeechBubble', '../Assets/Sprites/UI/SpeechBubble.png');
+    this.load.image('SpeechBubbleMedium', '../Assets/Sprites/UI/SpeechBubbleMedium.png');
+    this.load.image('SpeechBubbleSmall', '../Assets/Sprites/UI/SpeechBubbleSmall.png');
+
     this.load.image('PlatformEdge', '../Assets/Sprites/Platforms/Edge.png');
     this.load.image('PlatformEdgeRotated', '../Assets/Sprites/Platforms/EdgeRotated.png');
     this.load.image('PlatformCorner', '../Assets/Sprites/Platforms/Corner.png');
@@ -60,6 +65,14 @@ export class MainScene extends Phaser.Scene {
   }
 
   create(): void {
+    // new SpeechBubble(this, 100, 60, "I'd come for you if you were at the center of the earth or on the moon");
+    let textToDisplay: string = "Sibi... I... I was so scared";
+    let speech: SpeechBubble = new SpeechBubble(this, 100, 60, textToDisplay, {addedDelay: 80, postPause: 1000});
+    speech.on('done', (text: string) => {
+      if (text == textToDisplay)
+      speech.setText('I am so scared', {addedDelay: 150, prePause: 500});
+    }, this);
+
     this.createAnims();
     this.scene.launch('BackgroundScene');
     this.scene.moveAbove('BackgroundScene', 'MainScene');
@@ -67,8 +80,8 @@ export class MainScene extends Phaser.Scene {
     this.data.set('UnderGroundHostileGroup', this.add.group({ runChildUpdate: true }));
     this.setupKeyboard();
     this.createPlatforms();
-    this.createRockMelters();
     this.spawnPlayer();
+    this.createRockMelters();
     this.createSaws();
     this.createDrills();
     this.cameraZoomTriggers = this.add.group({
