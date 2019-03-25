@@ -1,37 +1,37 @@
+import { SpeechBubbleConfigs } from "./speechBubbleConfigs";
+
 export class SpeechBubble extends Phaser.GameObjects.Sprite {
 
     private container: Phaser.GameObjects.Container;
 
     private fullText: string;
-
     private bubbleText: Phaser.GameObjects.Text;
-    private timer: Phaser.Time.TimerEvent;
-
     private cursorIndex: number = 0;
 
-    private shortDelay: number = 30;
-    private mediumDelay: number = 80;
-    private longDelay: number = 150;
+    private shortDelay: number = 50;
+    private mediumDelay: number = 120;
+    private longDelay: number = 200;
 
     private config: SpeechBubbleConfigs;
 
-    constructor(scene: Phaser.Scene, x: number, y: number, fullText: string,
-        config: { addedDelay?: number, prePause?: number, postPause?: number }) {
+    constructor(scene: Phaser.Scene, x: number, y: number, fullText: string, isOnTheRight?: boolean,
+        config?: { addedDelay?: number, prePause?: number, postPause?: number }) {
         super(scene, 0, 0, 'SpeechBubble');
         this.scene.add.existing(this);
         this.container = this.scene.add.container(x, y, this);
         this.fullText = fullText;
-        this.setOrigin(0, 1);
-        this.timer = this.scene.time.addEvent({});
 
-        this.config = config;
+        this.config = config || new SpeechBubbleConfigs();
 
         this.bubbleText = this.scene.add.text(20, -this.height + 20, '', {
             fontFamily: 'Verdana',
             color: '#000',
             fontSize: '18px',
         }).setWordWrapWidth(this.width - 40);
+
+        this.setOrigin(0, 1);
         this.bubbleText.setOrigin(0, 0);
+        if (isOnTheRight) this.setFlipX(true);
 
         this.container.add(this.bubbleText);
 
@@ -56,6 +56,9 @@ export class SpeechBubble extends Phaser.GameObjects.Sprite {
         this.cursorIndex = 0;
         this.bubbleText.setText('');
         if (config != null) this.config = config;
+
+        this.container.setAlpha(text ? 1 : 0);
+        if (!text) return;
 
         if (this.config.prePause) {
             this.scene.time.addEvent({
@@ -117,10 +120,10 @@ export class SpeechBubble extends Phaser.GameObjects.Sprite {
         }
         return delay + (this.config.addedDelay || 0);
     }
-}
 
-class SpeechBubbleConfigs {
-    addedDelay?: number;
-    prePause?: number;
-    postPause?: number;
+    remove() {
+        this.bubbleText.destroy();
+        this.container.destroy();
+        this.destroy();
+    }
 }

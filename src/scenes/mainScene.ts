@@ -8,7 +8,8 @@ import { DigSawGroup } from '../entities/physicsGroups/digSaw/digSawGroup';
 import { RockMelterGroup } from '../entities/physicsGroups/rockMelter/rockMelterGroup';
 import { Direction } from '../helpers/enums/direction';
 import { DoubleDrillsGroup } from '../entities/physicsGroups/doubleDrills/doubleDrillsGroup';
-import { SpeechBubble } from '../entities/ui/speechBubble/speechBubble';
+import { SpeechBubble } from '../entities/ui/dialog/speechBubble';
+import { Dialog } from '../entities/ui/dialog/dialog';
 
 export class MainScene extends Phaser.Scene {
   private platformGroup: PlatformGroup;
@@ -66,12 +67,174 @@ export class MainScene extends Phaser.Scene {
 
   create(): void {
     // new SpeechBubble(this, 100, 60, "I'd come for you if you were at the center of the earth or on the moon");
-    let textToDisplay: string = "Sibi... I... I was so scared";
-    let speech: SpeechBubble = new SpeechBubble(this, 100, 60, textToDisplay, {addedDelay: 80, postPause: 1000});
-    speech.on('done', (text: string) => {
-      if (text == textToDisplay)
-      speech.setText('I am so scared', {addedDelay: 150, prePause: 500});
-    }, this);
+    // let textToDisplay: string = "Sibi... I... I was so scared";
+    // let speech: SpeechBubble = new SpeechBubble(this, 100, 60, textToDisplay, true, {addedDelay: 80, postPause: 1000});
+    // speech.on('done', (text: string) => {
+    //   if (text == textToDisplay)
+    //   speech.setText('I am so scared', {addedDelay: 150, prePause: 500});
+    // }, this);
+    let dialog = new Dialog(this, [{
+      key: 'Sibi',
+      x: 100,
+      y: 60,
+      isOnTheRight: false,
+    }, {
+      key: 'SibiMother',
+      x: 250,
+      y: -110,
+      isOnTheRight: true,
+    }]);
+
+    dialog.startDialog([
+      {
+        key: 'SibiMother',
+        text: 'Sibi, is that you?',
+        config: {
+          addedDelay: 100,
+          postPause: 1000
+        }
+      },
+      {
+        key: 'SibiMother',
+        text: 'Oh dear',
+        config: {
+          addedDelay: 100,
+          postPause: 1000
+        }
+      },
+      {
+        key: 'SibiMother',
+        text: "You didn't have to risk your life for me",
+        config: {
+          addedDelay: 50,
+          postPause: 1000
+        }
+      },
+      {
+        key: 'SibiMother',
+        text: "You should have left when you could",
+        config: {
+          addedDelay: 50,
+          postPause: 500
+        }
+      },
+      {
+        key: 'Sibi',
+        text: 'Mom...',
+        config: {}
+      },
+      {
+        key: 'SibiMother',
+        text: "I'm not worth saving...",
+        config: { addedDelay: 50,
+          postPause: 500 }
+      },
+      {
+        key: 'SibiMother',
+        text: "An old woman like me should be the last thing on your mind",
+        config: {}
+      },
+      {
+        key: 'Sibi',
+        text: 'Mom!',
+        config: {}
+      },
+      {
+        key: 'SibiMother',
+        text: 'You must be very scared',
+        config: {
+          postPause: 500
+        }
+      },
+      {
+        key: 'SibiMother',
+        text: "You're brave for being here",
+        config: {
+          postPause: 500
+        }
+      },
+      {
+        key: 'SibiMother',
+        text: "Oh, how I hate myself for having to put you through this, I...",
+        config: {}
+      },
+      {
+        key: 'Sibi',
+        text: 'MOM, Enough!',
+        config: {
+          postPause: 1500
+        }
+      },
+      {
+        key: 'Sibi',
+        text: "I'm here now, I'm getting you out of here",
+        config: {
+          postPause: 200
+        }
+      },
+      {
+        key: 'Sibi',
+        text: "I'd come for you always and no matter what",
+        config: {
+          postPause: 600
+        }
+      },
+      {
+        key: 'Sibi',
+        text: "Every single time",
+        config: {
+          postPause: 1500
+        }
+      },
+      {
+        key: 'SibiMother',
+        text: "Oh, Sibi. I thought I was going to die",
+        config: {
+          addedDelay: 100
+        }
+      },
+      {
+        key: 'Sibi',
+        text: "Mom...",
+        config: {
+          addedDelay: 50
+        }
+      },
+      {
+        key: 'SibiMother',
+        text: "I was so scared",
+        config: {
+          addedDelay: 200
+        }
+      },
+      {
+        key: 'Sibi',
+        text: "I...",
+        config: {
+          addedDelay: 50
+        }
+      },
+      {
+        key: 'SibiMother',
+        text: "I am so scared",
+        config: {
+          addedDelay: 250
+        }
+      },
+      {
+        key: 'Sibi',
+        text: "I know",
+        config: {
+          addedDelay: 100,
+          postPause: 3000
+        }
+      },
+      {
+        key: 'Sibi',
+        text: "Come on, let's get out of here",
+        config: {}
+      },
+    ])
 
     this.createAnims();
     this.scene.launch('BackgroundScene');
