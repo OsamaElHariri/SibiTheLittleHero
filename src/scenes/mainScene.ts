@@ -66,13 +66,6 @@ export class MainScene extends Phaser.Scene {
   }
 
   create(): void {
-    // new SpeechBubble(this, 100, 60, "I'd come for you if you were at the center of the earth or on the moon");
-    // let textToDisplay: string = "Sibi... I... I was so scared";
-    // let speech: SpeechBubble = new SpeechBubble(this, 100, 60, textToDisplay, true, {addedDelay: 80, postPause: 1000});
-    // speech.on('done', (text: string) => {
-    //   if (text == textToDisplay)
-    //   speech.setText('I am so scared', {addedDelay: 150, prePause: 500});
-    // }, this);
     let dialog = new Dialog(this, [{
       key: 'Sibi',
       x: 100,
@@ -234,7 +227,7 @@ export class MainScene extends Phaser.Scene {
         text: "Come on, let's get out of here",
         config: {}
       },
-    ])
+    ]);
 
     this.createAnims();
     this.scene.launch('BackgroundScene');
