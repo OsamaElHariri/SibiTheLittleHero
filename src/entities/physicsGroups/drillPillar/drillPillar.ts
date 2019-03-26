@@ -55,13 +55,13 @@ export class DrillPillar extends Phaser.GameObjects.Container {
                 .setOrigin(0.5));
         this.add(
             this.scene.add.sprite(
-                -3, this.pillarBodyWidth / 2, 'DrillPillarDrill')
+                -3, this.pillarBodyWidth / 2, 'Drill')
                 .setOrigin(0.5, 1)
                 .setAngle(-90)
                 .play('DrillRotate'));
         this.add(
             this.scene.add.sprite(
-                numberOfSegments * this.pillarBodyWidth + 3, this.pillarBodyWidth / 2, 'DrillPillarDrill')
+                numberOfSegments * this.pillarBodyWidth + 3, this.pillarBodyWidth / 2, 'Drill')
                 .setOrigin(0.5, 1)
                 .setAngle(90)
                 .play('DrillRotate'));

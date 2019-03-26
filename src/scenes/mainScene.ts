@@ -47,7 +47,6 @@ export class MainScene extends Phaser.Scene {
     this.load.image('DigSaw', '../Assets/Sprites/Enemies/DigSaw.png');
 
     this.load.image('MetalRod', '../Assets/Sprites/Enemies/DrillPillar/MetalRod.png');
-    this.load.image('DrillPillarDrill', '../Assets/Sprites/Enemies/DrillPillar/Drill.png');
     this.load.spritesheet('DrillPillarBody', '../Assets/Sprites/Enemies/DrillPillar/PillarBody.png',
       { frameWidth: 88 / 4, frameHeight: 22 });
 
@@ -55,6 +54,9 @@ export class MainScene extends Phaser.Scene {
     this.load.image("CurledSibi", "../Assets/Sprites/Sibi/CurledBall.png");
     this.load.spritesheet("SibiIdle", "../Assets/Sprites/Sibi/SpriteSheets/Idle.png",
       { frameWidth: 148 / 4, frameHeight: 396 / 6 });
+      
+    this.load.spritesheet("Drill", "../Assets/Sprites/Enemies/Drill.png",
+    { frameWidth: 44 / 2, frameHeight: 64 / 2 });
 
 
     this.load.image("RockMelterCeilingSupport", "../Assets/Sprites/Enemies/RockMelter/CeilingSupport.png");
@@ -65,8 +67,6 @@ export class MainScene extends Phaser.Scene {
     this.load.spritesheet("Smoke", "../Assets/Sprites/Enemies/RockMelter/Smoke.png",
       { frameWidth: 96 / 3, frameHeight: 296 / 4 });
 
-    this.load.spritesheet("Drill", "../Assets/Sprites/Enemies/DoubleDrills/Drill.png",
-      { frameWidth: 44 / 2, frameHeight: 64 / 2 });
     this.load.image("DrillsStand", "../Assets/Sprites/Enemies/DoubleDrills/Stand.png");
     this.load.image("DoubleDrillsGear", "../Assets/Sprites/Enemies/DoubleDrills/Gear.png");
     this.load.image("DrillsSupport", "../Assets/Sprites/Enemies/DoubleDrills/DrillsSupport.png");
