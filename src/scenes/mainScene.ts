@@ -10,6 +10,7 @@ import { Direction } from '../helpers/enums/direction';
 import { DoubleDrillsGroup } from '../entities/physicsGroups/doubleDrills/doubleDrillsGroup';
 import { SpeechBubble } from '../entities/ui/dialog/speechBubble';
 import { Dialog } from '../entities/ui/dialog/dialog';
+import { DrillPillarGroup } from '../entities/physicsGroups/drillPillar/drillPillarGroup';
 
 export class MainScene extends Phaser.Scene {
   private platformGroup: PlatformGroup;
@@ -20,6 +21,7 @@ export class MainScene extends Phaser.Scene {
   player: BurrowingSibi;
   cursors: InputKeys;
   private rockMelterGroup: RockMelterGroup;
+  private drillPillarGroup: DrillPillarGroup;
 
   private doubleDrillsGroup: DoubleDrillsGroup;
 
@@ -43,6 +45,11 @@ export class MainScene extends Phaser.Scene {
     this.load.image('YellowSquare', '../Assets/Sprites/Platforms/YellowSquare.png');
 
     this.load.image('DigSaw', '../Assets/Sprites/Enemies/DigSaw.png');
+
+    this.load.image('MetalRod', '../Assets/Sprites/Enemies/DrillPillar/MetalRod.png');
+    this.load.image('DrillPillarDrill', '../Assets/Sprites/Enemies/DrillPillar/Drill.png');
+    this.load.spritesheet('DrillPillarBody', '../Assets/Sprites/Enemies/DrillPillar/PillarBody.png',
+      { frameWidth: 88 / 4, frameHeight: 22 });
 
     this.load.image("UndergroundSibi", "../Assets/Sprites/Sibi/UndergroundSibi.png");
     this.load.image("CurledSibi", "../Assets/Sprites/Sibi/CurledBall.png");
@@ -78,156 +85,6 @@ export class MainScene extends Phaser.Scene {
       isOnTheRight: true,
     }]);
 
-    dialog.startDialog([
-      {
-        key: 'SibiMother',
-        text: 'Sibi, is that you?',
-        config: {
-          addedDelay: 100,
-          postPause: 1000
-        }
-      },
-      {
-        key: 'SibiMother',
-        text: 'Oh dear',
-        config: {
-          addedDelay: 100,
-          postPause: 1000
-        }
-      },
-      {
-        key: 'SibiMother',
-        text: "You didn't have to risk your life for me",
-        config: {
-          addedDelay: 50,
-          postPause: 1000
-        }
-      },
-      {
-        key: 'SibiMother',
-        text: "You should have left when you could",
-        config: {
-          addedDelay: 50,
-          postPause: 500
-        }
-      },
-      {
-        key: 'Sibi',
-        text: 'Mom...',
-        config: {}
-      },
-      {
-        key: 'SibiMother',
-        text: "I'm not worth saving...",
-        config: { addedDelay: 50,
-          postPause: 500 }
-      },
-      {
-        key: 'SibiMother',
-        text: "An old woman like me should be the last thing on your mind",
-        config: {}
-      },
-      {
-        key: 'Sibi',
-        text: 'Mom!',
-        config: {}
-      },
-      {
-        key: 'SibiMother',
-        text: 'You must be very scared',
-        config: {
-          postPause: 500
-        }
-      },
-      {
-        key: 'SibiMother',
-        text: "You're brave for being here",
-        config: {
-          postPause: 500
-        }
-      },
-      {
-        key: 'SibiMother',
-        text: "Oh, how I hate myself for having to put you through this, I...",
-        config: {}
-      },
-      {
-        key: 'Sibi',
-        text: 'MOM, Enough!',
-        config: {
-          postPause: 1500
-        }
-      },
-      {
-        key: 'Sibi',
-        text: "I'm here now, I'm getting you out of here",
-        config: {
-          postPause: 200
-        }
-      },
-      {
-        key: 'Sibi',
-        text: "I'd come for you always and no matter what",
-        config: {
-          postPause: 600
-        }
-      },
-      {
-        key: 'Sibi',
-        text: "Every single time",
-        config: {
-          postPause: 1500
-        }
-      },
-      {
-        key: 'SibiMother',
-        text: "Oh, Sibi. I thought I was going to die",
-        config: {
-          addedDelay: 100
-        }
-      },
-      {
-        key: 'Sibi',
-        text: "Mom...",
-        config: {
-          addedDelay: 50
-        }
-      },
-      {
-        key: 'SibiMother',
-        text: "I was so scared",
-        config: {
-          addedDelay: 200
-        }
-      },
-      {
-        key: 'Sibi',
-        text: "I...",
-        config: {
-          addedDelay: 50
-        }
-      },
-      {
-        key: 'SibiMother',
-        text: "I am so scared",
-        config: {
-          addedDelay: 250
-        }
-      },
-      {
-        key: 'Sibi',
-        text: "I know",
-        config: {
-          addedDelay: 100,
-          postPause: 3000
-        }
-      },
-      {
-        key: 'Sibi',
-        text: "Come on, let's get out of here",
-        config: {}
-      },
-    ]);
 
     this.createAnims();
     this.scene.launch('BackgroundScene');
@@ -240,6 +97,7 @@ export class MainScene extends Phaser.Scene {
     this.createRockMelters();
     this.createSaws();
     this.createDrills();
+    this.createDrillPillars();
     this.cameraZoomTriggers = this.add.group({
       runChildUpdate: true
     });
@@ -270,6 +128,12 @@ export class MainScene extends Phaser.Scene {
       frames: this.anims.generateFrameNumbers('Drill', { start: 0, end: 3 }),
       frameRate: 20,
       repeat: -1
+    });
+    this.anims.create({
+      key: 'DrillBodyRotate',
+      frames: this.anims.generateFrameNumbers('DrillPillarBody', { start: 0, end: 3 }),
+      frameRate: 20,
+      repeat: -1,
     });
   }
 
@@ -310,6 +174,10 @@ export class MainScene extends Phaser.Scene {
     this.doubleDrillsGroup = new DoubleDrillsGroup(this, this.platformGroup);
   }
 
+  createDrillPillars(): void {
+    this.drillPillarGroup = new DrillPillarGroup(this, this.platformGroup);
+  }
+
   setupKeyboard(): void {
     InputKeys.setKeyboard(this.input.keyboard);
   }
@@ -325,6 +193,9 @@ export class MainScene extends Phaser.Scene {
       (child) => { child.update(); }
     );
     this.doubleDrillsGroup.children.entries.forEach(
+      (child) => { child.update(); }
+    );
+    this.drillPillarGroup.children.entries.forEach(
       (child) => { child.update(); }
     );
   }

@@ -20,7 +20,7 @@ export class DoubleDrills extends Phaser.GameObjects.Rectangle {
     private timeToMove: number = 1500;
     private numberOfDrills: number;
 
-    private moveSpeed: number = 0.86;
+    private moveSpeed: number = 0.9;
     private moveUp: boolean = false;
     private moveDown: boolean = false;
 
