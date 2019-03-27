@@ -11,6 +11,7 @@ import { DoubleDrillsGroup } from '../entities/physicsGroups/doubleDrills/double
 import { SpeechBubble } from '../entities/ui/dialog/speechBubble';
 import { Dialog } from '../entities/ui/dialog/dialog';
 import { DrillPillarGroup } from '../entities/physicsGroups/drillPillar/drillPillarGroup';
+import { DrillMat } from '../entities/physicsGroups/drillMat/drillMat';
 
 export class MainScene extends Phaser.Scene {
   private platformGroup: PlatformGroup;
@@ -54,9 +55,10 @@ export class MainScene extends Phaser.Scene {
     this.load.image("CurledSibi", "../Assets/Sprites/Sibi/CurledBall.png");
     this.load.spritesheet("SibiIdle", "../Assets/Sprites/Sibi/SpriteSheets/Idle.png",
       { frameWidth: 148 / 4, frameHeight: 396 / 6 });
-      
+
+    this.load.image('ThinMetalRod', '../Assets/Sprites/Enemies/ThinMetalRod.png');
     this.load.spritesheet("Drill", "../Assets/Sprites/Enemies/Drill.png",
-    { frameWidth: 44 / 2, frameHeight: 64 / 2 });
+      { frameWidth: 44 / 2, frameHeight: 64 / 2 });
 
 
     this.load.image("RockMelterCeilingSupport", "../Assets/Sprites/Enemies/RockMelter/CeilingSupport.png");
@@ -98,6 +100,7 @@ export class MainScene extends Phaser.Scene {
     this.createSaws();
     this.createDrills();
     this.createDrillPillars();
+    this.createDrillMats();
     this.cameraZoomTriggers = this.add.group({
       runChildUpdate: true
     });
@@ -176,6 +179,10 @@ export class MainScene extends Phaser.Scene {
 
   createDrillPillars(): void {
     this.drillPillarGroup = new DrillPillarGroup(this, this.platformGroup);
+  }
+
+  createDrillMats(): void {
+    new DrillMat(this, 50, 50, 200);
   }
 
   setupKeyboard(): void {
