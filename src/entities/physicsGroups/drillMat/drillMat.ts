@@ -1,3 +1,6 @@
+import { PlatformGroup } from "../platforms/platformGroup";
+import { Direction } from "../../../helpers/enums/direction";
+
 export class DrillMat extends Phaser.GameObjects.Rectangle {
 
     private miniDrillWidth: number = 15;
@@ -5,51 +8,65 @@ export class DrillMat extends Phaser.GameObjects.Rectangle {
 
     private container: Phaser.GameObjects.Container;
 
-    constructor(scene: Phaser.Scene, x: number, y: number, width: number) {
-        super(scene, x, y, width, 15);
+    constructor(scene: Phaser.Scene, x: number, y: number, platformGroup: PlatformGroup,
+        config: { width?: number, direction?: Direction }) {
+        super(scene, x, y, config.width || 100, 15);
+        let height: number = 15;
+        config.width = config.width || 100;
 
         this.scene.add.existing(this);
         this.scene.physics.world.enable(this);
         this.body.setAllowGravity(false);
-        this.setOrigin(0, 1);
+        this.setOrigin(0.5);
 
         this.overgroundGroup = this.scene.data.get('OverGroundHostileGroup');
         this.overgroundGroup.add(this);
 
         this.container = this.scene.add.container(this.x, this.y);
 
-        for (let i: number = 0; i < width / this.miniDrillWidth - 1; i++) {
-            let angle: number = Math.random() * 20 - 10;
-            this.container.add(
-                this.scene.add.sprite(i * this.miniDrillWidth + 6, 0, 'ThinMetalRod')
-                    .setOrigin(0.5, 1)
-                    .setScale(0.4)
-                    .setAlpha(0.7)
-                    .setAngle(angle)
-            );
-            this.container.add(
-                this.scene.add.sprite(i * this.miniDrillWidth + 6, 0, 'Drill')
-                    .play('DrillRotate', true, Math.floor(Math.random() * 4))
-                    .setOrigin(0.5, 1.25)
-                    .setScale(0.4)
-                    .setAlpha(0.7)
-                    .setAngle(angle)
-            );
-        }
+        this.spawnDrillSprites();
 
-        for (let i: number = 0; i < width / this.miniDrillWidth; i++) {
+        let direction: Direction = config.direction || Direction.Right;
+        ;
+        switch (direction) {
+            case Direction.Right:
+                this.container.angle = 90;
+                this.body.setSize(height, config.width);
+                break;
+            case Direction.Down:
+                this.container.angle = 180;
+                break;
+            case Direction.Left:
+                this.container.angle = -90;
+                this.body.setSize(height, config.width);
+                break;
+        }
+    }
+
+    spawnDrillSprites(): void {
+        this.spawnDrillRow(0.4, 1.25, 6, 0.7);
+        this.spawnDrillRow(0.5, 1.2, 0, 1);
+
+    }
+
+    spawnDrillRow(scale: number, drillOrigin: number, offset: number, alpha: number): void {
+        let max: number = this.width / this.miniDrillWidth / 2;
+        let min = -max;
+        for (let i: number = min; i < max; i++) {
             let angle: number = Math.random() * 20 - 10;
             this.container.add(
-                this.scene.add.sprite(i * this.miniDrillWidth, 0, 'ThinMetalRod')
+                this.scene.add.sprite(i * this.miniDrillWidth + offset, 0, 'ThinMetalRod')
                     .setOrigin(0.5, 1)
-                    .setScale(0.5)
+                    .setScale(scale)
+                    .setAlpha(alpha)
                     .setAngle(angle)
             );
             this.container.add(
-                this.scene.add.sprite(i * this.miniDrillWidth, 0, 'Drill')
+                this.scene.add.sprite(i * this.miniDrillWidth + offset, 0, 'Drill')
                     .play('DrillRotate', true, Math.floor(Math.random() * 4))
-                    .setOrigin(0.5, 1.2)
-                    .setScale(0.5)
+                    .setOrigin(0.5, drillOrigin)
+                    .setScale(scale)
+                    .setAlpha(alpha)
                     .setAngle(angle)
             );
         }

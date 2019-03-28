@@ -158,7 +158,7 @@ export class MainScene extends Phaser.Scene {
 
     this.player = new BurrowingSibi({
       scene: this,
-      x: 100,
+      x: 250,
       y: -100,
       platforms: this.platformGroup,
       trackIntersectionGroup: this.trackIntersectionGroup
@@ -182,7 +182,7 @@ export class MainScene extends Phaser.Scene {
   }
 
   createDrillMats(): void {
-    new DrillMat(this, 50, 50, 200);
+    new DrillMat(this, 50, 50, this.platformGroup, { width: 200 });
   }
 
   setupKeyboard(): void {
