@@ -26,8 +26,8 @@ export class DrillMat extends Phaser.GameObjects.Rectangle {
 
         this.spawnDrillSprites();
 
-        let direction: Direction = config.direction || Direction.Right;
-        ;
+        let direction: Direction = config.direction || Direction.Up;
+        
         switch (direction) {
             case Direction.Right:
                 this.container.angle = 90;

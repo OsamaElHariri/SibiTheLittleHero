@@ -42,6 +42,8 @@ export class MainScene extends Phaser.Scene {
     this.load.image('PlatformCorner', '../Assets/Sprites/Platforms/Corner.png');
     for (let i = 1; i <= 5; i++) this.load.image(`Rock${i}`, `../Assets/Sprites/Platforms/Rock${i}.png`);
     this.load.image('MetalBrace', '../Assets/Sprites/Platforms/MetalBrace.png');
+    this.load.image('Rock', '../Assets/Sprites/Environment/Rock.png');
+    this.load.image('SmokeCloud', '../Assets/Sprites/Environment/SmokeCloud.png');
 
     this.load.image('YellowSquare', '../Assets/Sprites/Platforms/YellowSquare.png');
 

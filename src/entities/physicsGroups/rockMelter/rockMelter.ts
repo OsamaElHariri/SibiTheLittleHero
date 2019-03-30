@@ -21,6 +21,16 @@ export class RockMelter extends Phaser.GameObjects.Sprite {
         this.sceneHostileGroup = this.scene.data.get('OverGroundHostileGroup');
         this.scene.add.existing(this);
         this.melter = this.scene.add.sprite(this.x - 5, this.y + 44, 'RockMelter');
+        this.scene.add.particles('SmokeCloud').setDepth(1).createEmitter({
+            x: x + 20,
+            y: y + 50,
+            scale: { start: Math.random() * 0.5, end: 1.0 + Math.random() * 0.5 },
+            alpha: { start: 1.0, end: 0, ease: 'Sine.easeIn' },
+            gravityY: -40,
+            lifespan: 1750,
+            frequency: 400,
+            emitZone: { source: new Phaser.Geom.Rectangle(0, 0, 20, 1) }
+        })
         this.initialMelterPos = {
             x: this.melter.x,
             y: this.melter.y
