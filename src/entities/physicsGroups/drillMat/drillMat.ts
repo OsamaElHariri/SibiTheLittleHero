@@ -27,7 +27,7 @@ export class DrillMat extends Phaser.GameObjects.Rectangle {
         this.spawnDrillSprites();
 
         let direction: Direction = config.direction || Direction.Up;
-        
+
         switch (direction) {
             case Direction.Right:
                 this.container.angle = 90;
@@ -41,6 +41,22 @@ export class DrillMat extends Phaser.GameObjects.Rectangle {
                 this.body.setSize(height, config.width);
                 break;
         }
+        let particles: Phaser.GameObjects.Particles.ParticleEmitterManager = this.scene.add.particles('Rock');
+        particles.setDepth(2).createEmitter({
+            x: this.x - this.body.width / 2,
+            y: this.y - this.body.height / 2,
+            scale: { start: 0.5, end: 0.6 },
+            alpha: { start: 1.0, end: 0, ease: 'Sine.easeIn' },
+            angle: { min: 240, max: 300 },
+            gravityY: 1000,
+            lifespan: 400,
+            speed: {min: 220, max: 50},
+            quantity: 2,
+            frequency: 150,
+            emitZone: { source: new Phaser.Geom.Rectangle(0, 0, this.body.width, this.body.height) }
+        });
+
+        // this.container.add(particles);
     }
 
     spawnDrillSprites(): void {
