@@ -1,4 +1,5 @@
 import { PlatformGroup } from "../platforms/platformGroup";
+import { Platform } from "../platforms/platform";
 
 export class DrillPillar extends Phaser.GameObjects.Container {
 
@@ -15,17 +16,20 @@ export class DrillPillar extends Phaser.GameObjects.Container {
     private speed: number = 0.5;
     private direction: number = 0;
 
+    private encounteredPlatforms = {};
+
     constructor(scene: Phaser.Scene, x: number, y: number, platformGroup: PlatformGroup,
         config: { numberOfBodySegments?: number, isVertical?: boolean }) {
         super(scene, x, y);
         this.scene.add.existing(this);
         this.platforms = platformGroup;
+        this.setDepth(4);
 
         this.overgroundGroup = this.scene.data.get('OverGroundHostileGroup');
         this.undergroundGroup = this.scene.data.get('UnderGroundHostileGroup');
 
         this.isVertical = config.isVertical;
-        if (config.isVertical) this.setAngle(90);
+        if (this.isVertical) this.setAngle(90);
 
         let segmentCount: number = config.numberOfBodySegments || 5
         this.constructDrills(segmentCount);
@@ -87,13 +91,16 @@ export class DrillPillar extends Phaser.GameObjects.Container {
         this.overgroundGroup.add(this.rightCollider);
         this.undergroundGroup.add(this.rightCollider);
 
-        this.scene.physics.add.overlap(this.leftCollider, this.platforms, () => {
+        this.scene.physics.add.overlap(this.leftCollider, this.platforms, (self: DrillPillar, platform: Platform) => {
             if (this.direction == 0) this.reverseSegmentAnims();
             if (this.direction <= 0) this.direction = -1;
+            this.digThroughPlatformSprite(platform);
+
         }, null, this);
-        this.scene.physics.add.overlap(this.rightCollider, this.platforms, () => {
+        this.scene.physics.add.overlap(this.rightCollider, this.platforms, (self: DrillPillar, platform: Platform) => {
             if (this.direction == 0) this.playSegmentAnims();
             if (this.direction >= 0) this.direction = 1;
+            this.digThroughPlatformSprite(platform);
         }, null, this);
     }
 
@@ -102,10 +109,29 @@ export class DrillPillar extends Phaser.GameObjects.Container {
             segment.anims.playReverse('DrillBodyRotate')
         });
     }
+
     playSegmentAnims(): void {
         this.segments.forEach((segment: Phaser.GameObjects.Sprite) => {
             segment.anims.play('DrillBodyRotate')
         });
+    }
+
+    digThroughPlatformSprite(platform: Platform) {
+        let platformKey: string = `${platform.x}, ${platform.y}`;
+        if (this.encounteredPlatforms[platformKey]) return;
+        let sprite: Phaser.GameObjects.TileSprite;
+        let tileSpriteHeight: number = 35;
+        if (this.isVertical) {
+            sprite = this.scene.add.tileSprite(this.x, platform.y, tileSpriteHeight, platform.height, 'PillarDigAreaVertical')
+            .setOrigin(0.8, 0);
+        } else {
+            sprite = this.scene.add.tileSprite(platform.x, this.y, platform.width, tileSpriteHeight, 'PillarDigArea')
+            .setOrigin(0, 0.2);
+        }
+        sprite.setDepth(3);
+        this.encounteredPlatforms[platformKey] = sprite;
+
+
     }
 
     update(): void {

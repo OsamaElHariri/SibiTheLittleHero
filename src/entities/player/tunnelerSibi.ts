@@ -1,7 +1,7 @@
 import { Direction } from "../../helpers/enums/direction";
 
 export class TunnelerSibi extends Phaser.GameObjects.Sprite {
-    hitBox: Phaser.GameObjects.Rectangle;
+    hitBox: Phaser.GameObjects.Sprite;
 
     private bodyWidth: number = 30;
     private bodyHeight: number = 30;
@@ -11,9 +11,13 @@ export class TunnelerSibi extends Phaser.GameObjects.Sprite {
     constructor(params: { scene: Phaser.Scene, x: number, y: number }) {
         super(params.scene, params.x, params.y, 'UndergroundSibi');
 
-        this.hitBox = this.scene.add.rectangle(this.x, this.y, this.bodyWidth, this.bodyHeight);
+        this.hitBox = this.scene.add.sprite(this.x, this.y, 'UndergroundIndicator');
         this.scene.physics.world.enable(this.hitBox);
         this.hitBox.body.setAllowGravity(false);
+        this.hitBox.body.width = this.bodyWidth;
+        this.hitBox.body.height = this.bodyHeight;
+        this.hitBox.setOrigin(0.5, 0).setDepth(3);
+        this.hitBox.body.setSize(this.bodyWidth, this.bodyHeight);
 
         this.setOrigin(0.5, 1);
 
@@ -104,38 +108,35 @@ export class TunnelerSibi extends Phaser.GameObjects.Sprite {
 
     faceUp(): void {
         this.setAngle(0);
-        this.hitBox.body.offset.y = 18;
+        this.hitBox.setAngle(0);
+        this.hitBox.body.offset.y = 0;
         this.hitBox.body.offset.x = 0;
-        this.hitBox.body.width = this.bodyWidth;
-        this.hitBox.body.height = this.bodyHeight;
     }
 
     faceRight(): void {
         this.setAngle(90);
-        this.hitBox.body.offset.y = 3;
-        this.hitBox.body.offset.x = -12;
-        this.hitBox.body.width = this.bodyHeight;
-        this.hitBox.body.height = this.bodyWidth;
+        this.hitBox.setAngle(90);
+        this.hitBox.body.offset.y = -15;
+        this.hitBox.body.offset.x = -15;
     }
 
     faceDown(): void {
         this.setAngle(180);
-        this.hitBox.body.offset.y = -18;
+        this.hitBox.setAngle(180);
+        this.hitBox.body.offset.y = -30;
         this.hitBox.body.offset.x = 0;
-        this.hitBox.body.width = this.bodyWidth;
-        this.hitBox.body.height = this.bodyHeight;
     }
 
     faceLeft(): void {
         this.setAngle(-90);
-        this.hitBox.body.offset.y = 3;
-        this.hitBox.body.offset.x = 22;
-        this.hitBox.body.width = this.bodyHeight;
-        this.hitBox.body.height = this.bodyWidth;
+        this.hitBox.setAngle(-90);
+        this.hitBox.body.offset.y = -15;
+        this.hitBox.body.offset.x = 15;
     }
 
     destroy(): void {
         this.hitBox.destroy();
+
         super.destroy();
     }
 }

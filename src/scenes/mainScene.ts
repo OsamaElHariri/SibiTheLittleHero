@@ -50,10 +50,13 @@ export class MainScene extends Phaser.Scene {
     this.load.image('DigSaw', '../Assets/Sprites/Enemies/DigSaw.png');
 
     this.load.image('MetalRod', '../Assets/Sprites/Enemies/DrillPillar/MetalRod.png');
+    this.load.image('PillarDigArea', '../Assets/Sprites/Enemies/DrillPillar/PillarDigArea.png');
+    this.load.image('PillarDigAreaVertical', '../Assets/Sprites/Enemies/DrillPillar/PillarDigAreaVertical.png');
     this.load.spritesheet('DrillPillarBody', '../Assets/Sprites/Enemies/DrillPillar/PillarBody.png',
       { frameWidth: 88 / 4, frameHeight: 22 });
 
     this.load.image("UndergroundSibi", "../Assets/Sprites/Sibi/UndergroundSibi.png");
+    this.load.image("UndergroundIndicator", "../Assets/Sprites/Sibi/UndergroundIndicator.png");
     this.load.image("CurledSibi", "../Assets/Sprites/Sibi/CurledBall.png");
     this.load.spritesheet("SibiIdle", "../Assets/Sprites/Sibi/SpriteSheets/Idle.png",
       { frameWidth: 148 / 4, frameHeight: 396 / 6 });

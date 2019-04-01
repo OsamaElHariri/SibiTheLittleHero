@@ -4,7 +4,8 @@ import { Direction } from '../../../helpers/enums/direction';
 import { TrackIntersectionGroup } from '../intersection/trackIntersectionGroup';
 export class Platform extends Phaser.GameObjects.Rectangle {
 
-    static textureKey: string = 'OrangeRect';
+    spriteMask: Phaser.Display.Masks.BitmapMask;
+    
     readonly topTrack: UndergroundTrack;
     readonly bottomTrack: UndergroundTrack;
     readonly rightTrack: UndergroundTrack;
@@ -34,6 +35,11 @@ export class Platform extends Phaser.GameObjects.Rectangle {
         this.setOrigin(0, 0);
         this.scene.add.existing(this);
         this.scene.physics.world.enable(this, Phaser.Physics.Arcade.STATIC_BODY);
+
+        let mask: Phaser.GameObjects.Graphics = this.scene.make.graphics({ fillStyle: { color: 0x000000 }, add: false })
+            .fillRectShape(new Phaser.Geom.Rectangle(this.x, this.y, this.width, this.height));
+
+        this.spriteMask = new Phaser.Display.Masks.BitmapMask(this.scene, mask);
     }
 
     setupCornerSprites(): void {

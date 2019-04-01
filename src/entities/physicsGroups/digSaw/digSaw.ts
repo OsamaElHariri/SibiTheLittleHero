@@ -19,7 +19,7 @@ export class DigSaw extends Phaser.GameObjects.Sprite {
     constructor(scene: Phaser.Scene, x: number, y: number, platforms: PlatformGroup,
         config: { clockwise?: boolean, initialDirection?: Direction }) {
         super(scene, x, y, 'DigSaw');
-        this.depth = -1;
+        this.setDepth(4);
 
         if (config.clockwise) {
             this.clockwise = config.clockwise;

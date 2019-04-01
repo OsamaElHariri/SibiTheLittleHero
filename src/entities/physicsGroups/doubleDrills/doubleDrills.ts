@@ -17,10 +17,10 @@ export class DoubleDrills extends Phaser.GameObjects.Rectangle {
     private initailHeight: number = -40;
     private drillwidth: number = 32;
     private holdDelay: number = 3000;
-    private timeToMove: number = 1500;
+    private timeToMove: number = 1400;
     private numberOfDrills: number;
 
-    private moveSpeed: number = 0.9;
+    private moveSpeed: number = 0.91;
     private moveUp: boolean = false;
     private moveDown: boolean = false;
 
@@ -33,7 +33,7 @@ export class DoubleDrills extends Phaser.GameObjects.Rectangle {
         this.undergroundGroup = this.scene.data.get('UnderGroundHostileGroup');
         this.numberOfDrills = config.numberOfDrills || 5;
 
-        this.container = this.scene.add.container(this.x, this.y);
+        this.container = this.scene.add.container(this.x, this.y).setDepth(3);
         this.drillContainer = this.scene.add.container(0, this.initailHeight);
         this.container.add(this.drillContainer);
 
@@ -105,7 +105,7 @@ export class DoubleDrills extends Phaser.GameObjects.Rectangle {
     }
 
     spawnCollider(): void {
-        this.hitBox = this.scene.add.rectangle(0, this.initailHeight, this.drillwidth * this.numberOfDrills, 40)
+        this.hitBox = this.scene.add.rectangle(5, this.initailHeight, this.drillwidth * this.numberOfDrills - 10, 40)
             .setOrigin(0, 0.5);
         this.scene.physics.world.enable(this.hitBox);
         this.hitBox.body.setAllowGravity(false);
