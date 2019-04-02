@@ -24,6 +24,9 @@ export class DoubleDrills extends Phaser.GameObjects.Rectangle {
     private moveUp: boolean = false;
     private moveDown: boolean = false;
 
+    private xMultiplier = 0;
+    private yMultiplier = 0;
+
     constructor(scene: Phaser.Scene, x: number, y: number, platforms: PlatformGroup,
         config: { direction?: Direction, numberOfDrills?: number }) {
         super(scene, x, y);
@@ -34,28 +37,58 @@ export class DoubleDrills extends Phaser.GameObjects.Rectangle {
         this.numberOfDrills = config.numberOfDrills || 5;
 
         this.container = this.scene.add.container(this.x, this.y).setDepth(3);
-        this.drillContainer = this.scene.add.container(0, this.initailHeight);
-        this.container.add(this.drillContainer);
+        this.drillContainer = this.scene.add.container(this.x, this.y + this.initailHeight)
+            .setDepth(4)
 
         let direction: Direction = config.direction || Direction.Up;
+
+        this.spawnStands();
+        this.spawnDrills();
+        this.spawnGears();
+        this.spawnCollider();
+
         switch (direction) {
+            case Direction.Up:
+                this.yMultiplier = 1;
+                this.hitBox.y = this.initailHeight;
+                this.hitBox.x = 10;
+                this.hitBox.setOrigin(0, 0.5);
+                break;
             case Direction.Right:
                 this.container.angle = 90;
+                this.drillContainer.angle = 90;
+                this.xMultiplier = -1;
+                this.drillContainer.y += 40;
+                this.drillContainer.x += 40;
+                this.hitBox.x += this.drillwidth * (this.numberOfDrills - 2) / 2 + 10;
+                this.hitBox.y += this.initailHeight;
+                this.hitBox.body.setSize(46, this.drillwidth * this.numberOfDrills - 20);
+                this.hitBox.setOrigin(0.5, 0);
                 break;
             case Direction.Down:
                 this.container.angle = 180;
+                this.drillContainer.angle = 180;
+                this.yMultiplier = -1;
+                this.hitBox.setOrigin(1, 0.5);
+                this.drillContainer.y += 80;
+                this.hitBox.y = this.initailHeight;
+                this.hitBox.x = 10;
                 break;
             case Direction.Left:
                 this.container.angle = -90;
+                this.drillContainer.angle = -90;
+                this.xMultiplier = 1;
+                this.drillContainer.y += 40;
+                this.drillContainer.x -= 40;
+                this.hitBox.x += this.drillwidth * (this.numberOfDrills - 2) / 2 + 10;
+                this.hitBox.y += this.initailHeight;
+                this.hitBox.body.setSize(46, this.drillwidth * this.numberOfDrills - 20);
+                this.hitBox.setOrigin(0.5, 1);
                 break;
         }
 
-        this.spawnStands();
-        this.spawnGears();
-        this.spawnDrills();
-        this.spawnCollider();
-
         this.startMoveDown();
+
     }
 
     spawnStands(): void {
@@ -89,6 +122,12 @@ export class DoubleDrills extends Phaser.GameObjects.Rectangle {
 
     spawnSingleDrill(index: number): void {
         let xPos = this.drillwidth * (index + 0.5);
+
+        this.container.add(
+            this.scene.add.sprite(xPos, 0, 'DoubleDrillDigArea')
+                .setOrigin(0.5, 0)
+        );
+
         let drillSupport: Phaser.GameObjects.Sprite = this.scene.add.sprite(xPos, 0, 'DrillsSupport');
         this.drillContainer.add(drillSupport);
 
@@ -102,10 +141,11 @@ export class DoubleDrills extends Phaser.GameObjects.Rectangle {
             .setFlipY(true);
         bottomDrill.play('DrillRotate', true, Math.floor(Math.random() * 4));
         this.drillContainer.add(bottomDrill);
+
     }
 
     spawnCollider(): void {
-        this.hitBox = this.scene.add.rectangle(5, this.initailHeight, this.drillwidth * this.numberOfDrills - 10, 40)
+        this.hitBox = this.scene.add.rectangle(0, 0, this.drillwidth * this.numberOfDrills - 20, 46)
             .setOrigin(0, 0.5);
         this.scene.physics.world.enable(this.hitBox);
         this.hitBox.body.setAllowGravity(false);
@@ -121,8 +161,9 @@ export class DoubleDrills extends Phaser.GameObjects.Rectangle {
         this.gears[0].angle += speed * 10;
         this.gears[1].y -= speed;
         this.gears[1].angle -= speed * 10;
-        this.drillContainer.y -= speed
         this.hitBox.y -= speed;
+        this.drillContainer.x -= speed * this.xMultiplier;
+        this.drillContainer.y -= speed * this.yMultiplier;
     }
 
     startMoveUp(): void {
@@ -166,5 +207,4 @@ export class DoubleDrills extends Phaser.GameObjects.Rectangle {
             }
         });
     }
-
 }

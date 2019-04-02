@@ -77,6 +77,7 @@ export class MainScene extends Phaser.Scene {
     this.load.image("DrillsStand", "../Assets/Sprites/Enemies/DoubleDrills/Stand.png");
     this.load.image("DoubleDrillsGear", "../Assets/Sprites/Enemies/DoubleDrills/Gear.png");
     this.load.image("DrillsSupport", "../Assets/Sprites/Enemies/DoubleDrills/DrillsSupport.png");
+    this.load.image("DoubleDrillDigArea", "../Assets/Sprites/Enemies/DoubleDrills/DoubleDrillDigArea.png");
   }
 
   create(): void {
