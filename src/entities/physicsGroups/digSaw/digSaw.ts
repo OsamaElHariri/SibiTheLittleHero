@@ -9,12 +9,22 @@ export class DigSaw extends Phaser.GameObjects.Sprite {
     private currentDirection: Direction = Direction.Down;
 
     private nextDirection: (direction: Direction) => Direction;
+    private previousDirection: (direction: Direction) => Direction;
 
     private currentSpeed: number = 0;
     private maxSpeed: number = 550;
     private accelerationFactor: number = 1.15;
     private rotationDirection: number = -1;
     private maxRotationSpeed: number = 50;
+
+    private bottomDigArea: Phaser.GameObjects.Sprite;
+    private bottomDigAreaOffset: { x: number, y: number };
+    private topDigArea: Phaser.GameObjects.Sprite;
+    private topDigAreaOffset: { x: number, y: number };
+    private rightDigArea: Phaser.GameObjects.Sprite;
+    private rightDigAreaOffset: { x: number, y: number };
+    private leftDigArea: Phaser.GameObjects.Sprite;
+    private leftDigAreaOffset: { x: number, y: number };
 
     constructor(scene: Phaser.Scene, x: number, y: number, platforms: PlatformGroup,
         config: { clockwise?: boolean, initialDirection?: Direction }) {
@@ -29,6 +39,7 @@ export class DigSaw extends Phaser.GameObjects.Sprite {
 
 
         this.nextDirection = this.clockwise ? DirectionUtil.counterClockWise : DirectionUtil.clockWise;
+        this.previousDirection = this.clockwise ? DirectionUtil.clockWise : DirectionUtil.counterClockWise;
 
         this.scene.add.existing(this);
         this.scene.physics.world.enable(this);
@@ -43,18 +54,81 @@ export class DigSaw extends Phaser.GameObjects.Sprite {
             isOverGroundHostile: true,
             isUnderGroundHostile: true
         });
+
+        this.spawnDigAreas();
+    }
+
+    spawnDigAreas(): void {
+        this.bottomDigArea = this.scene.add.sprite(this.x, this.y, 'DigSawDigArea')
+            .setOrigin(this.clockwise ? 1 : 0, 0.5)
+            .setFlipX(this.clockwise)
+            .setDepth(3);
+
+        this.leftDigArea = this.scene.add.sprite(this.x, this.y, 'DigSawDigArea')
+            .setAngle(90)
+            .setOrigin(this.clockwise ? 1 : 0, 0.5)
+            .setFlipX(this.clockwise)
+            .setDepth(3);
+
+        this.topDigArea = this.scene.add.sprite(this.x, this.y, 'DigSawDigArea')
+            .setAngle(180)
+            .setOrigin(this.clockwise ? 1 : 0, 0.5)
+            .setFlipX(this.clockwise)
+            .setDepth(3);
+
+        this.rightDigArea = this.scene.add.sprite(this.x, this.y, 'DigSawDigArea')
+            .setAngle(-90)
+            .setOrigin(this.clockwise ? 1 : 0, 0.5)
+            .setFlipX(this.clockwise)
+            .setDepth(3);
+
+        if (this.clockwise) {
+            this.bottomDigAreaOffset = { x: 64, y: 42 }
+            this.leftDigAreaOffset = { x: -42, y: -64 }
+            this.topDigAreaOffset = { x: 64, y: -42 }
+            this.rightDigAreaOffset = { x: 42, y: -64 }
+        } else {
+            this.bottomDigAreaOffset = { x: -64, y: 42 }
+            this.leftDigAreaOffset = { x: -42, y: 64 }
+            this.topDigAreaOffset = { x: -64, y: -42 }
+            this.rightDigAreaOffset = { x: 42, y: 64 }
+        }
     }
 
     update(): void {
         this.currentSpeed = this.currentSpeed || 1.1;
         this.currentSpeed = Math.min(this.currentSpeed * this.accelerationFactor, this.maxSpeed);
 
-        let maxRotationFraction: number = Math.abs(this.body.speed) / this.maxSpeed;
+        let speedFraction: number = Math.abs(this.body.speed) / this.maxSpeed;
 
-        this.angle += Math.pow(maxRotationFraction, 1.2) * this.maxRotationSpeed * this.rotationDirection;
+        this.angle += Math.pow(speedFraction, 1.2) * this.maxRotationSpeed * this.rotationDirection;
 
         this.setDirection();
+        let previous: Direction = this.previousDirection(this.currentDirection);
         this.applySpeedInDirection(this.currentSpeed, this.currentDirection);
+        this.applySpeedInDirection(1, previous);
+
+
+        this.bottomDigArea
+            .setPosition(this.x + this.bottomDigAreaOffset.x, this.y + this.bottomDigAreaOffset.y)
+            .setAlpha(previous == Direction.Down && this.body.blocked.down ? 1 : 0)
+            .setScale(1 + speedFraction / 2, 1);
+
+        this.leftDigArea
+            .setPosition(this.x + this.leftDigAreaOffset.x, this.y + this.leftDigAreaOffset.y)
+            .setAlpha(previous == Direction.Left && this.body.blocked.left ? 1 : 0)
+            .setScale(1 + speedFraction / 2, 1);
+
+        this.topDigArea
+            .setPosition(this.x + this.topDigAreaOffset.x, this.y + this.topDigAreaOffset.y)
+            .setAlpha(previous == Direction.Up && this.body.blocked.up ? 1 : 0)
+            .setScale(1 + speedFraction / 2, 1);
+
+        this.rightDigArea
+            .setPosition(this.x + this.rightDigAreaOffset.x, this.y + this.rightDigAreaOffset.y)
+            .setAlpha(previous == Direction.Right && this.body.blocked.right ? 1 : 0)
+            .setScale(1 + speedFraction / 2, 1);
+
     }
 
     setDirection(): void {

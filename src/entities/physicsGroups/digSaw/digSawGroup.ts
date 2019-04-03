@@ -7,7 +7,7 @@ export class DigSawGroup extends Phaser.Physics.Arcade.Group {
     constructor(scene: Phaser.Scene, platformGroup: PlatformGroup) {
         super(scene.physics.world, scene);
         this.platformGroup = platformGroup;
-        this.createDigSaw(150, -100, false);
+        this.createDigSaw(150, -100, true);
     }
 
     createDigSaw(x: number, y: number, clockWise?: boolean): DigSaw {

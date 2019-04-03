@@ -47,7 +47,8 @@ export class MainScene extends Phaser.Scene {
 
     this.load.image('YellowSquare', '../Assets/Sprites/Platforms/YellowSquare.png');
 
-    this.load.image('DigSaw', '../Assets/Sprites/Enemies/DigSaw.png');
+    this.load.image('DigSaw', '../Assets/Sprites/Enemies/DigSaw/DigSaw.png');
+    this.load.image('DigSawDigArea', '../Assets/Sprites/Enemies/DigSaw/DigSawDigArea.png');
 
     this.load.image('MetalRod', '../Assets/Sprites/Enemies/DrillPillar/MetalRod.png');
     this.load.image('PillarDigArea', '../Assets/Sprites/Enemies/DrillPillar/PillarDigArea.png');
