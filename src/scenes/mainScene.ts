@@ -6,21 +6,23 @@ import { BurrowingSibi } from '../entities/player/burrowingSibi';
 import { TrackIntersectionGroup } from '../entities/physicsGroups/intersection/trackIntersectionGroup';
 import { DigSawGroup } from '../entities/physicsGroups/digSaw/digSawGroup';
 import { RockMelterGroup } from '../entities/physicsGroups/rockMelter/rockMelterGroup';
-import { Direction } from '../helpers/enums/direction';
 import { DoubleDrillsGroup } from '../entities/physicsGroups/doubleDrills/doubleDrillsGroup';
-import { SpeechBubble } from '../entities/ui/dialog/speechBubble';
 import { Dialog } from '../entities/ui/dialog/dialog';
 import { DrillPillarGroup } from '../entities/physicsGroups/drillPillar/drillPillarGroup';
 import { DrillMat } from '../entities/physicsGroups/drillMat/drillMat';
 
 export class MainScene extends Phaser.Scene {
+
+  groupsNeedUpdate: Phaser.GameObjects.Group[] = [];
+  miscGroup: Phaser.GameObjects.Group;
+  player: BurrowingSibi;
+  cursors: InputKeys;
+
   private platformGroup: PlatformGroup;
   private trackIntersectionGroup: TrackIntersectionGroup;
   private digSawGroup: DigSawGroup;
   private cameraZoomTriggers: Phaser.GameObjects.Group;
   private cameraTarget: CameraTarget;
-  player: BurrowingSibi;
-  cursors: InputKeys;
   private rockMelterGroup: RockMelterGroup;
   private drillPillarGroup: DrillPillarGroup;
 
@@ -100,6 +102,9 @@ export class MainScene extends Phaser.Scene {
     this.scene.moveAbove('BackgroundScene', 'MainScene');
     this.data.set('OverGroundHostileGroup', this.add.group({ runChildUpdate: true }));
     this.data.set('UnderGroundHostileGroup', this.add.group({ runChildUpdate: true }));
+
+    this.miscGroup = this.add.group();
+
     this.setupKeyboard();
     this.createPlatforms();
     this.spawnPlayer();
@@ -113,6 +118,14 @@ export class MainScene extends Phaser.Scene {
     });
 
     // this.cameraZoomTriggers.add(new CameraZoomInZone({ scene: this, x: 300, y: 450, camTarget: this.cameraTarget }));
+
+    this.miscGroup.add(this.cameraTarget);
+    this.groupsNeedUpdate.push(this.miscGroup);
+
+    this.groupsNeedUpdate.push(this.digSawGroup);
+    this.groupsNeedUpdate.push(this.rockMelterGroup);
+    this.groupsNeedUpdate.push(this.doubleDrillsGroup);
+    this.groupsNeedUpdate.push(this.drillPillarGroup);
 
     this.events.on('PlayerDead', () => {
       this.spawnPlayer();
@@ -170,6 +183,8 @@ export class MainScene extends Phaser.Scene {
       platforms: this.platformGroup,
       trackIntersectionGroup: this.trackIntersectionGroup
     });
+    this.miscGroup.add(this.player);
+
     if (!this.cameraTarget)
       this.cameraTarget = new CameraTarget(this, this.player.body);
     else
@@ -198,18 +213,13 @@ export class MainScene extends Phaser.Scene {
 
   update(): void {
     this.registry.set('MainCameraPosition', { x: this.cameras.main.scrollX, y: this.cameras.main.scrollY });
-    this.player.update();
-    this.cameraTarget.update();
-    this.digSawGroup.children.entries.forEach(
-      (child) => { child.update(); }
-    );
-    this.rockMelterGroup.children.entries.forEach(
-      (child) => { child.update(); }
-    );
-    this.doubleDrillsGroup.children.entries.forEach(
-      (child) => { child.update(); }
-    );
-    this.drillPillarGroup.children.entries.forEach(
+    this.groupsNeedUpdate.forEach(group => {
+      this.updateChildrenInGroup(group)
+    });
+  }
+
+  updateChildrenInGroup(group: Phaser.GameObjects.Group) {
+    group.children.entries.forEach(
       (child) => { child.update(); }
     );
   }
