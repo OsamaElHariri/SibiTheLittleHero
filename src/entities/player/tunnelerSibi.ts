@@ -19,7 +19,8 @@ export class TunnelerSibi extends Phaser.GameObjects.Sprite {
         this.hitBox.setOrigin(0.5, 0).setDepth(3);
         this.hitBox.body.setSize(this.bodyWidth, this.bodyHeight);
 
-        this.setOrigin(0.5, 1);
+        this.setOrigin(0.5, 1)
+        .setDepth(3);
 
         this.scene.add.existing(this);
 

@@ -2,6 +2,7 @@ import { PlatformGroup } from "../platforms/platformGroup";
 import { Direction } from "../../../helpers/enums/direction";
 import { DirectionUtil } from "../../../helpers/directionUtil/directionUtil";
 import { FollowCollider } from "../utilColliders/followCollider";
+import { Platform } from "../platforms/platform";
 
 export class DigSaw extends Phaser.GameObjects.Sprite {
 
@@ -43,7 +44,13 @@ export class DigSaw extends Phaser.GameObjects.Sprite {
 
         this.scene.add.existing(this);
         this.scene.physics.world.enable(this);
-        this.scene.physics.add.collider(this, platforms);
+        this.scene.physics.add.collider(this, platforms,
+            (self: DigSaw, platform: Platform) => {
+                this.bottomDigArea.setMask(platform.spriteMask);
+                this.topDigArea.setMask(platform.spriteMask);
+                this.leftDigArea.setMask(platform.spriteMask);
+                this.rightDigArea.setMask(platform.spriteMask);
+            });
         this.body.setSize(30, 30);
         this.body.setAllowGravity(false);
         new FollowCollider(this.scene, this, {
@@ -106,7 +113,7 @@ export class DigSaw extends Phaser.GameObjects.Sprite {
         this.setDirection();
         let previous: Direction = this.previousDirection(this.currentDirection);
         this.applySpeedInDirection(this.currentSpeed, this.currentDirection);
-        this.applySpeedInDirection(1, previous);
+        this.applySpeedInDirection(2, previous);
 
 
         this.bottomDigArea
