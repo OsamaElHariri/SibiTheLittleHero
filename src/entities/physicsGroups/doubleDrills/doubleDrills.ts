@@ -27,6 +27,8 @@ export class DoubleDrills extends Phaser.GameObjects.Rectangle {
     private xMultiplier = 0;
     private yMultiplier = 0;
 
+    private timeEvent: Phaser.Time.TimerEvent;
+
     constructor(scene: Phaser.Scene, x: number, y: number, platforms: PlatformGroup,
         config: { direction?: Direction, numberOfDrills?: number }) {
         super(scene, x, y);
@@ -169,7 +171,7 @@ export class DoubleDrills extends Phaser.GameObjects.Rectangle {
     startMoveUp(): void {
         this.moveUp = true;
         this.overgroundGroup.add(this.hitBox);
-        this.scene.time.addEvent({
+        this.timeEvent = this.scene.time.addEvent({
             delay: this.timeToMove,
             callbackScope: this,
             callback: () => {
@@ -190,7 +192,7 @@ export class DoubleDrills extends Phaser.GameObjects.Rectangle {
     startMoveDown(): void {
         this.moveDown = true;
         this.undergroundGroup.add(this.hitBox);
-        this.scene.time.addEvent({
+        this.timeEvent = this.scene.time.addEvent({
             delay: this.timeToMove,
             callbackScope: this,
             callback: () => {
@@ -206,5 +208,14 @@ export class DoubleDrills extends Phaser.GameObjects.Rectangle {
                 });
             }
         });
+    }
+
+    destroy() {
+        if (this.timeEvent) this.timeEvent.destroy();
+        this.container.removeAll(true);
+        this.container.destroy();
+        this.drillContainer.removeAll(true);
+        this.drillContainer.destroy();
+        super.destroy();
     }
 }

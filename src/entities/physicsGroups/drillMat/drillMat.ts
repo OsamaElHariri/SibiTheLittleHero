@@ -7,6 +7,7 @@ export class DrillMat extends Phaser.GameObjects.Rectangle {
     private overgroundGroup: Phaser.GameObjects.Group;
 
     private container: Phaser.GameObjects.Container;
+    private rockParticles: Phaser.GameObjects.Particles.ParticleEmitterManager;
 
     constructor(scene: Phaser.Scene, x: number, y: number, platformGroup: PlatformGroup,
         config: { width?: number, direction?: Direction }) {
@@ -41,8 +42,8 @@ export class DrillMat extends Phaser.GameObjects.Rectangle {
                 this.body.setSize(height, config.width);
                 break;
         }
-        let particles: Phaser.GameObjects.Particles.ParticleEmitterManager = this.scene.add.particles('Rock');
-        particles.setDepth(2).createEmitter({
+        this.rockParticles = this.scene.add.particles('Rock');
+        this.rockParticles.setDepth(2).createEmitter({
             x: this.x - this.body.width / 2,
             y: this.y - this.body.height / 2,
             scale: { start: 0.3, end: 0.4 },
@@ -50,13 +51,11 @@ export class DrillMat extends Phaser.GameObjects.Rectangle {
             angle: { min: 240, max: 300 },
             gravityY: 1000,
             lifespan: 250,
-            speed: {min: 220, max: 50},
+            speed: { min: 220, max: 50 },
             quantity: 2,
             frequency: 250,
             emitZone: { source: new Phaser.Geom.Rectangle(0, 0, this.body.width, this.body.height) }
         });
-
-        // this.container.add(particles);
     }
 
     spawnDrillSprites(): void {
@@ -86,6 +85,13 @@ export class DrillMat extends Phaser.GameObjects.Rectangle {
                     .setAngle(angle)
             );
         }
+    }
+
+    destroy() {
+        this.container.removeAll(true);
+        this.container.destroy();
+        this.rockParticles.destroy();
+        super.destroy();
     }
 
 }

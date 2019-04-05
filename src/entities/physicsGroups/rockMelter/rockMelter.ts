@@ -15,13 +15,17 @@ export class RockMelter extends Phaser.GameObjects.Sprite {
 
     private sceneHostileGroup: Phaser.GameObjects.Group;
 
+    private spawnedObjects = [];
+    private tween: Phaser.Tweens.Tween;
+
     constructor(scene: Phaser.Scene, x: number, y: number, platforms: PlatformGroup) {
         super(scene, x, y, 'RockMelterCeilingSupport');
         this.platforms = platforms;
         this.sceneHostileGroup = this.scene.data.get('OverGroundHostileGroup');
         this.scene.add.existing(this);
         this.melter = this.scene.add.sprite(this.x - 5, this.y + 44, 'RockMelter');
-        this.scene.add.particles('SmokeCloud').setDepth(1).createEmitter({
+        let smokeParticles = this.scene.add.particles('SmokeCloud').setDepth(1);
+        smokeParticles.createEmitter({
             x: x + 20,
             y: y + 50,
             scale: { start: Math.random() * 0.5, end: 1.0 + Math.random() * 0.5 },
@@ -30,7 +34,8 @@ export class RockMelter extends Phaser.GameObjects.Sprite {
             lifespan: 1750,
             frequency: 400,
             emitZone: { source: new Phaser.Geom.Rectangle(0, 0, 20, 1) }
-        })
+        });
+        this.spawnedObjects.push(this.melter, smokeParticles);
         this.initialMelterPos = {
             x: this.melter.x,
             y: this.melter.y
@@ -59,7 +64,7 @@ export class RockMelter extends Phaser.GameObjects.Sprite {
     spawnMoltenball(): void {
         this.moltenball = this.scene.add.sprite(this.x - 5, this.y + 50, 'MoltenBall');
         this.moltenball.setScale(0);
-        this.scene.add.tween({
+        this.tween = this.scene.add.tween({
             targets: [this.moltenball],
             ease: 'Sine.easeIn',
             duration: this.hasSpawnedPuddle ? 600 : 1,
@@ -95,6 +100,7 @@ export class RockMelter extends Phaser.GameObjects.Sprite {
     spawnMoltenPubble(x: number, y: number) {
         this.hasSpawnedPuddle = true;
         let puddle: Phaser.GameObjects.Sprite = this.scene.add.sprite(x, y + 2, 'MoltenPuddle').setDepth(2).play('MoltenPuddleMovement');
+        this.spawnedObjects.push(puddle);
         let numberOfSmoke: number = Math.floor(Math.random() * 3 + 3);
         for (let i = 0; i < numberOfSmoke; i++) {
             let smokeX: number = puddle.getTopLeft().x + (i + 0.25) * (puddle.width / numberOfSmoke);
@@ -113,5 +119,12 @@ export class RockMelter extends Phaser.GameObjects.Sprite {
         puddle.body.x += (puddle.body.width * (1 - widthRatio) / 2);
         puddle.body.width *= 0.8;
         this.sceneHostileGroup.add(puddle);
+    }
+
+    destroy() {
+        if (this.tween) this.tween.stop();
+        if (this.moltenball) this.moltenball.destroy();
+        this.spawnedObjects.forEach(obj => obj.destroy());
+        super.destroy();
     }
 }

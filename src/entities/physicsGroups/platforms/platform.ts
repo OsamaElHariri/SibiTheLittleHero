@@ -5,7 +5,7 @@ import { TrackIntersectionGroup } from '../intersection/trackIntersectionGroup';
 export class Platform extends Phaser.GameObjects.Rectangle {
 
     spriteMask: Phaser.Display.Masks.BitmapMask;
-    
+
     readonly topTrack: UndergroundTrack;
     readonly bottomTrack: UndergroundTrack;
     readonly rightTrack: UndergroundTrack;
@@ -16,6 +16,8 @@ export class Platform extends Phaser.GameObjects.Rectangle {
 
     private imageWidth: number = 64;
 
+    private spawnedObjects = [];
+
     constructor(scene: Phaser.Scene, x: number, y: number, width: number, height: number, intersectionsGroup?: TrackIntersectionGroup) {
         super(scene, x, y, width, height, 0x6d541d);
         this.depth = 1;
@@ -24,7 +26,7 @@ export class Platform extends Phaser.GameObjects.Rectangle {
         this.bottomTrack = new UndergroundTrack({ minBound: x, maxBound: x + width, constantAxisPosition: y + height, direction: Direction.Down });
         this.rightTrack = new UndergroundTrack({ minBound: y, maxBound: y + height, constantAxisPosition: x + width, direction: Direction.Right });
         this.leftTrack = new UndergroundTrack({ minBound: y, maxBound: y + height, constantAxisPosition: x, direction: Direction.Left });
-        
+
         this.setupEdgeSprites();
         this.setupCornerSprites();
 
@@ -44,20 +46,20 @@ export class Platform extends Phaser.GameObjects.Rectangle {
 
     setupCornerSprites(): void {
         let cornerDepth: number = 2;
-        this.scene.add.sprite(this.x, this.y, 'PlatformCorner').setOrigin(0, 0).setDepth(cornerDepth);
-        this.scene.add.sprite(this.x + this.width, this.y, 'PlatformCorner').setOrigin(1, 0).setFlip(true, false).setDepth(cornerDepth);
-        this.scene.add.sprite(this.x, this.y + this.height, 'PlatformCorner').setOrigin(0, 1).setFlip(false, true).setDepth(cornerDepth);
-        this.scene.add.sprite(this.x + this.width, this.y + this.height, 'PlatformCorner').setOrigin(1, 1).setFlip(true, true).setDepth(cornerDepth);
+        let corner1 = this.scene.add.sprite(this.x, this.y, 'PlatformCorner').setOrigin(0, 0).setDepth(cornerDepth);
+        let corner2 = this.scene.add.sprite(this.x + this.width, this.y, 'PlatformCorner').setOrigin(1, 0).setFlip(true, false).setDepth(cornerDepth);
+        let corner3 = this.scene.add.sprite(this.x, this.y + this.height, 'PlatformCorner').setOrigin(0, 1).setFlip(false, true).setDepth(cornerDepth);
+        let corner4 = this.scene.add.sprite(this.x + this.width, this.y + this.height, 'PlatformCorner').setOrigin(1, 1).setFlip(true, true).setDepth(cornerDepth);
+        this.spawnedObjects.push(corner1, corner2, corner3, corner4);
     }
 
     setupEdgeSprites(): void {
         let edgeDepth: number = 2;
-        this.scene.add.tileSprite(this.x, this.y, this.width, this.imageWidth, 'PlatformEdge').setOrigin(0, 0).setDepth(edgeDepth);
-        this.scene.add.tileSprite(this.x, this.y + this.height, this.width, this.imageWidth, 'PlatformEdge').setOrigin(0, 1).setDepth(edgeDepth).setFlipY(true);
-
-        this.scene.add.tileSprite(this.x, this.y, this.imageWidth, this.height, 'PlatformEdgeRotated').setOrigin(0, 0).setDepth(edgeDepth);
-        this.scene.add.tileSprite(this.x + this.width, this.y, this.imageWidth, this.height, 'PlatformEdgeRotated').setOrigin(1, 0).setDepth(edgeDepth).setFlipX(true);
-
+        let edge1 = this.scene.add.tileSprite(this.x, this.y, this.width, this.imageWidth, 'PlatformEdge').setOrigin(0, 0).setDepth(edgeDepth);
+        let edge2 = this.scene.add.tileSprite(this.x, this.y + this.height, this.width, this.imageWidth, 'PlatformEdge').setOrigin(0, 1).setDepth(edgeDepth).setFlipY(true);
+        let edge3 = this.scene.add.tileSprite(this.x, this.y, this.imageWidth, this.height, 'PlatformEdgeRotated').setOrigin(0, 0).setDepth(edgeDepth);
+        let edge4 = this.scene.add.tileSprite(this.x + this.width, this.y, this.imageWidth, this.height, 'PlatformEdgeRotated').setOrigin(1, 0).setDepth(edgeDepth).setFlipX(true);
+        this.spawnedObjects.push(edge1, edge2, edge3, edge4);
     }
 
     setupIntersections(intersectionGroup: TrackIntersectionGroup): void {
@@ -124,5 +126,13 @@ export class Platform extends Phaser.GameObjects.Rectangle {
             return this.leftTrack;
         else if (collider.x >= this.x + this.width)
             return this.rightTrack;
+    }
+
+    destroy() {
+
+        this.spawnedObjects.forEach(obj => {
+            obj.destroy();
+        });
+        super.destroy()
     }
 }

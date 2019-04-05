@@ -123,10 +123,10 @@ export class DrillPillar extends Phaser.GameObjects.Container {
         let tileSpriteHeight: number = 35;
         if (this.isVertical) {
             sprite = this.scene.add.tileSprite(this.x, platform.y, tileSpriteHeight, platform.height, 'PillarDigAreaVertical')
-            .setOrigin(0.8, 0);
+                .setOrigin(0.8, 0);
         } else {
             sprite = this.scene.add.tileSprite(platform.x, this.y, platform.width, tileSpriteHeight, 'PillarDigArea')
-            .setOrigin(0, 0.2);
+                .setOrigin(0, 0.2);
         }
         sprite.setDepth(3);
         this.encounteredPlatforms[platformKey] = sprite;
@@ -143,5 +143,10 @@ export class DrillPillar extends Phaser.GameObjects.Container {
 
         this.direction *= 0.95;
         if (Math.abs(this.direction) < 0.25) this.direction = 0;
+    }
+
+    destroy() {
+        this.removeAll(true);
+        super.destroy();
     }
 }
