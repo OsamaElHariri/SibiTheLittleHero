@@ -1,7 +1,9 @@
 import { PlatformGroup } from "../platforms/platformGroup";
 import { Direction } from "../../../helpers/enums/direction";
+import { EntityType } from "../entityType";
 
 export class DoubleDrills extends Phaser.GameObjects.Rectangle {
+    entityType: EntityType = EntityType.DoubleDrill;
 
     private platforms: PlatformGroup;
 
@@ -29,9 +31,12 @@ export class DoubleDrills extends Phaser.GameObjects.Rectangle {
 
     private timeEvent: Phaser.Time.TimerEvent;
 
+    config: DoubleDrillConfigs;
+
     constructor(scene: Phaser.Scene, x: number, y: number, platforms: PlatformGroup,
-        config: { direction?: Direction, numberOfDrills?: number }) {
+        config: DoubleDrillConfigs) {
         super(scene, x, y);
+        this.config = config;
         this.scene.add.existing(this);
         this.platforms = platforms;
         this.overgroundGroup = this.scene.data.get('OverGroundHostileGroup');
@@ -217,5 +222,15 @@ export class DoubleDrills extends Phaser.GameObjects.Rectangle {
         this.drillContainer.removeAll(true);
         this.drillContainer.destroy();
         super.destroy();
+    }
+}
+
+export class DoubleDrillConfigs {
+    direction: Direction = Direction.Up;
+    numberOfDrills: number = 5;
+    constructor(configs?: { direction?: Direction, numberOfDrills?: number }) {
+        configs = configs || {};
+        this.direction = configs.direction || this.direction;
+        this.numberOfDrills = configs.numberOfDrills || this.numberOfDrills;
     }
 }

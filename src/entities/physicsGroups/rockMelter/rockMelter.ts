@@ -1,6 +1,9 @@
 import { PlatformGroup } from "../platforms/platformGroup";
+import { EntityType } from "../entityType";
 
 export class RockMelter extends Phaser.GameObjects.Sprite {
+    entityType: EntityType = EntityType.RockMelter;
+
     private melter: Phaser.GameObjects.Sprite;
     private initialMelterPos: { x: number, y: number };
     private initialTime: number;
@@ -11,15 +14,17 @@ export class RockMelter extends Phaser.GameObjects.Sprite {
     private smokeSprites: Phaser.GameObjects.Sprite[] = [];
     private moltenball: Phaser.GameObjects.Sprite;
 
-    private dropInterval = 600;
-
     private sceneHostileGroup: Phaser.GameObjects.Group;
 
     private spawnedObjects = [];
     private tween: Phaser.Tweens.Tween;
 
-    constructor(scene: Phaser.Scene, x: number, y: number, platforms: PlatformGroup) {
+    private config: RockMelterConfigs;
+
+    constructor(scene: Phaser.Scene, x: number, y: number, platforms: PlatformGroup,
+        config: RockMelterConfigs) {
         super(scene, x, y, 'RockMelterCeilingSupport');
+        this.config = config;
         this.platforms = platforms;
         this.sceneHostileGroup = this.scene.data.get('OverGroundHostileGroup');
         this.scene.add.existing(this);
@@ -53,7 +58,7 @@ export class RockMelter extends Phaser.GameObjects.Sprite {
 
     startMoltenballTimer(): void {
         this.scene.time.addEvent({
-            delay: this.dropInterval,
+            delay: this.config.dropInterval,
             callbackScope: this,
             callback: () => {
                 this.spawnMoltenball();
@@ -126,5 +131,15 @@ export class RockMelter extends Phaser.GameObjects.Sprite {
         if (this.moltenball) this.moltenball.destroy();
         this.spawnedObjects.forEach(obj => obj.destroy());
         super.destroy();
+    }
+}
+
+export class RockMelterConfigs {
+    dropInterval: number = 600;
+    constructor(configs?: {
+        dropInterval?: number
+    }) {
+        configs = configs || {};
+        this.dropInterval = configs.dropInterval || this.dropInterval
     }
 }

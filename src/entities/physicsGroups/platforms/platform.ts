@@ -34,6 +34,16 @@ export class Platform extends Phaser.GameObjects.Rectangle {
             this.setupIntersections(intersectionsGroup);
 
 
+        this.setInteractive();
+        this.on('pointerdown', () => {
+            let x: number = this.scene.input.mousePointer.worldX;
+            let y: number = this.scene.input.mousePointer.worldY;
+            console.log(`pointer down ${x}, ${y}`);
+        });
+        this.on('pointerup', () => {
+            console.log('pointer up');
+        });
+
         this.setOrigin(0, 0);
         this.scene.add.existing(this);
         this.scene.physics.world.enable(this, Phaser.Physics.Arcade.STATIC_BODY);

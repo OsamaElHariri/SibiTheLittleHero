@@ -3,8 +3,10 @@ import { Direction } from "../../../helpers/enums/direction";
 import { DirectionUtil } from "../../../helpers/directionUtil/directionUtil";
 import { FollowCollider } from "../utilColliders/followCollider";
 import { Platform } from "../platforms/platform";
+import { EntityType } from "../entityType";
 
 export class DigSaw extends Phaser.GameObjects.Sprite {
+    entityType: EntityType = EntityType.DigSaw;
 
     private clockwise: boolean = false;
     private currentDirection: Direction = Direction.Down;
@@ -27,9 +29,13 @@ export class DigSaw extends Phaser.GameObjects.Sprite {
     private leftDigArea: Phaser.GameObjects.Sprite;
     private leftDigAreaOffset: { x: number, y: number };
 
+    private spawnedObjects = [];
+    config: DigSawConfigs;
+
     constructor(scene: Phaser.Scene, x: number, y: number, platforms: PlatformGroup,
-        config: { clockwise?: boolean, initialDirection?: Direction }) {
+        config: DigSawConfigs) {
         super(scene, x, y, 'DigSaw');
+        this.config = config;
         this.setDepth(4);
 
         if (config.clockwise) {
@@ -53,7 +59,7 @@ export class DigSaw extends Phaser.GameObjects.Sprite {
             });
         this.body.setSize(30, 30);
         this.body.setAllowGravity(false);
-        new FollowCollider(this.scene, this, {
+        let collider = new FollowCollider(this.scene, this, {
             isCircle: true,
             width: 50,
             xOffset: 13,
@@ -61,6 +67,7 @@ export class DigSaw extends Phaser.GameObjects.Sprite {
             isOverGroundHostile: true,
             isUnderGroundHostile: true
         });
+        this.spawnedObjects.push(collider);
 
         this.spawnDigAreas();
     }
@@ -96,10 +103,15 @@ export class DigSaw extends Phaser.GameObjects.Sprite {
             this.rightDigAreaOffset = { x: 42, y: -64 }
         } else {
             this.bottomDigAreaOffset = { x: -64, y: 42 }
-            this.leftDigAreaOffset = { x: -42, y: 64 }
+            this.leftDigAreaOffset = { x: -42, y: -64 }
             this.topDigAreaOffset = { x: -64, y: -42 }
             this.rightDigAreaOffset = { x: 42, y: 64 }
         }
+
+        this.spawnedObjects.push(this.bottomDigAreaOffset,
+            this.leftDigAreaOffset,
+            this.topDigAreaOffset,
+            this.rightDigAreaOffset);
     }
 
     update(): void {
@@ -190,5 +202,19 @@ export class DigSaw extends Phaser.GameObjects.Sprite {
                 this.body.setVelocityX(-speed);
                 break;
         }
+    }
+    destroy() {
+        this.spawnedObjects.forEach(obj => obj.destroy());
+        super.destroy();
+    }
+}
+
+export class DigSawConfigs {
+    clockwise: boolean = false;
+    initialDirection: Direction = Direction.Down;
+    constructor(configs?: { clockwise?: boolean, initialDirection?: Direction }) {
+        configs = configs || {};
+        this.clockwise = configs.clockwise || this.clockwise;
+        this.initialDirection = configs.initialDirection || this.initialDirection;
     }
 }

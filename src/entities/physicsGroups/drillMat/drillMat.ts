@@ -1,7 +1,8 @@
-import { PlatformGroup } from "../platforms/platformGroup";
 import { Direction } from "../../../helpers/enums/direction";
+import { EntityType } from "../entityType";
 
 export class DrillMat extends Phaser.GameObjects.Rectangle {
+    entityType: EntityType = EntityType.DrillMat;
 
     private miniDrillWidth: number = 15;
     private overgroundGroup: Phaser.GameObjects.Group;
@@ -9,10 +10,14 @@ export class DrillMat extends Phaser.GameObjects.Rectangle {
     private container: Phaser.GameObjects.Container;
     private rockParticles: Phaser.GameObjects.Particles.ParticleEmitterManager;
 
-    constructor(scene: Phaser.Scene, x: number, y: number, platformGroup: PlatformGroup,
-        config: { width?: number, direction?: Direction }) {
-        super(scene, x, y, config.width || 100, 15);
+    config: DrillMatConfigs;
+
+    constructor(scene: Phaser.Scene, x: number, y: number,
+        config: DrillMatConfigs) {
+        super(scene, x, y, config.width, 15);
         let height: number = 15;
+
+        this.config = config;
         config.width = config.width || 100;
 
         this.scene.add.existing(this);
@@ -93,5 +98,14 @@ export class DrillMat extends Phaser.GameObjects.Rectangle {
         this.rockParticles.destroy();
         super.destroy();
     }
+}
 
+export class DrillMatConfigs {
+    width: number = 100;
+    direction: Direction = Direction.Up;
+    constructor(configs?: { width?: number, direction?: Direction }) {
+        configs = configs || {};
+        this.width = configs.width || this.width;
+        this.direction = configs.direction || this.direction;
+    }
 }

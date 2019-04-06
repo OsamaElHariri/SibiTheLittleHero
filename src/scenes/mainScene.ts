@@ -9,7 +9,9 @@ import { RockMelterGroup } from '../entities/physicsGroups/rockMelter/rockMelter
 import { DoubleDrillsGroup } from '../entities/physicsGroups/doubleDrills/doubleDrillsGroup';
 import { Dialog } from '../entities/ui/dialog/dialog';
 import { DrillPillarGroup } from '../entities/physicsGroups/drillPillar/drillPillarGroup';
-import { DrillMat } from '../entities/physicsGroups/drillMat/drillMat';
+import { EditingPanel } from '../helpers/level_editor/editingPanel';
+import { DrillMatGroup } from '../entities/physicsGroups/drillMat/drillMatGroup';
+import { EntityType } from '../entities/physicsGroups/entityType';
 
 export class MainScene extends Phaser.Scene {
 
@@ -25,6 +27,7 @@ export class MainScene extends Phaser.Scene {
   private cameraTarget: CameraTarget;
   private rockMelterGroup: RockMelterGroup;
   private drillPillarGroup: DrillPillarGroup;
+  private drillMatGroup: DrillMatGroup;
 
   private doubleDrillsGroup: DoubleDrillsGroup;
 
@@ -204,7 +207,8 @@ export class MainScene extends Phaser.Scene {
   }
 
   createDrillMats(): void {
-    new DrillMat(this, 50, 50, this.platformGroup, { width: 200 });
+    this.drillMatGroup = new DrillMatGroup(this);
+    // new EditingPanel(this).edit(this.drillMatGroup.children[0]);
   }
 
   setupKeyboard(): void {
@@ -222,5 +226,22 @@ export class MainScene extends Phaser.Scene {
     group.children.entries.forEach(
       (child) => { child.update(); }
     );
+  }
+
+  spawnFromType(type: EntityType, x: number, y: number, config: any) {
+    switch (type) {
+      case EntityType.DrillMat:
+        return this.drillMatGroup.createDrillMat(x, y, config);
+      case EntityType.DigSaw:
+        return this.digSawGroup.createDigSaw(x, y, config);
+      case EntityType.RockMelter:
+        return this.rockMelterGroup.createRockMelter(x, y, config);
+      case EntityType.DoubleDrill:
+        return this.doubleDrillsGroup.createDrills(x, y, config);
+      case EntityType.DrillPillar:
+        return this.drillPillarGroup.createPillar(x, y, config);
+      default:
+        throw `Type ${type} is unknown`;
+    }
   }
 }

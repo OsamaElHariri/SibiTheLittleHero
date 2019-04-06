@@ -1,7 +1,9 @@
 import { PlatformGroup } from "../platforms/platformGroup";
 import { Platform } from "../platforms/platform";
+import { EntityType } from "../entityType";
 
 export class DrillPillar extends Phaser.GameObjects.Container {
+    entityType: EntityType = EntityType.DrillPillar;
 
     private platforms: PlatformGroup;
     private overgroundGroup: Phaser.GameObjects.Group;
@@ -18,9 +20,12 @@ export class DrillPillar extends Phaser.GameObjects.Container {
 
     private encounteredPlatforms = {};
 
+    config: DrillPillarConfigs;
+
     constructor(scene: Phaser.Scene, x: number, y: number, platformGroup: PlatformGroup,
-        config: { numberOfBodySegments?: number, isVertical?: boolean }) {
+        config: DrillPillarConfigs) {
         super(scene, x, y);
+        this.config = config;
         this.scene.add.existing(this);
         this.platforms = platformGroup;
         this.setDepth(4);
@@ -148,5 +153,16 @@ export class DrillPillar extends Phaser.GameObjects.Container {
     destroy() {
         this.removeAll(true);
         super.destroy();
+    }
+}
+
+
+export class DrillPillarConfigs {
+    numberOfBodySegments: number = 10;
+    isVertical: boolean = false;
+    constructor(configs?: { numberOfBodySegments?: number, isVertical?: boolean }) {
+        configs = configs || {};
+        this.numberOfBodySegments = configs.numberOfBodySegments || this.numberOfBodySegments;
+        this.isVertical = configs.isVertical || this.isVertical;
     }
 }
