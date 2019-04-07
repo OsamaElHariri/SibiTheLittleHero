@@ -41,6 +41,10 @@ export class EditingPanel extends Phaser.GameObjects.Container {
         scene.getSpawnedEntities().forEach(gameObject => {
             this.setObjectInteractive(gameObject);
         });
+
+        let playerFolder: dat.GUI = this.gui.addFolder('Player');
+        playerFolder.add(scene.playerSpawnPosition, 'x');
+        playerFolder.add(scene.playerSpawnPosition, 'y');
     }
 
     setObjectInteractive(gameObject) {
