@@ -12,8 +12,8 @@ import { DrillPillarGroup } from '../entities/physicsGroups/drillPillar/drillPil
 import { EditingPanel } from '../helpers/levelEditor/editingPanel';
 import { DrillMatGroup } from '../entities/physicsGroups/drillMat/drillMatGroup';
 import { EntityType } from '../entities/physicsGroups/entityType';
-import * as testLevel from "../levels/testLevel.json";
 import { JsonHandler } from '../helpers/levelEditor/jsonHandler';
+import * as testLevel from "../levels/testLevel.json";
 
 export class MainScene extends Phaser.Scene {
 
@@ -112,7 +112,6 @@ export class MainScene extends Phaser.Scene {
     this.data.set('OverGroundHostileGroup', this.add.group({ runChildUpdate: true }));
     this.data.set('UnderGroundHostileGroup', this.add.group({ runChildUpdate: true }));
 
-    
     this.setupKeyboard();
     this.createPlatforms();
     this.createRockMelters();
@@ -121,15 +120,12 @@ export class MainScene extends Phaser.Scene {
     this.createDrillPillars();
     this.createDrillMats();
     this.miscGroup = this.add.group();
-
-    // console.log(new JsonHandler(this).saveAsJson());
     new JsonHandler(this).instantiateFromJson(testLevel);
-    
     this.spawnPlayer();
-    this.cameraZoomTriggers = this.add.group({
-      runChildUpdate: true
-    });
 
+    // this.cameraZoomTriggers = this.add.group({
+    //   runChildUpdate: true
+    // });
     // this.cameraZoomTriggers.add(new CameraZoomInZone({ scene: this, x: 300, y: 450, camTarget: this.cameraTarget }));
 
     this.miscGroup.add(this.cameraTarget);

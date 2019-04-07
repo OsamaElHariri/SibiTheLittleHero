@@ -1,5 +1,6 @@
 import { MainScene } from "../../scenes/mainScene";
 import { EntityType } from "../../entities/physicsGroups/entityType";
+import { JsonDownload } from "./jsonDownload";
 
 export class JsonHandler {
     private mainScene: MainScene;
@@ -14,7 +15,11 @@ export class JsonHandler {
         });
     }
 
-    saveAsJson() {
+    downloadLevelJson(levelName?: string) {
+        JsonDownload.download(this.saveAsJson(), levelName);
+    }
+
+    saveAsJson(): any {
         return {
             playerSpawnPosition: this.getPlayerSpawnPosition(),
             objects: this.encodeGroups()

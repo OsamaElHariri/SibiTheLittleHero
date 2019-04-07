@@ -1,5 +1,4 @@
 import { DrillMat, DrillMatConfigs } from "./drillMat";
-import { Direction } from "../../../helpers/enums/direction";
 
 export class DrillMatGroup extends Phaser.GameObjects.Group {
     constructor(scene: Phaser.Scene) {

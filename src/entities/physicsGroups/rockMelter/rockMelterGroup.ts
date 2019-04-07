@@ -5,7 +5,7 @@ export class RockMelterGroup extends Phaser.GameObjects.Group {
     private platformGroup: PlatformGroup;
 
     constructor(scene: Phaser.Scene, platformGroup: PlatformGroup) {
-        super(scene, [], { runChildUpdate: true });
+        super(scene);
         this.platformGroup = platformGroup;
     }
 
