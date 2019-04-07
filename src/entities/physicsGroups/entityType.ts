@@ -1,5 +1,6 @@
 export enum EntityType {
-    DrillMat = 1,
+    Platform = 1,
+    DrillMat,
     DigSaw,
     RockMelter,
     DoubleDrill,

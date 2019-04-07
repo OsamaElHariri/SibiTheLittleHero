@@ -7,7 +7,6 @@ export class DrillPillarGroup extends Phaser.GameObjects.Group {
     constructor(scene: Phaser.Scene, platformGroup: PlatformGroup) {
         super(scene);
         this.platformGroup = platformGroup;
-        this.createPillar(-50, 50, new DrillPillarConfigs({ numberOfBodySegments: 12 }));
     }
 
     createPillar(x: number, y: number, config: DrillPillarConfigs): DrillPillar {

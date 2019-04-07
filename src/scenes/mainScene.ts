@@ -9,9 +9,11 @@ import { RockMelterGroup } from '../entities/physicsGroups/rockMelter/rockMelter
 import { DoubleDrillsGroup } from '../entities/physicsGroups/doubleDrills/doubleDrillsGroup';
 import { Dialog } from '../entities/ui/dialog/dialog';
 import { DrillPillarGroup } from '../entities/physicsGroups/drillPillar/drillPillarGroup';
-import { EditingPanel } from '../helpers/level_editor/editingPanel';
+import { EditingPanel } from '../helpers/levelEditor/editingPanel';
 import { DrillMatGroup } from '../entities/physicsGroups/drillMat/drillMatGroup';
 import { EntityType } from '../entities/physicsGroups/entityType';
+import * as testLevel from "../levels/testLevel.json";
+import { JsonHandler } from '../helpers/levelEditor/jsonHandler';
 
 export class MainScene extends Phaser.Scene {
 
@@ -20,16 +22,20 @@ export class MainScene extends Phaser.Scene {
   player: BurrowingSibi;
   cursors: InputKeys;
 
-  private platformGroup: PlatformGroup;
+  playerSpawnPosition: { x: number, y: number } = { x: 250, y: -100 };
+
+  platformGroup: PlatformGroup;
+  digSawGroup: DigSawGroup;
+  rockMelterGroup: RockMelterGroup;
+  drillPillarGroup: DrillPillarGroup;
+  drillMatGroup: DrillMatGroup;
+  doubleDrillsGroup: DoubleDrillsGroup;
+
+
   private trackIntersectionGroup: TrackIntersectionGroup;
-  private digSawGroup: DigSawGroup;
   private cameraZoomTriggers: Phaser.GameObjects.Group;
   private cameraTarget: CameraTarget;
-  private rockMelterGroup: RockMelterGroup;
-  private drillPillarGroup: DrillPillarGroup;
-  private drillMatGroup: DrillMatGroup;
 
-  private doubleDrillsGroup: DoubleDrillsGroup;
 
   constructor() {
     super({
@@ -106,16 +112,20 @@ export class MainScene extends Phaser.Scene {
     this.data.set('OverGroundHostileGroup', this.add.group({ runChildUpdate: true }));
     this.data.set('UnderGroundHostileGroup', this.add.group({ runChildUpdate: true }));
 
-    this.miscGroup = this.add.group();
-
+    
     this.setupKeyboard();
     this.createPlatforms();
-    this.spawnPlayer();
     this.createRockMelters();
     this.createSaws();
     this.createDrills();
     this.createDrillPillars();
     this.createDrillMats();
+    this.miscGroup = this.add.group();
+
+    // console.log(new JsonHandler(this).saveAsJson());
+    new JsonHandler(this).instantiateFromJson(testLevel);
+    
+    this.spawnPlayer();
     this.cameraZoomTriggers = this.add.group({
       runChildUpdate: true
     });
@@ -163,35 +173,16 @@ export class MainScene extends Phaser.Scene {
     });
   }
 
+  setupKeyboard(): void {
+    InputKeys.setKeyboard(this.input.keyboard);
+  }
+
   createPlatforms(): void {
     this.trackIntersectionGroup = new TrackIntersectionGroup(this);
     this.platformGroup = new PlatformGroup(this, this.trackIntersectionGroup);
   }
   createRockMelters(): void {
     this.rockMelterGroup = new RockMelterGroup(this, this.platformGroup);
-  }
-
-  spawnPlayer() {
-    this.anims.create({
-      key: 'Idle',
-      frames: this.anims.generateFrameNumbers('SibiIdle', { start: 0, end: 24 }),
-      frameRate: 20,
-      repeat: -1
-    });
-
-    this.player = new BurrowingSibi({
-      scene: this,
-      x: 250,
-      y: -100,
-      platforms: this.platformGroup,
-      trackIntersectionGroup: this.trackIntersectionGroup
-    });
-    this.miscGroup.add(this.player);
-
-    if (!this.cameraTarget)
-      this.cameraTarget = new CameraTarget(this, this.player.body);
-    else
-      this.cameraTarget.setTarget(this.player);
   }
 
   createSaws(): void {
@@ -208,11 +199,29 @@ export class MainScene extends Phaser.Scene {
 
   createDrillMats(): void {
     this.drillMatGroup = new DrillMatGroup(this);
-    // new EditingPanel(this).edit(this.drillMatGroup.children[0]);
   }
 
-  setupKeyboard(): void {
-    InputKeys.setKeyboard(this.input.keyboard);
+  spawnPlayer() {
+    this.anims.create({
+      key: 'Idle',
+      frames: this.anims.generateFrameNumbers('SibiIdle', { start: 0, end: 24 }),
+      frameRate: 20,
+      repeat: -1
+    });
+
+    this.player = new BurrowingSibi({
+      scene: this,
+      x: this.playerSpawnPosition.x,
+      y: this.playerSpawnPosition.y,
+      platforms: this.platformGroup,
+      trackIntersectionGroup: this.trackIntersectionGroup
+    });
+    this.miscGroup.add(this.player);
+
+    if (!this.cameraTarget)
+      this.cameraTarget = new CameraTarget(this, this.player.body);
+    else
+      this.cameraTarget.setTarget(this.player);
   }
 
   update(): void {
@@ -230,6 +239,8 @@ export class MainScene extends Phaser.Scene {
 
   spawnFromType(type: EntityType, x: number, y: number, config: any) {
     switch (type) {
+      case EntityType.Platform:
+        return this.platformGroup.createPlatform(x, y, config);
       case EntityType.DrillMat:
         return this.drillMatGroup.createDrillMat(x, y, config);
       case EntityType.DigSaw:

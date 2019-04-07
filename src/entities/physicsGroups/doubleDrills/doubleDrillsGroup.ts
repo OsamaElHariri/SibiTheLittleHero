@@ -7,7 +7,6 @@ export class DoubleDrillsGroup extends Phaser.GameObjects.Group {
     constructor(scene: Phaser.Scene, platformGroup: PlatformGroup) {
         super(scene);
         this.platformGroup = platformGroup;
-        this.createDrills(-80, -50, new DoubleDrillConfigs({ numberOfDrills: 3 }));
     }
 
     createDrills(x: number, y: number, config: DoubleDrillConfigs): DoubleDrills {

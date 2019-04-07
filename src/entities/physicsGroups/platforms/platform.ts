@@ -2,8 +2,9 @@ import { UndergroundTrack } from '../../../helpers/underground/undergroundTrack'
 import { Rectangle } from '../../../helpers/shapes/rectangle';
 import { Direction } from '../../../helpers/enums/direction';
 import { TrackIntersectionGroup } from '../intersection/trackIntersectionGroup';
+import { EntityType } from '../entityType';
 export class Platform extends Phaser.GameObjects.Rectangle {
-
+    entityType: EntityType = EntityType.Platform;
     spriteMask: Phaser.Display.Masks.BitmapMask;
 
     readonly topTrack: UndergroundTrack;
@@ -18,8 +19,14 @@ export class Platform extends Phaser.GameObjects.Rectangle {
 
     private spawnedObjects = [];
 
-    constructor(scene: Phaser.Scene, x: number, y: number, width: number, height: number, intersectionsGroup?: TrackIntersectionGroup) {
-        super(scene, x, y, width, height, 0x6d541d);
+    config: PlatformConfigs;
+
+    constructor(scene: Phaser.Scene, x: number, y: number,
+        config: PlatformConfigs, intersectionsGroup?: TrackIntersectionGroup) {
+        super(scene, x, y, config.width, config.height, 0x6d541d);
+        this.config = config;
+        let width: number = config.width;
+        let height: number = config.height;
         this.depth = 1;
 
         this.topTrack = new UndergroundTrack({ minBound: x, maxBound: x + width, constantAxisPosition: y, direction: Direction.Up });
@@ -144,5 +151,15 @@ export class Platform extends Phaser.GameObjects.Rectangle {
             obj.destroy();
         });
         super.destroy()
+    }
+}
+
+export class PlatformConfigs {
+    width: number = 100;
+    height: number = 100;
+    constructor(configs?: { width?: number, height?: number }) {
+        configs = configs || {};
+        this.width = configs.width || this.width;
+        this.height = configs.height || this.height;
     }
 }

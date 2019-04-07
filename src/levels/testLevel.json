@@ -1,0 +1,164 @@
+{
+    "playerSpawnPosition": {
+        "x": 250,
+        "y": -100
+    },
+    "objects": [
+        {
+            "x": 0,
+            "y": 568,
+            "config": {
+                "width": 800,
+                "height": 150
+            },
+            "type": 1
+        },
+        {
+            "x": 600,
+            "y": 400,
+            "config": {
+                "width": 400,
+                "height": 150
+            },
+            "type": 1
+        },
+        {
+            "x": -100,
+            "y": -50,
+            "config": {
+                "width": 150,
+                "height": 200
+            },
+            "type": 1
+        },
+        {
+            "x": -400,
+            "y": -50,
+            "config": {
+                "width": 150,
+                "height": 200
+            },
+            "type": 1
+        },
+        {
+            "x": 750,
+            "y": 220,
+            "config": {
+                "width": 400,
+                "height": 150
+            },
+            "type": 1
+        },
+        {
+            "x": 50,
+            "y": 150,
+            "config": {
+                "width": 400,
+                "height": 150
+            },
+            "type": 1
+        },
+        {
+            "x": 470,
+            "y": 0,
+            "config": {
+                "width": 400,
+                "height": 150
+            },
+            "type": 1
+        },
+        {
+            "x": 940,
+            "y": -150,
+            "config": {
+                "width": 400,
+                "height": 150
+            },
+            "type": 1
+        },
+        {
+            "x": 150,
+            "y": -100,
+            "config": {
+                "clockwise": false,
+                "initialDirection": 2
+            },
+            "type": 3
+        },
+        {
+            "x": 125,
+            "y": -300,
+            "config": {
+                "dropInterval": 600
+            },
+            "type": 4
+        },
+        {
+            "x": 375,
+            "y": -300,
+            "config": {
+                "dropInterval": 600
+            },
+            "type": 4
+        },
+        {
+            "x": 545,
+            "y": -450,
+            "config": {
+                "dropInterval": 600
+            },
+            "type": 4
+        },
+        {
+            "x": 795,
+            "y": -450,
+            "config": {
+                "dropInterval": 600
+            },
+            "type": 4
+        },
+        {
+            "x": 1015,
+            "y": -600,
+            "config": {
+                "dropInterval": 600
+            },
+            "type": 4
+        },
+        {
+            "x": 1265,
+            "y": -600,
+            "config": {
+                "dropInterval": 600
+            },
+            "type": 4
+        },
+        {
+            "x": -50,
+            "y": 50,
+            "config": {
+                "numberOfBodySegments": 12,
+                "isVertical": false
+            },
+            "type": 6
+        },
+        {
+            "x": 50,
+            "y": 50,
+            "config": {
+                "width": 100,
+                "direction": 4
+            },
+            "type": 2
+        },
+        {
+            "x": -80,
+            "y": -50,
+            "config": {
+                "direction": 1,
+                "numberOfDrills": 3
+            },
+            "type": 5
+        }
+    ]
+}
