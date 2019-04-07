@@ -67,6 +67,7 @@ export class RockMelter extends Phaser.GameObjects.Sprite {
     }
 
     spawnMoltenball(): void {
+        if (!this.scene) return;
         this.moltenball = this.scene.add.sprite(this.x - 5, this.y + 50, 'MoltenBall');
         this.moltenball.setScale(0);
         this.tween = this.scene.add.tween({
@@ -103,6 +104,7 @@ export class RockMelter extends Phaser.GameObjects.Sprite {
     }
 
     spawnMoltenPubble(x: number, y: number) {
+        if (!this.scene) return;
         this.hasSpawnedPuddle = true;
         let puddle: Phaser.GameObjects.Sprite = this.scene.add.sprite(x, y + 2, 'MoltenPuddle').setDepth(2).play('MoltenPuddleMovement');
         this.spawnedObjects.push(puddle);

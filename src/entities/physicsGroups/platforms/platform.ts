@@ -41,15 +41,15 @@ export class Platform extends Phaser.GameObjects.Rectangle {
             this.setupIntersections(intersectionsGroup);
 
 
-        this.setInteractive();
-        this.on('pointerdown', () => {
-            let x: number = this.scene.input.mousePointer.worldX;
-            let y: number = this.scene.input.mousePointer.worldY;
-            console.log(`pointer down ${x}, ${y}`);
-        });
-        this.on('pointerup', () => {
-            console.log('pointer up');
-        });
+        // this.setInteractive();
+        // this.on('pointerdown', () => {
+        //     let x: number = this.scene.input.mousePointer.worldX;
+        //     let y: number = this.scene.input.mousePointer.worldY;
+        //     console.log(`pointer down ${x}, ${y}`);
+        // });
+        // this.on('pointerup', () => {
+        //     console.log('pointer up');
+        // });
 
         this.setOrigin(0, 0);
         this.scene.add.existing(this);
@@ -87,7 +87,7 @@ export class Platform extends Phaser.GameObjects.Rectangle {
     }
 
     setupTopLeftIntersection(intersectionGroup: TrackIntersectionGroup): void {
-        intersectionGroup.createIntersection({
+        let intersection = intersectionGroup.createIntersection({
             x: this.x,
             y: this.y,
             width: this.intersectionWidths,
@@ -96,10 +96,11 @@ export class Platform extends Phaser.GameObjects.Rectangle {
                 rightTrack: this.topTrack,
                 bottomTrack: this.leftTrack
             });
+        this.spawnedObjects.push(intersection);
     }
 
     setupTopRightIntersection(intersectionGroup: TrackIntersectionGroup): void {
-        intersectionGroup.createIntersection({
+        let intersection = intersectionGroup.createIntersection({
             x: this.x + this.width,
             y: this.y,
             width: this.intersectionWidths,
@@ -108,10 +109,11 @@ export class Platform extends Phaser.GameObjects.Rectangle {
                 leftTrack: this.topTrack,
                 bottomTrack: this.rightTrack
             });
+        this.spawnedObjects.push(intersection);
     }
 
     setupBottomLeftIntersection(intersectionGroup: TrackIntersectionGroup): void {
-        intersectionGroup.createIntersection({
+        let intersection = intersectionGroup.createIntersection({
             x: this.x,
             y: this.y + this.height,
             width: this.intersectionWidths,
@@ -120,10 +122,11 @@ export class Platform extends Phaser.GameObjects.Rectangle {
                 topTrack: this.leftTrack,
                 rightTrack: this.bottomTrack
             });
+        this.spawnedObjects.push(intersection);
     }
 
     setupBottomRightIntersection(intersectionGroup: TrackIntersectionGroup): void {
-        intersectionGroup.createIntersection({
+        let intersection = intersectionGroup.createIntersection({
             x: this.x + this.width,
             y: this.y + this.height,
             width: this.intersectionWidths,
@@ -132,6 +135,7 @@ export class Platform extends Phaser.GameObjects.Rectangle {
                 topTrack: this.rightTrack,
                 leftTrack: this.bottomTrack
             });
+        this.spawnedObjects.push(intersection);
     }
 
     getTrack(collider: Rectangle): UndergroundTrack {

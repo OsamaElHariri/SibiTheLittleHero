@@ -93,7 +93,7 @@ export class MainScene extends Phaser.Scene {
   }
 
   create(): void {
-    new EditingPanel(this).edit({});
+    new EditingPanel(this);
     let dialog = new Dialog(this, [{
       key: 'Sibi',
       x: 100,

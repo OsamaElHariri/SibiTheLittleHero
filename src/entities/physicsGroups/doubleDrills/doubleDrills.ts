@@ -174,6 +174,7 @@ export class DoubleDrills extends Phaser.GameObjects.Rectangle {
     }
 
     startMoveUp(): void {
+        if (!this.scene) return;
         this.moveUp = true;
         this.overgroundGroup.add(this.hitBox);
         this.timeEvent = this.scene.time.addEvent({
@@ -195,6 +196,7 @@ export class DoubleDrills extends Phaser.GameObjects.Rectangle {
     }
 
     startMoveDown(): void {
+        if (!this.scene) return;
         this.moveDown = true;
         this.undergroundGroup.add(this.hitBox);
         this.timeEvent = this.scene.time.addEvent({
@@ -226,8 +228,8 @@ export class DoubleDrills extends Phaser.GameObjects.Rectangle {
 }
 
 export class DoubleDrillConfigs {
-    direction: Direction = Direction.Up;
     numberOfDrills: number = 5;
+    direction: Direction = Direction.Up;
     constructor(configs?: { direction?: Direction, numberOfDrills?: number }) {
         configs = configs || {};
         this.direction = configs.direction || this.direction;

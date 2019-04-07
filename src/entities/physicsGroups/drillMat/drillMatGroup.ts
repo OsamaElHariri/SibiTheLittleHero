@@ -5,8 +5,8 @@ export class DrillMatGroup extends Phaser.GameObjects.Group {
         super(scene);
     }
 
-    createDrillMat(x: number, y: number, config: DrillMatConfigs): DrillMat {
-        let drillMat: DrillMat = new DrillMat(this.scene, x, y, config);
+    createDrillMat(x: number, y: number, config): DrillMat {
+        let drillMat: DrillMat = new DrillMat(this.scene, x, y, new DrillMatConfigs(config));
         this.add(drillMat);
         return drillMat;
     }

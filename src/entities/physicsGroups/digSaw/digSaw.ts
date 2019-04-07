@@ -104,14 +104,14 @@ export class DigSaw extends Phaser.GameObjects.Sprite {
         } else {
             this.bottomDigAreaOffset = { x: -64, y: 42 }
             this.leftDigAreaOffset = { x: -42, y: -64 }
-            this.topDigAreaOffset = { x: -64, y: -42 }
+            this.topDigAreaOffset = { x: 64, y: -42 }
             this.rightDigAreaOffset = { x: 42, y: 64 }
         }
 
-        this.spawnedObjects.push(this.bottomDigAreaOffset,
-            this.leftDigAreaOffset,
-            this.topDigAreaOffset,
-            this.rightDigAreaOffset);
+        this.spawnedObjects.push(this.bottomDigArea,
+            this.leftDigArea,
+            this.topDigArea,
+            this.rightDigArea);
     }
 
     update(): void {
