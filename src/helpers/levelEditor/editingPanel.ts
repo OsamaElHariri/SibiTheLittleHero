@@ -2,15 +2,18 @@ import * as dat from 'dat.gui';
 import { MainScene } from '../../scenes/mainScene';
 import { EntityType } from '../../entities/physicsGroups/entityType';
 import { JsonHandler } from './jsonHandler';
+import { LevelEditor } from './levelEditor';
 
 export class EditingPanel extends Phaser.GameObjects.Container {
     private gui: dat.GUI;
     private objectFolder: dat.GUI;
     private editingObject;
     private mainScene: MainScene;
-    constructor(scene: MainScene) {
+    private levelEditor: LevelEditor;
+    constructor(scene: MainScene, levelEditor: LevelEditor) {
         super(scene);
         this.mainScene = scene;
+        this.levelEditor = levelEditor;
         this.gui = new dat.GUI();
 
         let spawnObjectsFolder: dat.GUI = this.gui.addFolder('Spawn Object');
@@ -20,7 +23,7 @@ export class EditingPanel extends Phaser.GameObjects.Container {
             spawnObjectsFolder.add({
                 spawn: () => {
                     let type = Number(key);
-                    let newObj = scene.spawnFromType(type, 0, 0, {});
+                    let newObj = scene.spawnFromType(type, levelEditor.x, levelEditor.y, {});
                     this.setObjectInteractive(newObj);
                     this.edit(newObj);
                 }
@@ -49,7 +52,7 @@ export class EditingPanel extends Phaser.GameObjects.Container {
 
     setObjectInteractive(gameObject) {
         gameObject.setInteractive();
-        gameObject.on('pointerdown', () => {
+        gameObject.on('pointerup', () => {
             this.edit(gameObject);
         })
     }
@@ -60,20 +63,36 @@ export class EditingPanel extends Phaser.GameObjects.Container {
         this.objectFolder = this.gui.addFolder('Edit Object');
         this.objectFolder.open();
         if (gameObject.x == 0 || gameObject.x) {
-            this.objectFolder.add(gameObject, 'x').onChange(() => this.onSelectedObjectUpdate(this.mainScene));
+            this.objectFolder.add(gameObject, 'x').onChange(() => this.onSelectedObjectUpdate());
         }
         if (gameObject.y == 0 || gameObject.y) {
-            this.objectFolder.add(gameObject, 'y').onChange(() => this.onSelectedObjectUpdate(this.mainScene));
+            this.objectFolder.add(gameObject, 'y').onChange(() => this.onSelectedObjectUpdate());
         }
         if (gameObject.config) {
             let keys: string[] = Object.keys(gameObject.config);
             keys.forEach((key: string) => {
-                this.objectFolder.add(gameObject.config, key).onChange(() => this.onSelectedObjectUpdate(this.mainScene));
+                this.objectFolder.add(gameObject.config, key).onChange(() => this.onSelectedObjectUpdate());
             });
         }
+
+        this.objectFolder.add({
+            focus: () => {
+                if (this.editingObject)
+                    this.levelEditor.setPosition(this.editingObject.x, this.editingObject.y);
+            }
+        }, 'focus').name('Focus');
+
+        this.objectFolder.add({
+            delete: () => {
+                if (gameObject && gameObject.destroy) gameObject.destroy();
+                this.editingObject = null;
+            }
+        }, 'delete').name('Delete');
+
+
     }
 
-    private onSelectedObjectUpdate(mainScene: MainScene) {
+    private onSelectedObjectUpdate() {
         let tempCurrentEditingObject = this.editingObject;
         let type: EntityType = this.editingObject.entityType;
         let x: number = this.editingObject.xOriginal || this.editingObject.x;

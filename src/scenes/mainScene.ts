@@ -9,11 +9,11 @@ import { RockMelterGroup } from '../entities/physicsGroups/rockMelter/rockMelter
 import { DoubleDrillsGroup } from '../entities/physicsGroups/doubleDrills/doubleDrillsGroup';
 import { Dialog } from '../entities/ui/dialog/dialog';
 import { DrillPillarGroup } from '../entities/physicsGroups/drillPillar/drillPillarGroup';
-import { EditingPanel } from '../helpers/levelEditor/editingPanel';
 import { DrillMatGroup } from '../entities/physicsGroups/drillMat/drillMatGroup';
 import { EntityType } from '../entities/physicsGroups/entityType';
 import { JsonHandler } from '../helpers/levelEditor/jsonHandler';
 import * as testLevel from "../levels/testLevel.json";
+import { LevelEditor } from '../helpers/levelEditor/levelEditor';
 
 export class MainScene extends Phaser.Scene {
 
@@ -31,11 +31,10 @@ export class MainScene extends Phaser.Scene {
   drillMatGroup: DrillMatGroup;
   doubleDrillsGroup: DoubleDrillsGroup;
 
+  cameraTarget: CameraTarget;
 
   private trackIntersectionGroup: TrackIntersectionGroup;
   private cameraZoomTriggers: Phaser.GameObjects.Group;
-  private cameraTarget: CameraTarget;
-
 
   constructor() {
     super({
@@ -123,7 +122,7 @@ export class MainScene extends Phaser.Scene {
     new JsonHandler(this).instantiateFromJson(testLevel);
     this.spawnPlayer();
 
-    new EditingPanel(this);
+    this.miscGroup.add(new LevelEditor(this));
 
     // this.cameraZoomTriggers = this.add.group({
     //   runChildUpdate: true
