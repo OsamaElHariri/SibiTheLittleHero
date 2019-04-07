@@ -46,8 +46,8 @@ export class JsonHandler {
         if (!gameObject.entityType) return null;
         let encodedObject: EncodedGameObject = new EncodedGameObject();
         encodedObject.type = gameObject.entityType;
-        if (gameObject.x) encodedObject.x = gameObject.x;
-        if (gameObject.y) encodedObject.y = gameObject.y;
+        if (gameObject.xOriginal || gameObject.x) encodedObject.x = gameObject.xOriginal || gameObject.x;
+        if (gameObject.yOriginal || gameObject.y) encodedObject.y = gameObject.yOriginal || gameObject.y;
         if (gameObject.config) encodedObject.config = gameObject.config;
         return encodedObject;
     }
