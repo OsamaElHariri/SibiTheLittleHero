@@ -93,7 +93,6 @@ export class MainScene extends Phaser.Scene {
   }
 
   create(): void {
-    new EditingPanel(this);
     let dialog = new Dialog(this, [{
       key: 'Sibi',
       x: 100,
@@ -123,6 +122,8 @@ export class MainScene extends Phaser.Scene {
     this.miscGroup = this.add.group();
     new JsonHandler(this).instantiateFromJson(testLevel);
     this.spawnPlayer();
+
+    new EditingPanel(this);
 
     // this.cameraZoomTriggers = this.add.group({
     //   runChildUpdate: true
@@ -251,5 +252,16 @@ export class MainScene extends Phaser.Scene {
       default:
         throw `Type ${type} is unknown`;
     }
+  }
+
+  getSpawnedEntities(): any[] {
+    let allEntities = [];
+    allEntities = allEntities.concat(this.platformGroup.children.getArray());
+    allEntities = allEntities.concat(this.digSawGroup.children.getArray());
+    allEntities = allEntities.concat(this.rockMelterGroup.children.getArray());
+    allEntities = allEntities.concat(this.drillPillarGroup.children.getArray());
+    allEntities = allEntities.concat(this.drillMatGroup.children.getArray());
+    allEntities = allEntities.concat(this.doubleDrillsGroup.children.getArray());
+    return allEntities
   }
 }

@@ -22,7 +22,7 @@ export class JsonHandler {
     saveAsJson(): any {
         return {
             playerSpawnPosition: this.getPlayerSpawnPosition(),
-            objects: this.encodeGroups()
+            objects: this.encodeAll()
         }
     }
 
@@ -33,20 +33,9 @@ export class JsonHandler {
         }
     }
 
-    private encodeGroups(): EncodedGameObject[] {
-        let allEncoded: EncodedGameObject[] = [];
-        allEncoded = allEncoded.concat(this.encodeAll(this.mainScene.platformGroup.children.getArray()));
-        allEncoded = allEncoded.concat(this.encodeAll(this.mainScene.digSawGroup.children.getArray()));
-        allEncoded = allEncoded.concat(this.encodeAll(this.mainScene.rockMelterGroup.children.getArray()));
-        allEncoded = allEncoded.concat(this.encodeAll(this.mainScene.drillPillarGroup.children.getArray()));
-        allEncoded = allEncoded.concat(this.encodeAll(this.mainScene.drillMatGroup.children.getArray()));
-        allEncoded = allEncoded.concat(this.encodeAll(this.mainScene.doubleDrillsGroup.children.getArray()));
-        return allEncoded
-    }
-
-    private encodeAll(gameObjects): EncodedGameObject[] {
+    private encodeAll(): EncodedGameObject[] {
         let encodedObjects: EncodedGameObject[] = [];
-        gameObjects.forEach(gameObject => {
+        this.mainScene.getSpawnedEntities().forEach(gameObject => {
             let encodedObject: EncodedGameObject = this.encodeGameObject(gameObject);
             if (encodedObject) encodedObjects.push(encodedObject);
         });

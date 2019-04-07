@@ -4,7 +4,6 @@ import { EntityType } from '../../entities/physicsGroups/entityType';
 import { JsonHandler } from './jsonHandler';
 
 export class EditingPanel extends Phaser.GameObjects.Container {
-    private ok = 'ok';
     private gui: dat.GUI;
     private objectFolder: dat.GUI;
     private editingObject;
@@ -21,7 +20,9 @@ export class EditingPanel extends Phaser.GameObjects.Container {
             spawnObjectsFolder.add({
                 spawn: () => {
                     let type = Number(key);
-                    this.edit(scene.spawnFromType(type, 0, 0, {}));
+                    let newObj = scene.spawnFromType(type, 0, 0, {});
+                    this.setObjectInteractive(newObj);
+                    this.edit(newObj);
                 }
             }, 'spawn').name(EntityType[key]);
         });
@@ -37,11 +38,20 @@ export class EditingPanel extends Phaser.GameObjects.Container {
         saveFolder.add(saveObject, 'filename');
         saveFolder.add(saveObject, 'onSave').name('Download');
 
+        scene.getSpawnedEntities().forEach(gameObject => {
+            this.setObjectInteractive(gameObject);
+        });
+    }
+
+    setObjectInteractive(gameObject) {
+        gameObject.setInteractive();
+        gameObject.on('pointerdown', () => {
+            this.edit(gameObject);
+        })
     }
 
     edit(gameObject) {
         if (this.objectFolder) this.gui.removeFolder(this.objectFolder);
-        if (this.editingObject && this.editingObject.destroy) this.editingObject.destroy();
         this.editingObject = gameObject;
         this.objectFolder = this.gui.addFolder('Edit Object');
         this.objectFolder.open();
@@ -61,8 +71,11 @@ export class EditingPanel extends Phaser.GameObjects.Container {
 
     private onSelectedObjectUpdate(mainScene: MainScene) {
         let tempCurrentEditingObject = this.editingObject;
-        let newObj = this.mainScene.spawnFromType(this.editingObject.entityType, this.editingObject.x, this.editingObject.y, this.editingObject.config);
+        let type: EntityType = this.editingObject.entityType;
+        let x: number = this.editingObject.xOriginal || this.editingObject.x;
+        let y: number = this.editingObject.yOriginal || this.editingObject.y;
+        let newObj = this.mainScene.spawnFromType(type, x, y, this.editingObject.config);
         this.edit(newObj);
-        if (tempCurrentEditingObject.destroy) tempCurrentEditingObject.destroy();
+        if (tempCurrentEditingObject && tempCurrentEditingObject.destroy) tempCurrentEditingObject.destroy();
     }
 }

@@ -7,6 +7,8 @@ import { EntityType } from "../entityType";
 
 export class DigSaw extends Phaser.GameObjects.Sprite {
     entityType: EntityType = EntityType.DigSaw;
+    xOriginal:number;
+    yOriginal:number;
 
     private clockwise: boolean = false;
     private currentDirection: Direction = Direction.Down;
@@ -35,6 +37,8 @@ export class DigSaw extends Phaser.GameObjects.Sprite {
     constructor(scene: Phaser.Scene, x: number, y: number, platforms: PlatformGroup,
         config: DigSawConfigs) {
         super(scene, x, y, 'DigSaw');
+        this.xOriginal = x;
+        this.yOriginal = y;
         this.config = config;
         this.setDepth(4);
 

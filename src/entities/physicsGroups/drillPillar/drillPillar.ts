@@ -4,6 +4,8 @@ import { EntityType } from "../entityType";
 
 export class DrillPillar extends Phaser.GameObjects.Container {
     entityType: EntityType = EntityType.DrillPillar;
+    xOriginal: number;
+    yOriginal: number;
 
     private platforms: PlatformGroup;
     private overgroundGroup: Phaser.GameObjects.Group;
@@ -25,6 +27,8 @@ export class DrillPillar extends Phaser.GameObjects.Container {
     constructor(scene: Phaser.Scene, x: number, y: number, platformGroup: PlatformGroup,
         config: DrillPillarConfigs) {
         super(scene, x, y);
+        this.xOriginal = x;
+        this.yOriginal = y;
         this.config = config;
         this.scene.add.existing(this);
         this.platforms = platformGroup;
