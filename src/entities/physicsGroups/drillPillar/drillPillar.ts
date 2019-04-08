@@ -2,10 +2,12 @@ import { PlatformGroup } from "../platforms/platformGroup";
 import { Platform } from "../platforms/platform";
 import { EntityType } from "../entityType";
 
-export class DrillPillar extends Phaser.GameObjects.Container {
+export class DrillPillar extends Phaser.GameObjects.Rectangle {
     entityType: EntityType = EntityType.DrillPillar;
     xOriginal: number;
     yOriginal: number;
+
+    private container: Phaser.GameObjects.Container;
 
     private platforms: PlatformGroup;
     private overgroundGroup: Phaser.GameObjects.Group;
@@ -21,24 +23,26 @@ export class DrillPillar extends Phaser.GameObjects.Container {
     private direction: number = 0;
 
     private encounteredPlatforms = {};
+    private spawnedObjects = [];
 
     config: DrillPillarConfigs;
 
     constructor(scene: Phaser.Scene, x: number, y: number, platformGroup: PlatformGroup,
         config: DrillPillarConfigs) {
-        super(scene, x, y);
+        super(scene, x, y, config.isVertical ? 22 : 22 * config.numberOfBodySegments, config.isVertical ? 22 * config.numberOfBodySegments : 22);
         this.xOriginal = x;
         this.yOriginal = y;
+        this.container = this.scene.add.container(x, y).setDepth(4);
         this.config = config;
         this.scene.add.existing(this);
         this.platforms = platformGroup;
-        this.setDepth(4);
+        this.setOrigin(0, 0.5);
 
         this.overgroundGroup = this.scene.data.get('OverGroundHostileGroup');
         this.undergroundGroup = this.scene.data.get('UnderGroundHostileGroup');
 
         this.isVertical = config.isVertical;
-        if (this.isVertical) this.setAngle(90);
+        if (this.isVertical) this.container.setAngle(90);
 
         let segmentCount: number = config.numberOfBodySegments || 5
         this.constructDrills(segmentCount);
@@ -52,27 +56,27 @@ export class DrillPillar extends Phaser.GameObjects.Container {
                 this.pillarBodyWidth * i, 0, 'DrillPillarBody')
                 .setOrigin(0, 0);
             segment.anims.play('DrillBodyRotate');
-            this.add(segment);
+            this.container.add(segment);
             this.segments.push(segment);
         }
     }
 
     constructDrills(numberOfSegments: number): void {
-        this.add(
+        this.container.add(
             this.scene.add.sprite(
                 0, this.pillarBodyWidth / 2, 'MetalRod')
                 .setOrigin(0.5));
-        this.add(
+        this.container.add(
             this.scene.add.sprite(
                 numberOfSegments * this.pillarBodyWidth, this.pillarBodyWidth / 2, 'MetalRod')
                 .setOrigin(0.5));
-        this.add(
+        this.container.add(
             this.scene.add.sprite(
                 -3, this.pillarBodyWidth / 2, 'Drill')
                 .setOrigin(0.5, 1)
                 .setAngle(-90)
                 .play('DrillRotate'));
-        this.add(
+        this.container.add(
             this.scene.add.sprite(
                 numberOfSegments * this.pillarBodyWidth + 3, this.pillarBodyWidth / 2, 'Drill')
                 .setOrigin(0.5, 1)
@@ -89,14 +93,14 @@ export class DrillPillar extends Phaser.GameObjects.Container {
         this.leftCollider = this.scene.add.rectangle(-25, y, width, height).setOrigin(0);
         this.scene.physics.world.enable(this.leftCollider);
         this.leftCollider.body.setAllowGravity(false);
-        this.add(this.leftCollider);
+        this.container.add(this.leftCollider);
         this.overgroundGroup.add(this.leftCollider);
         this.undergroundGroup.add(this.leftCollider);
 
         this.rightCollider = this.scene.add.rectangle(maxWidth / 2, y, width, height).setOrigin(0);
         this.scene.physics.world.enable(this.rightCollider);
         this.rightCollider.body.setAllowGravity(false);
-        this.add(this.rightCollider);
+        this.container.add(this.rightCollider);
         this.overgroundGroup.add(this.rightCollider);
         this.undergroundGroup.add(this.rightCollider);
 
@@ -138,6 +142,7 @@ export class DrillPillar extends Phaser.GameObjects.Container {
                 .setOrigin(0, 0.2);
         }
         sprite.setDepth(3);
+        this.spawnedObjects.push(sprite);
         this.encounteredPlatforms[platformKey] = sprite;
 
 
@@ -149,13 +154,16 @@ export class DrillPillar extends Phaser.GameObjects.Container {
         } else {
             this.x += this.speed * this.direction;
         }
+        this.container.setPosition(this.x, this.y);
 
         this.direction *= 0.95;
         if (Math.abs(this.direction) < 0.25) this.direction = 0;
     }
 
     destroy() {
-        this.removeAll(true);
+        this.container.removeAll(true);
+        this.container.destroy();
+        this.spawnedObjects.forEach(obj => obj.destroy());
         super.destroy();
     }
 }
