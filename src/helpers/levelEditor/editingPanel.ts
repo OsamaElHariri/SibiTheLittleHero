@@ -62,10 +62,14 @@ export class EditingPanel extends Phaser.GameObjects.Container {
         this.editingObject = gameObject;
         this.objectFolder = this.gui.addFolder('Edit Object');
         this.objectFolder.open();
-        if (gameObject.x == 0 || gameObject.x) {
+        if (gameObject.xOriginal == 0 || gameObject.xOriginal) {
+            this.objectFolder.add(gameObject, 'xOriginal').name('x').onChange(() => this.onSelectedObjectUpdate());
+        } else if (gameObject.x == 0 || gameObject.x) {
             this.objectFolder.add(gameObject, 'x').onChange(() => this.onSelectedObjectUpdate());
         }
-        if (gameObject.y == 0 || gameObject.y) {
+        if (gameObject.yOriginal == 0 || gameObject.yOriginal) {
+            this.objectFolder.add(gameObject, 'yOriginal').name('y').onChange(() => this.onSelectedObjectUpdate());
+        } else if (gameObject.y == 0 || gameObject.y) {
             this.objectFolder.add(gameObject, 'y').onChange(() => this.onSelectedObjectUpdate());
         }
         if (gameObject.config) {
