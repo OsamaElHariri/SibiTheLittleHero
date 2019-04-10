@@ -14,6 +14,7 @@ import { EntityType } from '../entities/physicsGroups/entityType';
 import { JsonHandler } from '../helpers/levelEditor/jsonHandler';
 import * as testLevel from "../levels/testLevel.json";
 import { LevelEditor } from '../helpers/levelEditor/levelEditor';
+import { SawBeltGroup } from '../entities/physicsGroups/sawBelt/sawBeltGroup';
 
 export class MainScene extends Phaser.Scene {
 
@@ -30,6 +31,7 @@ export class MainScene extends Phaser.Scene {
   drillPillarGroup: DrillPillarGroup;
   drillMatGroup: DrillMatGroup;
   doubleDrillsGroup: DoubleDrillsGroup;
+  sawBeltGroup: SawBeltGroup;
 
   cameraTarget: CameraTarget;
 
@@ -59,6 +61,10 @@ export class MainScene extends Phaser.Scene {
 
     this.load.image('DigSaw', '../Assets/Sprites/Enemies/DigSaw/DigSaw.png');
     this.load.image('DigSawDigArea', '../Assets/Sprites/Enemies/DigSaw/DigSawDigArea.png');
+
+    this.load.image('SawBelt', '../Assets/Sprites/Enemies/SawBelt/Saw.png');
+    this.load.image('SawBeltDigArea', '../Assets/Sprites/Enemies/SawBelt/DigAreaMid.png');
+    this.load.image('SawBeltDigAreaEdge', '../Assets/Sprites/Enemies/SawBelt/DigAreaEdge.png');
 
     this.load.image('MetalRod', '../Assets/Sprites/Enemies/DrillPillar/MetalRod.png');
     this.load.image('PillarDigArea', '../Assets/Sprites/Enemies/DrillPillar/PillarDigArea.png');
@@ -118,6 +124,7 @@ export class MainScene extends Phaser.Scene {
     this.createDrills();
     this.createDrillPillars();
     this.createDrillMats();
+    this.createSawBelts();
     this.miscGroup = this.add.group();
     new JsonHandler(this).instantiateFromJson(testLevel);
     this.spawnPlayer();
@@ -136,6 +143,7 @@ export class MainScene extends Phaser.Scene {
     this.groupsNeedUpdate.push(this.rockMelterGroup);
     this.groupsNeedUpdate.push(this.doubleDrillsGroup);
     this.groupsNeedUpdate.push(this.drillPillarGroup);
+    this.groupsNeedUpdate.push(this.sawBeltGroup);
 
     this.events.on('PlayerDead', () => {
       this.spawnPlayer();
@@ -198,6 +206,10 @@ export class MainScene extends Phaser.Scene {
     this.drillMatGroup = new DrillMatGroup(this);
   }
 
+  createSawBelts(): void {
+    this.sawBeltGroup = new SawBeltGroup(this);
+  }
+
   spawnPlayer() {
     this.anims.create({
       key: 'Idle',
@@ -248,6 +260,8 @@ export class MainScene extends Phaser.Scene {
         return this.doubleDrillsGroup.createDrills(x, y, config);
       case EntityType.DrillPillar:
         return this.drillPillarGroup.createPillar(x, y, config);
+      case EntityType.SawBelt:
+        return this.sawBeltGroup.createSawBelt(x, y, config);
       default:
         throw `Type ${type} is unknown`;
     }

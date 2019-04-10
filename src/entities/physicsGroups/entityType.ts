@@ -5,4 +5,5 @@ export enum EntityType {
     RockMelter,
     DoubleDrill,
     DrillPillar,
+    SawBelt,
 }
