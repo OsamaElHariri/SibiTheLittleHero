@@ -10,6 +10,8 @@ export class EditingPanel extends Phaser.GameObjects.Container {
     private editingObject;
     private mainScene: MainScene;
     private levelEditor: LevelEditor;
+
+    private objectProperties;
     constructor(scene: MainScene, levelEditor: LevelEditor) {
         super(scene);
         this.mainScene = scene;
@@ -62,20 +64,28 @@ export class EditingPanel extends Phaser.GameObjects.Container {
         this.editingObject = gameObject;
         this.objectFolder = this.gui.addFolder('Edit Object');
         this.objectFolder.open();
+        this.objectProperties = {config: {}};
+
         if (gameObject.xOriginal == 0 || gameObject.xOriginal) {
-            this.objectFolder.add(gameObject, 'xOriginal').name('x').onChange(() => this.onSelectedObjectUpdate());
+            this.objectProperties.x = gameObject.xOriginal;
         } else if (gameObject.x == 0 || gameObject.x) {
-            this.objectFolder.add(gameObject, 'x').onChange(() => this.onSelectedObjectUpdate());
+            this.objectProperties.x = gameObject.x;
         }
+        this.objectFolder.add(this.objectProperties, 'x').onChange(() => this.onSelectedObjectUpdate());
+
         if (gameObject.yOriginal == 0 || gameObject.yOriginal) {
-            this.objectFolder.add(gameObject, 'yOriginal').name('y').onChange(() => this.onSelectedObjectUpdate());
+            this.objectProperties.y = gameObject.yOriginal;
         } else if (gameObject.y == 0 || gameObject.y) {
-            this.objectFolder.add(gameObject, 'y').onChange(() => this.onSelectedObjectUpdate());
+            this.objectProperties.y = gameObject.y;
         }
+        this.objectFolder.add(this.objectProperties, 'y').onChange(() => this.onSelectedObjectUpdate());
+
+
         if (gameObject.config) {
             let keys: string[] = Object.keys(gameObject.config);
             keys.forEach((key: string) => {
-                this.objectFolder.add(gameObject.config, key).onChange(() => this.onSelectedObjectUpdate());
+                this.objectProperties.config[key] = gameObject.config[key]
+                this.objectFolder.add(this.objectProperties.config, key).onChange(() => this.onSelectedObjectUpdate());
             });
         }
 
@@ -88,21 +98,19 @@ export class EditingPanel extends Phaser.GameObjects.Container {
 
         this.objectFolder.add({
             delete: () => {
-                if (gameObject && gameObject.destroy) gameObject.destroy();
+                if (this.editingObject && this.editingObject.destroy) this.editingObject.destroy();
                 this.editingObject = null;
             }
         }, 'delete').name('Delete');
-
-
     }
 
     private onSelectedObjectUpdate() {
         let tempCurrentEditingObject = this.editingObject;
         let type: EntityType = this.editingObject.entityType;
-        let x: number = this.editingObject.xOriginal || this.editingObject.x;
-        let y: number = this.editingObject.yOriginal || this.editingObject.y;
-        let newObj = this.mainScene.spawnFromType(type, x, y, this.editingObject.config);
-        this.edit(newObj);
+        let x: number = this.objectProperties.x;
+        let y: number = this.objectProperties.y;
+        let newObj = this.mainScene.spawnFromType(type, x, y, this.objectProperties.config);
+        this.editingObject = newObj;
         if (tempCurrentEditingObject && tempCurrentEditingObject.destroy) tempCurrentEditingObject.destroy();
     }
 }
