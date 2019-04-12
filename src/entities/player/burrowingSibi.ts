@@ -121,12 +121,10 @@ export class BurrowingSibi extends Sibi {
             this.airbornSibi.update();
 
         let objectToCheck = this.airbornSibi || this;
-        // if (objectToCheck.body) {
-            if (!objectToCheck.body.blocked.up) this.topTrack = null;
-            if (!objectToCheck.body.blocked.down) this.bottomTrack = null;
-            if (!objectToCheck.body.blocked.right) this.rightTrack = null;
-            if (!objectToCheck.body.blocked.left) this.leftTrack = null;
-        // }
+        if (!objectToCheck.body.blocked.up) this.topTrack = null;
+        if (!objectToCheck.body.blocked.down) this.bottomTrack = null;
+        if (!objectToCheck.body.blocked.right) this.rightTrack = null;
+        if (!objectToCheck.body.blocked.left) this.leftTrack = null;
         this.burrowIfPossible();
 
 

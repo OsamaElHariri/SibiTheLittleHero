@@ -38,6 +38,8 @@ export class MainScene extends Phaser.Scene {
   private trackIntersectionGroup: TrackIntersectionGroup;
   private cameraZoomTriggers: Phaser.GameObjects.Group;
 
+  private respawnDelay: number = 700;
+
   constructor() {
     super({
       key: "MainScene"
@@ -146,7 +148,13 @@ export class MainScene extends Phaser.Scene {
     this.groupsNeedUpdate.push(this.sawBeltGroup);
 
     this.events.on('PlayerDead', () => {
-      this.spawnPlayer();
+      this.time.addEvent({
+        delay: this.respawnDelay,
+        callbackScope: this,
+        callback: () => {
+          this.spawnPlayer();
+        }
+      });
     });
   }
 
