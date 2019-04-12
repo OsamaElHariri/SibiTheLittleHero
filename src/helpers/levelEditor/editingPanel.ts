@@ -50,6 +50,12 @@ export class EditingPanel extends Phaser.GameObjects.Container {
         let playerFolder: dat.GUI = this.gui.addFolder('Player');
         playerFolder.add(scene.playerSpawnPosition, 'x');
         playerFolder.add(scene.playerSpawnPosition, 'y');
+        playerFolder.add({
+            killPlayer: () => {
+                if (this.mainScene.player)
+                    this.mainScene.player.kill();
+            }
+        }, 'killPlayer').name('Reset');
     }
 
     setObjectInteractive(gameObject) {
@@ -64,7 +70,7 @@ export class EditingPanel extends Phaser.GameObjects.Container {
         this.editingObject = gameObject;
         this.objectFolder = this.gui.addFolder('Edit Object');
         this.objectFolder.open();
-        this.objectProperties = {config: {}};
+        this.objectProperties = { config: {} };
 
         if (gameObject.xOriginal == 0 || gameObject.xOriginal) {
             this.objectProperties.x = gameObject.xOriginal;
