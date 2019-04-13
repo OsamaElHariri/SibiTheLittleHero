@@ -18,7 +18,6 @@ export class DrillMat extends Phaser.GameObjects.Rectangle {
         let height: number = 15;
 
         this.config = config;
-        config.width = config.width || 100;
 
         this.scene.add.existing(this);
         this.scene.physics.world.enable(this);
@@ -35,16 +34,22 @@ export class DrillMat extends Phaser.GameObjects.Rectangle {
         let direction: Direction = config.direction || Direction.Up;
 
         switch (direction) {
+            case Direction.Up:
+                this.body.offset.y -= 7;
+                break;
             case Direction.Right:
                 this.container.angle = 90;
                 this.body.setSize(height, config.width);
+                this.body.offset.x += 7;
                 break;
             case Direction.Down:
+                this.body.offset.y += 7;
                 this.container.angle = 180;
                 break;
             case Direction.Left:
                 this.container.angle = -90;
                 this.body.setSize(height, config.width);
+                this.body.offset.x -= 7;
                 break;
         }
         this.rockParticles = this.scene.add.particles('Rock');
@@ -64,8 +69,8 @@ export class DrillMat extends Phaser.GameObjects.Rectangle {
     }
 
     spawnDrillSprites(): void {
-        this.spawnDrillRow(0.4, 1.25, 6, 0.7);
-        this.spawnDrillRow(0.5, 1.2, 0, 1);
+        this.spawnDrillRow(0.6, 1.25, 7, 0.8);
+        this.spawnDrillRow(0.7, 1.2, 0, 1);
 
     }
 
