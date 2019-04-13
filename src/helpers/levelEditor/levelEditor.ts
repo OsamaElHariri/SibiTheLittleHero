@@ -10,9 +10,16 @@ export class LevelEditor extends Phaser.GameObjects.Rectangle {
     constructor(scene: MainScene) {
         super(scene, scene.cameras.main.x, scene.cameras.main.y);
         this.mainScene = scene;
-        scene.cameraTarget.setTarget(this);
-        this.scene.cameras.main.setLerp(1);
+        this.takeCamera();
         new EditingPanel(scene, this);
+        this.scene.events.on('PlayerSpawned', () => {
+            this.takeCamera();
+        });
+    }
+
+    takeCamera() {
+        this.mainScene.cameraTarget.setTarget(this);
+        this.scene.cameras.main.setLerp(1);
     }
 
     update() {

@@ -235,10 +235,13 @@ export class MainScene extends Phaser.Scene {
     });
     this.miscGroup.add(this.player);
 
-    if (!this.cameraTarget)
+    if (!this.cameraTarget) {
       this.cameraTarget = new CameraTarget(this, this.player.body);
-    else
+    } else {
       this.cameraTarget.setTarget(this.player);
+    }
+
+    this.events.emit('PlayerSpawned');
   }
 
   update(): void {
