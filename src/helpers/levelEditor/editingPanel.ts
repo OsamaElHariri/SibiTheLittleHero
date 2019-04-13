@@ -18,20 +18,6 @@ export class EditingPanel extends Phaser.GameObjects.Container {
         this.levelEditor = levelEditor;
         this.gui = new dat.GUI();
 
-        let spawnObjectsFolder: dat.GUI = this.gui.addFolder('Spawn Object');
-
-        let keys = Object.keys(EntityType).filter(key => !isNaN(Number(key)));
-        keys.forEach(key => {
-            spawnObjectsFolder.add({
-                spawn: () => {
-                    let type = Number(key);
-                    let newObj = scene.spawnFromType(type, levelEditor.x, levelEditor.y, {});
-                    this.setObjectInteractive(newObj);
-                    this.edit(newObj);
-                }
-            }, 'spawn').name(EntityType[key]);
-        });
-
         let saveObject = {
             filename: 'sibi_level',
             onSave: function () {
@@ -62,6 +48,21 @@ export class EditingPanel extends Phaser.GameObjects.Container {
                     this.mainScene.player.kill();
             }
         }, 'killPlayer').name('Reset');
+
+        
+        let spawnObjectsFolder: dat.GUI = this.gui.addFolder('Spawn Object');
+
+        let keys = Object.keys(EntityType).filter(key => !isNaN(Number(key)));
+        keys.forEach(key => {
+            spawnObjectsFolder.add({
+                spawn: () => {
+                    let type = Number(key);
+                    let newObj = scene.spawnFromType(type, levelEditor.x, levelEditor.y, {});
+                    this.setObjectInteractive(newObj);
+                    this.edit(newObj);
+                }
+            }, 'spawn').name(EntityType[key]);
+        });
     }
 
     setObjectInteractive(gameObject) {
@@ -83,14 +84,14 @@ export class EditingPanel extends Phaser.GameObjects.Container {
         } else if (gameObject.x == 0 || gameObject.x) {
             this.objectProperties.x = gameObject.x;
         }
-        this.objectFolder.add(this.objectProperties, 'x').onChange(() => this.onSelectedObjectUpdate());
+        this.objectFolder.add(this.objectProperties, 'x').onChange(() => this.onSelectedObjectUpdate()).step(5);
 
         if (gameObject.yOriginal == 0 || gameObject.yOriginal) {
             this.objectProperties.y = gameObject.yOriginal;
         } else if (gameObject.y == 0 || gameObject.y) {
             this.objectProperties.y = gameObject.y;
         }
-        this.objectFolder.add(this.objectProperties, 'y').onChange(() => this.onSelectedObjectUpdate());
+        this.objectFolder.add(this.objectProperties, 'y').onChange(() => this.onSelectedObjectUpdate()).step(5);
 
 
         if (gameObject.config) {
@@ -109,6 +110,13 @@ export class EditingPanel extends Phaser.GameObjects.Container {
         }, 'focus').name('Focus');
 
         this.objectFolder.add({
+            duplicate: () => {
+                if (this.editingObject)
+                    this.edit(this.spawnNewromEditingObject());
+            }
+        }, 'duplicate').name('Duplicate');
+
+        this.objectFolder.add({
             delete: () => {
                 if (this.editingObject && this.editingObject.destroy) this.editingObject.destroy();
                 this.editingObject = null;
@@ -118,11 +126,17 @@ export class EditingPanel extends Phaser.GameObjects.Container {
 
     private onSelectedObjectUpdate() {
         let tempCurrentEditingObject = this.editingObject;
+        let newObj = this.spawnNewromEditingObject();
+        this.editingObject = newObj;
+        if (tempCurrentEditingObject && tempCurrentEditingObject.destroy) tempCurrentEditingObject.destroy();
+    }
+
+    private spawnNewromEditingObject() {
         let type: EntityType = this.editingObject.entityType;
         let x: number = this.objectProperties.x;
         let y: number = this.objectProperties.y;
         let newObj = this.mainScene.spawnFromType(type, x, y, this.objectProperties.config);
-        this.editingObject = newObj;
-        if (tempCurrentEditingObject && tempCurrentEditingObject.destroy) tempCurrentEditingObject.destroy();
+        this.setObjectInteractive(newObj);
+        return newObj;
     }
 }
