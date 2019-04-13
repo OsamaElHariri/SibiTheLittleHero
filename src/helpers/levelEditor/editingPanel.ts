@@ -51,6 +51,12 @@ export class EditingPanel extends Phaser.GameObjects.Container {
         playerFolder.add(scene.playerSpawnPosition, 'x');
         playerFolder.add(scene.playerSpawnPosition, 'y');
         playerFolder.add({
+            focusPlayer: () => {
+                if (this.mainScene.player)
+                    this.levelEditor.setPosition(this.mainScene.player.x, this.mainScene.player.y);
+            }
+        }, 'focusPlayer').name('Focus Player');
+        playerFolder.add({
             killPlayer: () => {
                 if (this.mainScene.player)
                     this.mainScene.player.kill();
