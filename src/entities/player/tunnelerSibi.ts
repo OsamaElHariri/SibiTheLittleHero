@@ -50,23 +50,6 @@ export class TunnelerSibi extends Phaser.GameObjects.Sprite {
         this.breatheTween.setTimeScale(timeScale);
     }
 
-    duplicateHereAndShrink() {
-        let shrinkSprite: Phaser.GameObjects.Sprite = this.scene.add.sprite(this.x, this.y, 'UndergroundSibi').setOrigin(0.5, 1).setAngle(this.angle);
-
-        this.scene.add.tween({
-            targets: [shrinkSprite],
-            ease: 'Sine.easeInOut',
-            duration: 300,
-            scaleY: {
-                getStart: () => 1,
-                getEnd: () => 0,
-            },
-            onComplete: () => {
-                shrinkSprite.destroy();
-            }
-        });
-    }
-
     playGrowAnim() {
         this.breatheTween.pause();
         this.scaleY = 0;

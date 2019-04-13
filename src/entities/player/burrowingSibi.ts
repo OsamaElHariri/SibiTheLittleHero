@@ -107,7 +107,6 @@ export class BurrowingSibi extends Sibi {
         if (track == this.trackHook.track) return;
 
         if (track && this.tunneler) {
-            this.tunneler.duplicateHereAndShrink();
             this.tunneler.playGrowAnim();
             this.tunneler.updateDirection(track.direction);
         }

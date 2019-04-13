@@ -12,7 +12,7 @@ import { DrillPillarGroup } from '../entities/physicsGroups/drillPillar/drillPil
 import { DrillMatGroup } from '../entities/physicsGroups/drillMat/drillMatGroup';
 import { EntityType } from '../entities/physicsGroups/entityType';
 import { JsonHandler } from '../helpers/levelEditor/jsonHandler';
-import * as testLevel from "../levels/testLevel.json";
+import * as levelToLoad from "../levels/Level1/Level1_v3.json";
 import { LevelEditor } from '../helpers/levelEditor/levelEditor';
 import { SawBeltGroup } from '../entities/physicsGroups/sawBelt/sawBeltGroup';
 
@@ -128,10 +128,10 @@ export class MainScene extends Phaser.Scene {
     this.createDrillMats();
     this.createSawBelts();
     this.miscGroup = this.add.group();
-    new JsonHandler(this).instantiateFromJson(testLevel);
+    new JsonHandler(this).instantiateFromJson(levelToLoad);
     this.spawnPlayer();
 
-    this.miscGroup.add(new LevelEditor(this));
+    // this.miscGroup.add(new LevelEditor(this));
 
     // this.cameraZoomTriggers = this.add.group({
     //   runChildUpdate: true
@@ -286,6 +286,7 @@ export class MainScene extends Phaser.Scene {
     allEntities = allEntities.concat(this.drillPillarGroup.children.getArray());
     allEntities = allEntities.concat(this.drillMatGroup.children.getArray());
     allEntities = allEntities.concat(this.doubleDrillsGroup.children.getArray());
+    allEntities = allEntities.concat(this.sawBeltGroup.children.getArray());
     return allEntities
   }
 }
