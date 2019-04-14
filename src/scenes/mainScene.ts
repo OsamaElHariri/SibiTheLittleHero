@@ -12,7 +12,7 @@ import { DrillPillarGroup } from '../entities/physicsGroups/drillPillar/drillPil
 import { DrillMatGroup } from '../entities/physicsGroups/drillMat/drillMatGroup';
 import { EntityType } from '../entities/physicsGroups/entityType';
 import { JsonHandler } from '../helpers/levelEditor/jsonHandler';
-import * as levelToLoad from "../levels/Level1/Level1_v3.json";
+import * as levelToLoad from "../levels/Level2/level2_v3.json";
 import { LevelEditor } from '../helpers/levelEditor/levelEditor';
 import { SawBeltGroup } from '../entities/physicsGroups/sawBelt/sawBeltGroup';
 
@@ -131,7 +131,7 @@ export class MainScene extends Phaser.Scene {
     new JsonHandler(this).instantiateFromJson(levelToLoad);
     this.spawnPlayer();
 
-    // this.miscGroup.add(new LevelEditor(this));
+    this.miscGroup.add(new LevelEditor(this));
 
     // this.cameraZoomTriggers = this.add.group({
     //   runChildUpdate: true
