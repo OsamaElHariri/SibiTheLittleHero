@@ -128,13 +128,13 @@ export class Platform extends Phaser.GameObjects.Rectangle {
     }
 
     getTrack(collider: Rectangle): UndergroundTrack {
-        if (collider.y + collider.height <= this.y)
+        if (collider.y + collider.height <= this.y + 1)
             return this.topTrack;
-        else if (collider.y >= this.y + this.height)
+        else if (collider.y >= this.y + this.height - 1)
             return this.bottomTrack;
-        else if (collider.x + collider.width <= this.x)
+        else if (collider.x + collider.width <= this.x + 1)
             return this.leftTrack;
-        else if (collider.x >= this.x + this.width)
+        else if (collider.x >= this.x + this.width - 1)
             return this.rightTrack;
     }
 
