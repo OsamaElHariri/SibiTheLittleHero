@@ -26,6 +26,7 @@ export class RockMelter extends Phaser.GameObjects.Sprite {
         super(scene, x, y, 'RockMelterCeilingSupport');
         this.config = config;
         this.platforms = platforms;
+        this.setDepth(4);
         this.sceneHostileGroup = this.scene.data.get('OverGroundHostileGroup');
         this.scene.add.existing(this);
         this.melter = this.scene.add.sprite(this.x - 5, this.y + 44, 'RockMelter');
@@ -45,9 +46,12 @@ export class RockMelter extends Phaser.GameObjects.Sprite {
             x: this.melter.x,
             y: this.melter.y
         }
-        this.depth = 1;
         this.initialTime = Date.now();
-        this.spawnMoltenball();
+        this.scene.time.addEvent({
+            delay: config.initialDelay,
+            callbackScope: this,
+            callback: this.spawnMoltenball
+        });
     }
 
     update(): void {
@@ -73,7 +77,7 @@ export class RockMelter extends Phaser.GameObjects.Sprite {
         this.tween = this.scene.add.tween({
             targets: [this.moltenball],
             ease: 'Sine.easeIn',
-            duration: this.hasSpawnedPuddle ? 600 : 1,
+            duration: 600,
             callbackScope: this,
             scaleX: {
                 getStart: () => 0,
@@ -139,10 +143,13 @@ export class RockMelter extends Phaser.GameObjects.Sprite {
 
 export class RockMelterConfigs {
     dropInterval: number = 600;
+    initialDelay: number = 0;
     constructor(configs?: {
-        dropInterval?: number
+        dropInterval?: number,
+        initialDelay?: number,
     }) {
         configs = configs || {};
         this.dropInterval = configs.dropInterval || this.dropInterval
+        this.initialDelay = configs.initialDelay || this.initialDelay
     }
 }

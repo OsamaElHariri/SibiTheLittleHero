@@ -10,8 +10,8 @@ export class RockMelterGroup extends Phaser.GameObjects.Group {
     }
 
     createRockMelter(x: number, y: number, config): RockMelter {
-        let platform: RockMelter = new RockMelter(this.scene, x, y, this.platformGroup, new RockMelterConfigs(config));
-        this.add(platform);
-        return platform;
+        let rockMelter: RockMelter = new RockMelter(this.scene, x, y, this.platformGroup, new RockMelterConfigs(config));
+        this.add(rockMelter);
+        return rockMelter;
     }
 }
