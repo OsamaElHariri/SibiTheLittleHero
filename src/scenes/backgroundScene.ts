@@ -11,11 +11,6 @@ export class BackgroundScene extends Phaser.Scene {
         });
     }
 
-    preload(): void {
-        this.load.image('MineWall', '../Assets/Sprites/Environment/MineWall.png');
-        this.load.image('WoodenPillars', '../Assets/Sprites/Environment/WoodenPillars.png');
-    }
-
     create(): void {
         this.walls = [
             new MineWall(this, -250, 0.7, 0.08, 0.8, 0xe7e7e7),

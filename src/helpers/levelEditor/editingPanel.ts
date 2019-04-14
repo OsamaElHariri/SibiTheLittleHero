@@ -14,6 +14,9 @@ export class EditingPanel extends Phaser.GameObjects.Container {
     private objectProperties;
     constructor(scene: MainScene, levelEditor: LevelEditor) {
         super(scene);
+        this.scene.events.on('LevelStart', () => {
+            this.gui.destroy();
+        });
         this.mainScene = scene;
         this.levelEditor = levelEditor;
         this.gui = new dat.GUI();
@@ -55,7 +58,7 @@ export class EditingPanel extends Phaser.GameObjects.Container {
             }
         }, 'killPlayer').name('Reset');
 
-        
+
         let spawnObjectsFolder: dat.GUI = this.gui.addFolder('Spawn Object');
 
         let keys = Object.keys(EntityType).filter(key => !isNaN(Number(key)));

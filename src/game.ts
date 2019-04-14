@@ -1,5 +1,5 @@
 import "phaser";
-import { WelcomeScene } from "./scenes/welcomeScene";
+import { LoaderScene } from "./scenes/loaderScene";
 import { MainScene } from './scenes/mainScene';
 import { BackgroundScene } from "./scenes/backgroundScene";
 
@@ -9,7 +9,7 @@ const config: GameConfig = {
   type: Phaser.AUTO,
   parent: "game",
   backgroundColor: '#303a59',
-  scene: [WelcomeScene, MainScene, BackgroundScene],
+  scene: [LoaderScene, MainScene, BackgroundScene],
   physics: {
     default: "arcade",
     arcade: {

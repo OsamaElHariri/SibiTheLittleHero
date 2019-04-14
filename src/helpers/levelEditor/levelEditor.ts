@@ -20,11 +20,13 @@ export class LevelEditor extends Phaser.GameObjects.Rectangle {
     }
 
     takeCamera() {
+        if (!this.scene) return;
         this.mainScene.cameraTarget.setTarget(this);
         this.scene.cameras.main.setLerp(1);
     }
 
     update() {
+        if (!this.scene) this.destroy();
         if (this.scene.input.activePointer.justDown) {
             this.xPrevious = this.scene.input.activePointer.worldX;
             this.yPrevious = this.scene.input.activePointer.worldY;

@@ -12,9 +12,9 @@ import { DrillPillarGroup } from '../entities/physicsGroups/drillPillar/drillPil
 import { DrillMatGroup } from '../entities/physicsGroups/drillMat/drillMatGroup';
 import { EntityType } from '../entities/physicsGroups/entityType';
 import { JsonHandler } from '../helpers/levelEditor/jsonHandler';
-import * as levelToLoad from "../levels/Level2/level2_v3.json";
 import { LevelEditor } from '../helpers/levelEditor/levelEditor';
 import { SawBeltGroup } from '../entities/physicsGroups/sawBelt/sawBeltGroup';
+import { levels } from '../levels/levels';
 
 export class MainScene extends Phaser.Scene {
 
@@ -35,6 +35,8 @@ export class MainScene extends Phaser.Scene {
 
   cameraTarget: CameraTarget;
 
+  private level: number;
+  private backgroundScene: Phaser.Scenes.ScenePlugin;
   private trackIntersectionGroup: TrackIntersectionGroup;
   private cameraZoomTriggers: Phaser.GameObjects.Group;
 
@@ -46,60 +48,8 @@ export class MainScene extends Phaser.Scene {
     });
   }
 
-  preload(): void {
-    this.load.image('SpeechBubble', '../Assets/Sprites/UI/SpeechBubble.png');
-    this.load.image('SpeechBubbleMedium', '../Assets/Sprites/UI/SpeechBubbleMedium.png');
-    this.load.image('SpeechBubbleSmall', '../Assets/Sprites/UI/SpeechBubbleSmall.png');
-
-    this.load.image('PlatformEdge', '../Assets/Sprites/Platforms/Edge.png');
-    this.load.image('PlatformEdgeRotated', '../Assets/Sprites/Platforms/EdgeRotated.png');
-    this.load.image('PlatformCorner', '../Assets/Sprites/Platforms/Corner.png');
-    for (let i = 1; i <= 5; i++) this.load.image(`Rock${i}`, `../Assets/Sprites/Platforms/Rock${i}.png`);
-    this.load.image('MetalBrace', '../Assets/Sprites/Platforms/MetalBrace.png');
-    this.load.image('Rock', '../Assets/Sprites/Environment/Rock.png');
-    this.load.image('SmokeCloud', '../Assets/Sprites/Environment/SmokeCloud.png');
-
-    this.load.image('YellowSquare', '../Assets/Sprites/Platforms/YellowSquare.png');
-
-    this.load.image('DigSaw', '../Assets/Sprites/Enemies/DigSaw/DigSaw.png');
-    this.load.image('DigSawDigArea', '../Assets/Sprites/Enemies/DigSaw/DigSawDigArea.png');
-
-    this.load.image('SawBelt', '../Assets/Sprites/Enemies/SawBelt/Saw.png');
-    this.load.image('SawBeltDigArea', '../Assets/Sprites/Enemies/SawBelt/DigAreaMid.png');
-    this.load.image('SawBeltDigAreaEdge', '../Assets/Sprites/Enemies/SawBelt/DigAreaEdge.png');
-
-    this.load.image('MetalRod', '../Assets/Sprites/Enemies/DrillPillar/MetalRod.png');
-    this.load.image('PillarDigArea', '../Assets/Sprites/Enemies/DrillPillar/PillarDigArea.png');
-    this.load.image('PillarDigAreaVertical', '../Assets/Sprites/Enemies/DrillPillar/PillarDigAreaVertical.png');
-    this.load.spritesheet('DrillPillarBody', '../Assets/Sprites/Enemies/DrillPillar/PillarBody.png',
-      { frameWidth: 88 / 4, frameHeight: 22 });
-
-    this.load.image("UndergroundSibi", "../Assets/Sprites/Sibi/UndergroundSibi.png");
-    this.load.image("UndergroundIndicator", "../Assets/Sprites/Sibi/UndergroundIndicator.png");
-    this.load.image("CurledSibi", "../Assets/Sprites/Sibi/CurledBall.png");
-    this.load.spritesheet("SibiIdle", "../Assets/Sprites/Sibi/SpriteSheets/Idle.png",
-      { frameWidth: 148 / 4, frameHeight: 396 / 6 });
-
-    this.load.image('ThinMetalRod', '../Assets/Sprites/Enemies/ThinMetalRod.png');
-    this.load.spritesheet("Drill", "../Assets/Sprites/Enemies/Drill.png",
-      { frameWidth: 44 / 2, frameHeight: 64 / 2 });
-
-
-    this.load.image("RockMelterCeilingSupport", "../Assets/Sprites/Enemies/RockMelter/CeilingSupport.png");
-    this.load.image("RockMelter", "../Assets/Sprites/Enemies/RockMelter/Melter.png");
-    this.load.image("MoltenBall", "../Assets/Sprites/Enemies/RockMelter/MoltenBall.png");
-    this.load.spritesheet("MoltenPuddle", "../Assets/Sprites/Enemies/RockMelter/MoltenPuddleSheet.png",
-      { frameWidth: 135, frameHeight: 78 / 4 });
-    this.load.spritesheet("Smoke", "../Assets/Sprites/Enemies/RockMelter/Smoke.png",
-      { frameWidth: 96 / 3, frameHeight: 296 / 4 });
-
-    this.load.image("DrillsStand", "../Assets/Sprites/Enemies/DoubleDrills/Stand.png");
-    this.load.image("DoubleDrillsGear", "../Assets/Sprites/Enemies/DoubleDrills/Gear.png");
-    this.load.image("DrillsSupport", "../Assets/Sprites/Enemies/DoubleDrills/DrillsSupport.png");
-    this.load.image("DoubleDrillDigArea", "../Assets/Sprites/Enemies/DoubleDrills/DoubleDrillDigArea.png");
-  }
-
   create(): void {
+    this.cameraTarget = null;
     let dialog = new Dialog(this, [{
       key: 'Sibi',
       x: 100,
@@ -114,7 +64,8 @@ export class MainScene extends Phaser.Scene {
 
 
     this.createAnims();
-    this.scene.launch('BackgroundScene');
+    this.cameras.main.fadeIn(500);
+    this.backgroundScene = this.scene.launch('BackgroundScene');
     this.scene.moveAbove('BackgroundScene', 'MainScene');
     this.data.set('OverGroundHostileGroup', this.add.group({ runChildUpdate: true }));
     this.data.set('UnderGroundHostileGroup', this.add.group({ runChildUpdate: true }));
@@ -128,7 +79,11 @@ export class MainScene extends Phaser.Scene {
     this.createDrillMats();
     this.createSawBelts();
     this.miscGroup = this.add.group();
-    new JsonHandler(this).instantiateFromJson(levelToLoad);
+
+    this.level = this.registry.get('Level') || 1;
+    this.events.emit('LevelStart', this.level);
+
+    new JsonHandler(this).instantiateFromJson(levels[this.level - 1]);
     this.spawnPlayer();
 
     this.miscGroup.add(new LevelEditor(this));
@@ -139,6 +94,7 @@ export class MainScene extends Phaser.Scene {
     // this.cameraZoomTriggers.add(new CameraZoomInZone({ scene: this, x: 300, y: 450, camTarget: this.cameraTarget }));
 
     this.miscGroup.add(this.cameraTarget);
+    this.groupsNeedUpdate = [];
     this.groupsNeedUpdate.push(this.miscGroup);
 
     this.groupsNeedUpdate.push(this.digSawGroup);
@@ -159,6 +115,12 @@ export class MainScene extends Phaser.Scene {
   }
 
   createAnims(): void {
+    this.anims.create({
+      key: 'Idle',
+      frames: this.anims.generateFrameNumbers('SibiIdle', { start: 0, end: 24 }),
+      frameRate: 20,
+      repeat: -1
+    });
     this.anims.create({
       key: 'SmokeDance',
       frames: this.anims.generateFrameNumbers('Smoke', { start: 0, end: 12 }),
@@ -219,13 +181,7 @@ export class MainScene extends Phaser.Scene {
   }
 
   spawnPlayer() {
-    this.anims.create({
-      key: 'Idle',
-      frames: this.anims.generateFrameNumbers('SibiIdle', { start: 0, end: 24 }),
-      frameRate: 20,
-      repeat: -1
-    });
-
+    if (this.player && this.player.destroy) this.player.destroy();
     this.player = new BurrowingSibi({
       scene: this,
       x: this.playerSpawnPosition.x,
@@ -240,7 +196,6 @@ export class MainScene extends Phaser.Scene {
     } else {
       this.cameraTarget.setTarget(this.player);
     }
-
     this.events.emit('PlayerSpawned');
   }
 
@@ -288,5 +243,15 @@ export class MainScene extends Phaser.Scene {
     allEntities = allEntities.concat(this.doubleDrillsGroup.children.getArray());
     allEntities = allEntities.concat(this.sawBeltGroup.children.getArray());
     return allEntities
+  }
+
+  goToLevel(level: number): void {
+    this.registry.set('Level', level);
+    this.cameras.main.fade(500, 0, 0, 0, false, (camera, progress) => {
+      if (progress == 1) {
+        this.backgroundScene.stop();
+        this.scene.restart();
+      }
+    });
   }
 }
