@@ -37,6 +37,12 @@ export class EditingPanel extends Phaser.GameObjects.Container {
         playerFolder.add(scene.playerSpawnPosition, 'x');
         playerFolder.add(scene.playerSpawnPosition, 'y');
         playerFolder.add({
+            moveHere: () => {
+                if (this.mainScene.player)
+                    this.mainScene.player.setPosition(this.levelEditor.x, this.levelEditor.y);
+            }
+        }, 'moveHere').name('Teleport Here');
+        playerFolder.add({
             focusPlayer: () => {
                 if (this.mainScene.player)
                     this.levelEditor.setPosition(this.mainScene.player.x, this.mainScene.player.y);
