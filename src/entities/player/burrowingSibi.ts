@@ -62,8 +62,44 @@ export class BurrowingSibi extends Sibi {
         if (this.tunneler) this.tunneler.destroy();
         if (this.airbornSibi) this.airbornSibi.destroy();
         this.removeLaunchHoldTween();
-        this.scene.events.emit('PlayerDead');
+        this.setAlpha(0);
+        this.spawnDeathSprite();
         this.destroy();
+    }
+
+    spawnDeathSprite(): void {
+        let deathSprite = this.scene.add.sprite(this.x, this.y, 'CurledSibi')
+            .setDepth(-5)
+            .setFlipX(!this.facingRight);
+        let scene = this.scene;
+        this.scene.physics.world.enable(deathSprite);
+        let endAngle = this.facingRight ? 180 : -180;
+        deathSprite.body.setVelocityY(-300);
+        this.scene.add.tween({
+            targets: [deathSprite],
+            ease: 'Sine.easeInOut',
+            duration: 1500,
+            scaleY: {
+                getStart: () => 1,
+                getEnd: () => 0.5,
+            },
+            scaleX: {
+                getStart: () => 1,
+                getEnd: () => 0.5,
+            },
+            angle: {
+                getStart: () => 0,
+                getEnd: () => endAngle,
+            },
+            alpha: {
+                getStart: () => 1,
+                getEnd: () => 0.6,
+            },
+            onComplete: () => {
+                scene.events.emit('PlayerDead');
+                deathSprite.destroy();
+            }
+        });
     }
 
     onCollisionWithPlatforms(self: BurrowingSibi, platform: Platform): void {

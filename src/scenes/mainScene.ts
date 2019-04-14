@@ -38,7 +38,7 @@ export class MainScene extends Phaser.Scene {
   private trackIntersectionGroup: TrackIntersectionGroup;
   private cameraZoomTriggers: Phaser.GameObjects.Group;
 
-  private respawnDelay: number = 700;
+  private respawnDelay: number = 500;
 
   constructor() {
     super({
