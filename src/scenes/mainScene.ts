@@ -80,7 +80,7 @@ export class MainScene extends Phaser.Scene {
     this.createSawBelts();
     this.miscGroup = this.add.group();
 
-    this.level = this.registry.get('Level') || 1;
+    this.level = this.registry.get('Level') || 3;
     this.events.emit('LevelStart', this.level);
 
     new JsonHandler(this).instantiateFromJson(levels[this.level - 1]);
@@ -228,8 +228,8 @@ export class MainScene extends Phaser.Scene {
         return this.drillPillarGroup.createPillar(x, y, config);
       case EntityType.SawBelt:
         return this.sawBeltGroup.createSawBelt(x, y, config);
-      default:
-        throw `Type ${type} is unknown`;
+      // default:
+      //   throw `Type ${type} is unknown`;
     }
   }
 

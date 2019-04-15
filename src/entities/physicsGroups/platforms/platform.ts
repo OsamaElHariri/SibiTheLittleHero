@@ -148,8 +148,8 @@ export class Platform extends Phaser.GameObjects.Rectangle {
 }
 
 export class PlatformConfigs {
-    width: number = 100;
-    height: number = 100;
+    width: number = 150;
+    height: number = 150;
     constructor(configs?: { width?: number, height?: number }) {
         configs = configs || {};
         this.width = configs.width || this.width;
