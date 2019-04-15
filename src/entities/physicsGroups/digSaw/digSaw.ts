@@ -14,7 +14,6 @@ export class DigSaw extends Phaser.GameObjects.Sprite {
     private currentDirection: Direction = Direction.Down;
 
     private nextDirection: (direction: Direction) => Direction;
-    private previousDirection: (direction: Direction) => Direction;
 
     private currentSpeed: number = 0;
     private maxSpeed: number = 550;
@@ -31,7 +30,7 @@ export class DigSaw extends Phaser.GameObjects.Sprite {
         this.xOriginal = x;
         this.yOriginal = y;
         this.config = config;
-        this.setDepth(4);
+        this.setDepth(6);
 
         if (config.clockwise) {
             this.clockwise = config.clockwise;
@@ -39,9 +38,7 @@ export class DigSaw extends Phaser.GameObjects.Sprite {
         }
         this.currentDirection = config.initialDirection || Direction.Down;
 
-
         this.nextDirection = this.clockwise ? DirectionUtil.counterClockWise : DirectionUtil.clockWise;
-        this.previousDirection = this.clockwise ? DirectionUtil.clockWise : DirectionUtil.counterClockWise;
 
         this.scene.add.existing(this);
         this.scene.physics.world.enable(this);
@@ -68,9 +65,8 @@ export class DigSaw extends Phaser.GameObjects.Sprite {
         this.angle += Math.pow(speedFraction, 1.2) * this.maxRotationSpeed * this.rotationDirection;
 
         this.setDirection();
-        let previous: Direction = this.previousDirection(this.currentDirection);
+        this.body.setAllowGravity(false);
         this.applySpeedInDirection(this.currentSpeed, this.currentDirection);
-        this.applySpeedInDirection(2, previous);
     }
 
     setDirection(): void {
@@ -113,16 +109,16 @@ export class DigSaw extends Phaser.GameObjects.Sprite {
     applySpeedInDirection(speed: number, direction: Direction): void {
         switch (direction) {
             case Direction.Up:
-                this.body.setVelocityY(-speed);
+                this.body.setVelocity(0, -speed);
                 break;
             case Direction.Down:
-                this.body.setVelocityY(speed);
+                this.body.setVelocity(0, speed);
                 break;
             case Direction.Right:
-                this.body.setVelocityX(speed);
+                this.body.setVelocity(speed, 0);
                 break;
             case Direction.Left:
-                this.body.setVelocityX(-speed);
+                this.body.setVelocity(-speed, 0);
                 break;
         }
     }
