@@ -1,5 +1,5 @@
 import { PlatformGroup } from "../platforms/platformGroup";
-import { Direction } from "../../../helpers/enums/direction";
+import { Direction } from '../../../helpers/enums/direction';
 import { EntityType } from "../entityType";
 
 export class DoubleDrills extends Phaser.GameObjects.Rectangle {
@@ -16,10 +16,9 @@ export class DoubleDrills extends Phaser.GameObjects.Rectangle {
     private hitBox: Phaser.GameObjects.Rectangle;
     private gears: Phaser.GameObjects.Sprite[] = [];
 
-    private initailHeight: number = -40;
+    private initailOffset: number = -40;
     private drillwidth: number = 32;
     private holdDelay: number = 3000;
-    private timeToMove: number = 1400;
     private numberOfDrills: number;
 
     private moveSpeed: number = 0.91;
@@ -28,6 +27,9 @@ export class DoubleDrills extends Phaser.GameObjects.Rectangle {
 
     private xMultiplier = 0;
     private yMultiplier = 0;
+
+    private maxDistanceToTravel: number = 80;
+    private distanceTravelled: number = 0;
 
     private timeEvent: Phaser.Time.TimerEvent;
 
@@ -44,8 +46,8 @@ export class DoubleDrills extends Phaser.GameObjects.Rectangle {
         this.numberOfDrills = config.numberOfDrills || 5;
 
         this.container = this.scene.add.container(this.x, this.y).setDepth(3);
-        this.drillContainer = this.scene.add.container(this.x, this.y + this.initailHeight)
-            .setDepth(4)
+        this.drillContainer = this.scene.add.container(this.x, this.y + this.initailOffset)
+            .setDepth(4);
 
         let direction: Direction = config.direction || Direction.Up;
 
@@ -57,7 +59,7 @@ export class DoubleDrills extends Phaser.GameObjects.Rectangle {
         switch (direction) {
             case Direction.Up:
                 this.yMultiplier = 1;
-                this.hitBox.y = this.initailHeight;
+                this.hitBox.y = this.initailOffset;
                 this.hitBox.x = 10;
                 this.hitBox.setOrigin(0, 0.5);
                 break;
@@ -68,7 +70,7 @@ export class DoubleDrills extends Phaser.GameObjects.Rectangle {
                 this.drillContainer.y += 40;
                 this.drillContainer.x += 40;
                 this.hitBox.x += this.drillwidth * (this.numberOfDrills - 2) / 2 + 10;
-                this.hitBox.y += this.initailHeight;
+                this.hitBox.y += this.initailOffset;
                 this.hitBox.body.setSize(46, this.drillwidth * this.numberOfDrills - 20);
                 this.hitBox.setOrigin(0.5, 0);
                 break;
@@ -78,7 +80,7 @@ export class DoubleDrills extends Phaser.GameObjects.Rectangle {
                 this.yMultiplier = -1;
                 this.hitBox.setOrigin(1, 0.5);
                 this.drillContainer.y += 80;
-                this.hitBox.y = this.initailHeight;
+                this.hitBox.y = this.initailOffset;
                 this.hitBox.x = 10;
                 break;
             case Direction.Left:
@@ -88,14 +90,12 @@ export class DoubleDrills extends Phaser.GameObjects.Rectangle {
                 this.drillContainer.y += 40;
                 this.drillContainer.x -= 40;
                 this.hitBox.x += this.drillwidth * (this.numberOfDrills - 2) / 2 + 10;
-                this.hitBox.y += this.initailHeight;
+                this.hitBox.y += this.initailOffset;
                 this.hitBox.body.setSize(46, this.drillwidth * this.numberOfDrills - 20);
                 this.hitBox.setOrigin(0.5, 1);
                 break;
         }
-
-        this.startMoveDown();
-
+        this.moveDownAfterDelay(0);
     }
 
     spawnStands(): void {
@@ -110,12 +110,12 @@ export class DoubleDrills extends Phaser.GameObjects.Rectangle {
     }
 
     spawnGears(): void {
-        let leftGear: Phaser.GameObjects.Sprite = this.scene.add.sprite(-4, this.initailHeight, 'DoubleDrillsGear')
+        let leftGear: Phaser.GameObjects.Sprite = this.scene.add.sprite(-4, this.initailOffset, 'DoubleDrillsGear')
             .setAngle(Math.random() * 360);
         this.container.add(leftGear);
 
 
-        let rightGear: Phaser.GameObjects.Sprite = this.scene.add.sprite(this.numberOfDrills * this.drillwidth + 4, this.initailHeight, 'DoubleDrillsGear')
+        let rightGear: Phaser.GameObjects.Sprite = this.scene.add.sprite(this.numberOfDrills * this.drillwidth + 4, this.initailOffset, 'DoubleDrillsGear')
             .setAngle(Math.random() * 360);
         this.container.add(rightGear);
         this.gears.push(leftGear, rightGear);
@@ -161,58 +161,45 @@ export class DoubleDrills extends Phaser.GameObjects.Rectangle {
 
     update(): void {
         let speed: number = 0;
-        if (this.moveUp) speed = this.moveSpeed;
-        else if (this.moveDown) speed = -this.moveSpeed;
+        if (this.moveUp) speed = -this.moveSpeed;
+        else if (this.moveDown) speed = this.moveSpeed;
 
-        this.gears[0].y -= speed;
-        this.gears[0].angle += speed * 10;
-        this.gears[1].y -= speed;
-        this.gears[1].angle -= speed * 10;
-        this.hitBox.y -= speed;
-        this.drillContainer.x -= speed * this.xMultiplier;
-        this.drillContainer.y -= speed * this.yMultiplier;
+        this.gears[0].y += speed;
+        this.gears[0].angle -= speed * 10;
+        this.gears[1].y += speed;
+        this.gears[1].angle += speed * 10;
+        this.hitBox.y += speed;
+        this.drillContainer.x += speed * this.xMultiplier;
+        this.drillContainer.y += speed * this.yMultiplier;
+        this.distanceTravelled += speed;
+
+        if (this.moveUp && this.distanceTravelled < 0) {
+            this.moveUp = false;
+            this.moveDownAfterDelay(this.holdDelay);
+        } else if (this.moveDown && this.distanceTravelled > this.maxDistanceToTravel) {
+            this.moveDown = false;
+            this.moveUpAfterDelay(this.holdDelay);
+        }
     }
 
-    startMoveUp(): void {
-        if (!this.scene) return;
-        this.moveUp = true;
-        this.overgroundGroup.add(this.hitBox);
+    moveUpAfterDelay(delay: number) {
+        this.overgroundGroup.remove(this.hitBox);
         this.timeEvent = this.scene.time.addEvent({
-            delay: this.timeToMove,
-            callbackScope: this,
+            delay: delay,
             callback: () => {
-                this.moveUp = false;
-                this.moveDown = false;
-                this.undergroundGroup.remove(this.hitBox);
-                this.scene.time.addEvent({
-                    delay: this.holdDelay,
-                    callbackScope: this,
-                    callback: () => {
-                        this.startMoveDown();
-                    }
-                });
+                this.overgroundGroup.add(this.hitBox);
+                this.moveUp = true
             }
         });
     }
 
-    startMoveDown(): void {
-        if (!this.scene) return;
-        this.moveDown = true;
-        this.undergroundGroup.add(this.hitBox);
+    moveDownAfterDelay(delay: number) {
+        this.undergroundGroup.remove(this.hitBox);
         this.timeEvent = this.scene.time.addEvent({
-            delay: this.timeToMove,
-            callbackScope: this,
+            delay: delay,
             callback: () => {
-                this.moveDown = false;
-                this.moveUp = false;
-                this.overgroundGroup.remove(this.hitBox);
-                this.scene.time.addEvent({
-                    delay: this.holdDelay,
-                    callbackScope: this,
-                    callback: () => {
-                        this.startMoveUp();
-                    }
-                });
+                this.undergroundGroup.add(this.hitBox);
+                this.moveDown = true
             }
         });
     }
