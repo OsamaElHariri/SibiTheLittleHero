@@ -33,6 +33,12 @@ export class DoubleDrills extends Phaser.GameObjects.Rectangle {
 
     private timeEvent: Phaser.Time.TimerEvent;
 
+    private yGearsLeftInitial: number;
+    private yGearsRightInitial: number;
+    private yHitBoxInitial: number;
+    private xDrillContainer: number;
+    private yDrillContainer: number;
+
     config: DoubleDrillConfigs;
 
     constructor(scene: Phaser.Scene, x: number, y: number, platforms: PlatformGroup,
@@ -44,6 +50,9 @@ export class DoubleDrills extends Phaser.GameObjects.Rectangle {
         this.overgroundGroup = this.scene.data.get('OverGroundHostileGroup');
         this.undergroundGroup = this.scene.data.get('UnderGroundHostileGroup');
         this.numberOfDrills = config.numberOfDrills || 5;
+
+        this.distanceTravelled = Math.max(0,
+            Math.floor(this.config.initialDistanceTravelled) % this.maxDistanceToTravel);
 
         this.container = this.scene.add.container(this.x, this.y).setDepth(3);
         this.drillContainer = this.scene.add.container(this.x, this.y + this.initailOffset)
@@ -95,6 +104,12 @@ export class DoubleDrills extends Phaser.GameObjects.Rectangle {
                 this.hitBox.setOrigin(0.5, 1);
                 break;
         }
+        this.yGearsLeftInitial = this.gears[0].y;
+        this.yGearsRightInitial = this.gears[1].y;
+        this.yHitBoxInitial = this.hitBox.y;
+        this.xDrillContainer = this.drillContainer.x;
+        this.yDrillContainer = this.drillContainer.y;
+
         this.moveDownAfterDelay(0);
     }
 
@@ -164,13 +179,14 @@ export class DoubleDrills extends Phaser.GameObjects.Rectangle {
         if (this.moveUp) speed = -this.moveSpeed;
         else if (this.moveDown) speed = this.moveSpeed;
 
-        this.gears[0].y += speed;
         this.gears[0].angle -= speed * 10;
-        this.gears[1].y += speed;
         this.gears[1].angle += speed * 10;
-        this.hitBox.y += speed;
-        this.drillContainer.x += speed * this.xMultiplier;
-        this.drillContainer.y += speed * this.yMultiplier;
+
+        this.gears[0].y = this.yGearsLeftInitial + this.distanceTravelled;
+        this.gears[1].y = this.yGearsRightInitial + this.distanceTravelled;
+        this.hitBox.y = this.yHitBoxInitial + this.distanceTravelled;
+        this.drillContainer.x = this.xDrillContainer + this.distanceTravelled * this.xMultiplier;
+        this.drillContainer.y = this.yDrillContainer + this.distanceTravelled * this.yMultiplier;
         this.distanceTravelled += speed;
 
         if (this.moveUp && this.distanceTravelled < 0) {
@@ -217,9 +233,11 @@ export class DoubleDrills extends Phaser.GameObjects.Rectangle {
 export class DoubleDrillConfigs {
     numberOfDrills: number = 5;
     direction: Direction = Direction.Up;
-    constructor(configs?: { direction?: Direction, numberOfDrills?: number }) {
+    initialDistanceTravelled: number = 0;
+    constructor(configs?: { direction?: Direction, numberOfDrills?: number, initialDistanceTravelled?: number }) {
         configs = configs || {};
         this.direction = configs.direction || this.direction;
         this.numberOfDrills = configs.numberOfDrills || this.numberOfDrills;
+        this.initialDistanceTravelled = configs.initialDistanceTravelled || this.initialDistanceTravelled;
     }
 }
