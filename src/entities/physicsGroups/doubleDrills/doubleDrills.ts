@@ -18,7 +18,6 @@ export class DoubleDrills extends Phaser.GameObjects.Rectangle {
 
     private initailOffset: number = -40;
     private drillwidth: number = 32;
-    private holdDelay: number = 3000;
     private numberOfDrills: number;
 
     private moveSpeed: number = 0.91;
@@ -110,7 +109,10 @@ export class DoubleDrills extends Phaser.GameObjects.Rectangle {
         this.xDrillContainer = this.drillContainer.x;
         this.yDrillContainer = this.drillContainer.y;
 
-        this.moveDownAfterDelay(0);
+        if (config.startMoveUp)
+            this.moveUpAfterDelay(0)
+        else
+            this.moveDownAfterDelay(0);
     }
 
     spawnStands(): void {
@@ -191,10 +193,10 @@ export class DoubleDrills extends Phaser.GameObjects.Rectangle {
 
         if (this.moveUp && this.distanceTravelled < 0) {
             this.moveUp = false;
-            this.moveDownAfterDelay(this.holdDelay);
+            this.moveDownAfterDelay(this.config.holdDelay);
         } else if (this.moveDown && this.distanceTravelled > this.maxDistanceToTravel) {
             this.moveDown = false;
-            this.moveUpAfterDelay(this.holdDelay);
+            this.moveUpAfterDelay(this.config.holdDelay);
         }
     }
 
@@ -234,10 +236,14 @@ export class DoubleDrillConfigs {
     numberOfDrills: number = 5;
     direction: Direction = Direction.Up;
     initialDistanceTravelled: number = 0;
-    constructor(configs?: { direction?: Direction, numberOfDrills?: number, initialDistanceTravelled?: number }) {
+    holdDelay: number = 3000;
+    startMoveUp: boolean = false;
+    constructor(configs?: { direction?: Direction, numberOfDrills?: number, initialDistanceTravelled?: number, holdDelay?: number, startMoveUp?: boolean }) {
         configs = configs || {};
         this.direction = configs.direction || this.direction;
         this.numberOfDrills = configs.numberOfDrills || this.numberOfDrills;
         this.initialDistanceTravelled = configs.initialDistanceTravelled || this.initialDistanceTravelled;
+        this.holdDelay = configs.holdDelay || this.holdDelay;
+        this.startMoveUp = configs.startMoveUp || this.startMoveUp;
     }
 }
