@@ -80,7 +80,7 @@ export class MainScene extends Phaser.Scene {
     this.createSawBelts();
     this.miscGroup = this.add.group();
 
-    this.level = this.registry.get('Level') || 4;
+    this.level = this.registry.get('Level') || 5;
     this.events.emit('LevelStart', this.level);
 
     new JsonHandler(this).instantiateFromJson(levels[this.level - 1]);
