@@ -11,16 +11,16 @@ export class TunnelerSibi extends Phaser.GameObjects.Sprite {
     constructor(params: { scene: Phaser.Scene, x: number, y: number }) {
         super(params.scene, params.x, params.y, 'UndergroundSibi');
 
-        this.hitBox = this.scene.add.sprite(this.x, this.y, 'UndergroundIndicator');
+        this.hitBox = this.scene.add.sprite(this.x, this.y, 'UndergroundIndicator')
+            .setOrigin(0.5, 0.02).setDepth(3);
         this.scene.physics.world.enable(this.hitBox);
         this.hitBox.body.setAllowGravity(false);
         this.hitBox.body.width = this.bodyWidth;
         this.hitBox.body.height = this.bodyHeight;
-        this.hitBox.setOrigin(0.5, 0).setDepth(3);
         this.hitBox.body.setSize(this.bodyWidth, this.bodyHeight);
 
         this.setOrigin(0.5, 1)
-        .setDepth(3);
+            .setDepth(3);
 
         this.scene.add.existing(this);
 

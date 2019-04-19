@@ -80,13 +80,13 @@ export class MainScene extends Phaser.Scene {
     this.createSawBelts();
     this.miscGroup = this.add.group();
 
-    this.level = this.registry.get('Level') || 5;
+    this.level = this.registry.get('Level') || 1;
     this.events.emit('LevelStart', this.level);
 
     new JsonHandler(this).instantiateFromJson(levels[this.level - 1]);
     this.spawnPlayer();
 
-    this.miscGroup.add(new LevelEditor(this));
+    // this.miscGroup.add(new LevelEditor(this));
 
     // this.cameraZoomTriggers = this.add.group({
     //   runChildUpdate: true
