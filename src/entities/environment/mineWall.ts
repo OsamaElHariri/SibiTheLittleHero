@@ -20,10 +20,6 @@ export class MineWall extends Phaser.GameObjects.TileSprite {
         this.pillarsFlipped = Math.random() < 0.5;
         this.woodenPillars.flipX = this.pillarsFlipped;
 
-        // if (scale) {
-        //     this.setScale(scale);
-        //     this.woodenPillars.setScale(scale);
-        // }
         if (tint) {
             this.setTint(tint);
             this.woodenPillars.setTint(tint);

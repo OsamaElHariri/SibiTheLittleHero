@@ -40,10 +40,10 @@ export class MainScene extends Phaser.Scene {
   private level: number;
   private backgroundScene: Phaser.Scenes.ScenePlugin;
   private trackIntersectionGroup: TrackIntersectionGroup;
-  private cameraZoomTriggers: Phaser.GameObjects.Group;
 
   private fallThreshold: number;
   private respawnDelay: number = 500;
+  private mistParticle: Phaser.GameObjects.Particles.ParticleEmitter;
 
   constructor() {
     super({
@@ -53,7 +53,7 @@ export class MainScene extends Phaser.Scene {
 
   create(): void {
     this.cameraTarget = null;
-
+    this.createMist();
     this.createAnims();
     this.cameras.main.fadeIn(500);
     this.backgroundScene = this.scene.launch('BackgroundScene');
@@ -80,12 +80,6 @@ export class MainScene extends Phaser.Scene {
     this.calculateFallThreshold();
 
     // this.miscGroup.add(new LevelEditor(this));
-
-    // this.cameraZoomTriggers = this.add.group({
-    //   runChildUpdate: true
-    // });
-    // this.cameraZoomTriggers.add(new CameraZoomInZone({ scene: this, x: 300, y: 450 }));
-
     this.miscGroup.add(this.cameraTarget);
     this.groupsNeedUpdate = [];
     this.groupsNeedUpdate.push(this.miscGroup);
@@ -104,6 +98,20 @@ export class MainScene extends Phaser.Scene {
           this.spawnPlayer();
         }
       });
+    });
+  }
+
+  createMist(): void {
+    let mistParticleManager = this.add.particles('MistCloud');
+    this.mistParticle = mistParticleManager.setDepth(-10).createEmitter({
+      scale: { min: 0.5, max: 1 },
+      alpha: { start: 0.2, end: 0 },
+      lifespan: 20000,
+      speed: { min: 30, max: 60 },
+      angle: 180,
+      quantity: 1,
+      frequency: 600,
+      emitZone: { source: new Phaser.Geom.Rectangle(0, 0, 100, 1200) }
     });
   }
 
@@ -203,6 +211,7 @@ export class MainScene extends Phaser.Scene {
   }
 
   update(): void {
+    this.mistParticle.setPosition(this.cameras.main.scrollX + 850, this.cameras.main.scrollY - 600);
     if (this.player && this.player.y > this.fallThreshold) {
       this.player.kill();
       this.player = null;

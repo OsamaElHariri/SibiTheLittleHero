@@ -14,6 +14,8 @@ export class LoaderScene extends Phaser.Scene {
     this.load.image('MoundTrap', '../Assets/Sprites/Environment/MoundTrap.png');
     this.load.image('MistCloud', '../Assets/Sprites/Environment/MistCloud.png');
     this.load.image('OverturnedCart', '../Assets/Sprites/Environment/OverturnedCart.png');
+    this.load.image('MineCart', '../Assets/Sprites/Environment/MineCart.png');
+    this.load.image('CartTrack', '../Assets/Sprites/Environment/CartTrack.png');
     this.load.image('MineWall', '../Assets/Sprites/Environment/MineWall.png');
     this.load.image('WoodenPillars', '../Assets/Sprites/Environment/WoodenPillars.png');
     this.load.image('SpeechBubble', '../Assets/Sprites/UI/SpeechBubble.png');
@@ -27,8 +29,6 @@ export class LoaderScene extends Phaser.Scene {
     this.load.image('MetalBrace', '../Assets/Sprites/Platforms/MetalBrace.png');
     this.load.image('Rock', '../Assets/Sprites/Environment/Rock.png');
     this.load.image('SmokeCloud', '../Assets/Sprites/Environment/SmokeCloud.png');
-
-    this.load.image('YellowSquare', '../Assets/Sprites/Platforms/YellowSquare.png');
 
     this.load.image('DigSaw', '../Assets/Sprites/Enemies/DigSaw/DigSaw.png');
     this.load.image('DigSawDigArea', '../Assets/Sprites/Enemies/DigSaw/DigSawDigArea.png');
