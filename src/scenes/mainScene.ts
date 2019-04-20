@@ -77,6 +77,8 @@ export class MainScene extends Phaser.Scene {
     new JsonHandler(this).instantiateFromJson(levels[this.level - 1]);
     this.spawnPlayer();
 
+    this.calculateFallThreshold();
+
     // this.miscGroup.add(new LevelEditor(this));
 
     // this.cameraZoomTriggers = this.add.group({
@@ -171,6 +173,15 @@ export class MainScene extends Phaser.Scene {
     this.sawBeltGroup = new SawBeltGroup(this);
   }
 
+  calculateFallThreshold(): void {
+    let lowestPoint: number = -Math.pow(2, 30);
+    this.platformGroup.getChildren().forEach((platform: Platform) => {
+      let lowPoint: number = platform.y + platform.height;
+      if (lowPoint > lowestPoint) lowestPoint = lowPoint;
+    });
+    this.fallThreshold = lowestPoint + 300;
+  }
+
   spawnPlayer() {
     if (this.player && this.player.destroy) this.player.destroy();
     this.player = new BurrowingSibi({
@@ -192,6 +203,10 @@ export class MainScene extends Phaser.Scene {
   }
 
   update(): void {
+    if (this.player && this.player.y > this.fallThreshold) {
+      this.player.kill();
+      this.player = null;
+    }
     this.registry.set('MainCameraPosition', { x: this.cameras.main.scrollX, y: this.cameras.main.scrollY });
     this.groupsNeedUpdate.forEach(group => {
       this.updateChildrenInGroup(group)
