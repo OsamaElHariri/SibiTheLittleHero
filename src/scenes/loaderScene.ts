@@ -7,6 +7,13 @@ export class LoaderScene extends Phaser.Scene {
   }
 
   preload(): void {
+    this.load.image('SibiMother', '../Assets/Sprites/Environment/SibiMother.png');
+    this.load.image('RedGuy', '../Assets/Sprites/Environment/RedGuy.png');
+    this.load.image('Cowboy', '../Assets/Sprites/Environment/Cowboy.png');
+    this.load.image('Baron', '../Assets/Sprites/Environment/Baron.png');
+    this.load.image('MoundTrap', '../Assets/Sprites/Environment/MoundTrap.png');
+    this.load.image('MistCloud', '../Assets/Sprites/Environment/MistCloud.png');
+    this.load.image('OverturnedCart', '../Assets/Sprites/Environment/OverturnedCart.png');
     this.load.image('MineWall', '../Assets/Sprites/Environment/MineWall.png');
     this.load.image('WoodenPillars', '../Assets/Sprites/Environment/WoodenPillars.png');
     this.load.image('SpeechBubble', '../Assets/Sprites/UI/SpeechBubble.png');

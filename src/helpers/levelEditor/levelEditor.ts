@@ -15,6 +15,10 @@ export class LevelEditor extends Phaser.GameObjects.Rectangle {
         this.takeCamera();
         new EditingPanel(scene, this);
         this.scene.events.on('PlayerSpawned', () => {
+            if (!this.scene) {
+                this.destroy();
+                return;
+            }
             this.takeCamera();
         });
     }
@@ -26,7 +30,10 @@ export class LevelEditor extends Phaser.GameObjects.Rectangle {
     }
 
     update() {
-        if (!this.scene) this.destroy();
+        if (!this.scene) {
+            this.destroy();
+            return;
+        }
         if (this.scene.input.activePointer.justDown) {
             this.xPrevious = this.scene.input.activePointer.worldX;
             this.yPrevious = this.scene.input.activePointer.worldY;

@@ -123,7 +123,6 @@ export class RockMelter extends Phaser.GameObjects.Sprite {
                     .setScale(Math.random() * 0.7 + 0.7)
                     .play('SmokeDance', false, Math.floor(Math.random() * 12));
             this.smokeSprites.push(smoke);
-            this.spawnedObjects.push(smoke);
         }
         this.scene.physics.world.enable(puddle, Phaser.Physics.Arcade.STATIC_BODY);
         puddle.body.height *= 0.5;
@@ -135,7 +134,6 @@ export class RockMelter extends Phaser.GameObjects.Sprite {
 
     destroy() {
         if (this.tween) this.tween.stop();
-        if (this.moltenball) this.moltenball.destroy();
         this.spawnedObjects.forEach(obj => obj.destroy());
         super.destroy();
     }

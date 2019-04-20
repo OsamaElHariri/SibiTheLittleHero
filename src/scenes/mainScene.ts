@@ -1,13 +1,11 @@
 import { InputKeys } from '../helpers/inputKeys/inputKeys';
 import { PlatformGroup } from '../entities/physicsGroups/platforms/platformGroup';
-import { CameraZoomInZone } from '../helpers/camera/cameraZoomInZone';
 import { CameraTarget } from '../helpers/camera/cameraTarget';
 import { BurrowingSibi } from '../entities/player/burrowingSibi';
 import { TrackIntersectionGroup } from '../entities/physicsGroups/intersection/trackIntersectionGroup';
 import { DigSawGroup } from '../entities/physicsGroups/digSaw/digSawGroup';
 import { RockMelterGroup } from '../entities/physicsGroups/rockMelter/rockMelterGroup';
 import { DoubleDrillsGroup } from '../entities/physicsGroups/doubleDrills/doubleDrillsGroup';
-import { Dialog } from '../entities/ui/dialog/dialog';
 import { DrillPillarGroup } from '../entities/physicsGroups/drillPillar/drillPillarGroup';
 import { DrillMatGroup } from '../entities/physicsGroups/drillMat/drillMatGroup';
 import { EntityType } from '../entities/physicsGroups/entityType';
@@ -15,6 +13,8 @@ import { JsonHandler } from '../helpers/levelEditor/jsonHandler';
 import { LevelEditor } from '../helpers/levelEditor/levelEditor';
 import { SawBeltGroup } from '../entities/physicsGroups/sawBelt/sawBeltGroup';
 import { levels } from '../levels/levels';
+import { LevelEnd, LevelEndConfigs } from '../entities/physicsGroups/levelEnd/levelEnd';
+import { Platform } from '../entities/physicsGroups/platforms/platform';
 
 export class MainScene extends Phaser.Scene {
 
@@ -33,6 +33,8 @@ export class MainScene extends Phaser.Scene {
   doubleDrillsGroup: DoubleDrillsGroup;
   sawBeltGroup: SawBeltGroup;
 
+  levelEnd: LevelEnd;
+
   cameraTarget: CameraTarget;
 
   private level: number;
@@ -40,6 +42,7 @@ export class MainScene extends Phaser.Scene {
   private trackIntersectionGroup: TrackIntersectionGroup;
   private cameraZoomTriggers: Phaser.GameObjects.Group;
 
+  private fallThreshold: number;
   private respawnDelay: number = 500;
 
   constructor() {
@@ -50,18 +53,6 @@ export class MainScene extends Phaser.Scene {
 
   create(): void {
     this.cameraTarget = null;
-    let dialog = new Dialog(this, [{
-      key: 'Sibi',
-      x: 100,
-      y: 60,
-      isOnTheRight: false,
-    }, {
-      key: 'SibiMother',
-      x: 250,
-      y: -110,
-      isOnTheRight: true,
-    }]);
-
 
     this.createAnims();
     this.cameras.main.fadeIn(500);
@@ -91,7 +82,7 @@ export class MainScene extends Phaser.Scene {
     // this.cameraZoomTriggers = this.add.group({
     //   runChildUpdate: true
     // });
-    // this.cameraZoomTriggers.add(new CameraZoomInZone({ scene: this, x: 300, y: 450, camTarget: this.cameraTarget }));
+    // this.cameraZoomTriggers.add(new CameraZoomInZone({ scene: this, x: 300, y: 450 }));
 
     this.miscGroup.add(this.cameraTarget);
     this.groupsNeedUpdate = [];
@@ -196,6 +187,7 @@ export class MainScene extends Phaser.Scene {
     } else {
       this.cameraTarget.setTarget(this.player);
     }
+    InputKeys.getInstance().isDisabled = false;
     this.events.emit('PlayerSpawned');
   }
 
@@ -228,6 +220,9 @@ export class MainScene extends Phaser.Scene {
         return this.drillPillarGroup.createPillar(x, y, config);
       case EntityType.SawBelt:
         return this.sawBeltGroup.createSawBelt(x, y, config);
+      case EntityType.LevelEnd:
+        this.levelEnd = new LevelEnd(this, x, y, new LevelEndConfigs(config));
+        return this.levelEnd;
       default:
         throw `Type ${type} is unknown`;
     }
@@ -242,15 +237,25 @@ export class MainScene extends Phaser.Scene {
     allEntities = allEntities.concat(this.drillMatGroup.children.getArray());
     allEntities = allEntities.concat(this.doubleDrillsGroup.children.getArray());
     allEntities = allEntities.concat(this.sawBeltGroup.children.getArray());
+    if (this.levelEnd) allEntities.push(this.levelEnd);
     return allEntities
+  }
+
+  goToNextLevel(): void {
+    this.goToLevel(this.level + 1);
   }
 
   goToLevel(level: number): void {
     this.registry.set('Level', level);
     this.cameras.main.fade(500, 0, 0, 0, false, (camera, progress) => {
       if (progress == 1) {
-        this.backgroundScene.stop();
-        this.scene.restart();
+        this.time.addEvent({
+          delay: 100,
+          callback: () => {
+            this.backgroundScene.stop();
+            this.scene.restart();
+          }
+        });
       }
     });
   }

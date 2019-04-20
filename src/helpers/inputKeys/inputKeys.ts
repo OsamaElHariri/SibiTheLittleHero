@@ -1,7 +1,9 @@
-import { KeyGroup } from "./keyGroup";
+import { KeyGroup } from './keyGroup';
 import { Direction } from "../enums/direction";
 
 export class InputKeys {
+    isDisabled: boolean = false;
+
     private keyboard: Phaser.Input.Keyboard.KeyboardPlugin;
     private static singleton: InputKeys;
 
@@ -85,35 +87,42 @@ export class InputKeys {
     }
 
     upPressed(): boolean {
-        return this.up.hasKeyDown();
+        return this.checkKeyGroupPressed(this.up);
     }
 
     downPressed(): boolean {
-        return this.down.hasKeyDown();
+        return this.checkKeyGroupPressed(this.down);
     }
 
     rightPressed(): boolean {
-        return this.right.hasKeyDown();
+        return this.checkKeyGroupPressed(this.right);
     }
 
     leftPressed(): boolean {
-        return this.left.hasKeyDown();
+        return this.checkKeyGroupPressed(this.left);
     }
 
     upJustPressed(): boolean {
-        return this.up.hasKeyJustPressed();
+        return this.checkKeyGroupJustPressed(this.up);
     }
 
     downJustPressed(): boolean {
-        return this.down.hasKeyJustPressed();
+        return this.checkKeyGroupJustPressed(this.down);
     }
 
     rightJustPressed(): boolean {
-        return this.right.hasKeyJustPressed();
+        return this.checkKeyGroupJustPressed(this.right);
     }
 
     leftJustPressed(): boolean {
-        return this.left.hasKeyJustPressed();
+        return this.checkKeyGroupJustPressed(this.left);
     }
 
+    private checkKeyGroupPressed(keyGroup: KeyGroup): boolean {
+        return !this.isDisabled && keyGroup.hasKeyDown();
+    }
+
+    private checkKeyGroupJustPressed(keyGroup: KeyGroup): boolean {
+        return !this.isDisabled && keyGroup.hasKeyJustPressed();
+    }
 }

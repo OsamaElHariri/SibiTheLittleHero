@@ -6,4 +6,5 @@ export enum EntityType {
     DoubleDrill,
     DrillPillar,
     SawBelt,
+    LevelEnd
 }
