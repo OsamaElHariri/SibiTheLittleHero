@@ -179,12 +179,15 @@ export class BurrowingSibi extends Sibi {
                 this.facingRight = false;
                 this.setFlipX(true);
                 this.body.setVelocityX(-160);
+                this.anims.play('Walk', true);
             } else if (this.inputKeys.rightPressed()) {
                 this.facingRight = true;
                 this.setFlipX(false);
                 this.body.setVelocityX(160);
+                this.anims.play('Walk', true);
             } else {
                 this.body.setVelocityX(0);
+                this.anims.play('Idle', true);
             }
         }
 

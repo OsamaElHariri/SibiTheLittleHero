@@ -123,6 +123,12 @@ export class MainScene extends Phaser.Scene {
       repeat: -1
     });
     this.anims.create({
+      key: 'Walk',
+      frames: this.anims.generateFrameNumbers('SibiWalk', { start: 0, end: 9 }),
+      frameRate: 15,
+      repeat: -1
+    });
+    this.anims.create({
       key: 'SmokeDance',
       frames: this.anims.generateFrameNumbers('Smoke', { start: 0, end: 12 }),
       frameRate: 12,

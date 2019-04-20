@@ -48,6 +48,8 @@ export class LoaderScene extends Phaser.Scene {
     this.load.image("CurledSibi", "../Assets/Sprites/Sibi/CurledBall.png");
     this.load.spritesheet("SibiIdle", "../Assets/Sprites/Sibi/SpriteSheets/Idle.png",
       { frameWidth: 148 / 4, frameHeight: 396 / 6 });
+    this.load.spritesheet("SibiWalk", "../Assets/Sprites/Sibi/SpriteSheets/Walk.png",
+      { frameWidth: 129 / 3, frameHeight: 204 / 3 });
 
     this.load.image('ThinMetalRod', '../Assets/Sprites/Enemies/ThinMetalRod.png');
     this.load.spritesheet("Drill", "../Assets/Sprites/Enemies/Drill.png",
