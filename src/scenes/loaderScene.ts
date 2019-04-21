@@ -1,4 +1,8 @@
+import { LoadingBar } from "../entities/ui/loading/loadingBar";
+
 export class LoaderScene extends Phaser.Scene {
+
+  private transitioning: boolean = false;
 
   constructor() {
     super({
@@ -68,9 +72,47 @@ export class LoaderScene extends Phaser.Scene {
     this.load.image("DoubleDrillsGear", "../Assets/Sprites/Enemies/DoubleDrills/Gear.png");
     this.load.image("DrillsSupport", "../Assets/Sprites/Enemies/DoubleDrills/DrillsSupport.png");
     this.load.image("DoubleDrillDigArea", "../Assets/Sprites/Enemies/DoubleDrills/DoubleDrillDigArea.png");
+
+    this.constructLoadingScrean();
+  }
+
+  constructLoadingScrean(): void {
+    let light = this.add.sprite(470, 290, 'LoadingScreenLight').setScale(2);
+    this.add.tween({
+      targets: [light],
+      duration: 25000,
+      repeat: -1,
+      angle: {
+        getStart: () => 0,
+        getEnd: () => 360,
+      }
+    })
+    this.add.sprite(400, 30, 'SibiTitle').setOrigin(0.5, 0);
+    this.add.text(500, 280, 'The Little Hero', {
+      fontFamily: 'Verdana',
+      color: '#F9C62D',
+      fontSize: '22px',
+    }).setOrigin(0.5);
+    let loadingBar = new LoadingBar(this, 250, 400);
+    this.load.on('progress', function (value: number) {
+      loadingBar.updateRatio(value);
+
+    });
   }
 
   create(): void {
-    this.scene.start('MainScene');
+    this.input.keyboard.on('keyup', () => {
+      if (this.transitioning) return;
+      this.transitioning = true;
+      this.fadeToOtherScene();
+    });
+  }
+
+  fadeToOtherScene(): void {
+    this.cameras.main.fade(500, 0, 0, 0, false, (camera, progress) => {
+      if (progress == 1) {
+        this.scene.start('MainScene');
+      }
+    });
   }
 }

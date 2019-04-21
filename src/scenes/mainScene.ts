@@ -279,13 +279,8 @@ export class MainScene extends Phaser.Scene {
     this.registry.set('Level', level);
     this.cameras.main.fade(500, 0, 0, 0, false, (camera, progress) => {
       if (progress == 1) {
-        this.time.addEvent({
-          delay: 100,
-          callback: () => {
-            this.backgroundScene.stop();
-            this.scene.restart();
-          }
-        });
+        this.backgroundScene.stop();
+        this.scene.restart();
       }
     });
   }
