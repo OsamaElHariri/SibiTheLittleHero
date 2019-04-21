@@ -1,5 +1,6 @@
 import { SpeechBubble } from "./speechBubble";
 import { SpeechBubbleConfigs } from "./speechBubbleConfigs";
+import { InputKeys } from '../../../helpers/inputKeys/inputKeys';
 
 export class Dialog extends Phaser.GameObjects.Rectangle {
 
@@ -14,6 +15,25 @@ export class Dialog extends Phaser.GameObjects.Rectangle {
       let speaker = speakers[i];
       this.speechBubbles[speaker.key] = new SpeechBubble(this.scene, speaker.x, speaker.y, '', speaker.isOnTheRight);
       this.speechBubbles[speaker.key].on('done', this.onSpeechBubbleDone, this);
+    }
+
+    let inputKeys = InputKeys.getInstance();
+    this.scene.input.keyboard.on('keydown', () => {
+      let tempDisabled = inputKeys.isDisabled;
+      inputKeys.isDisabled = false;
+      if (inputKeys.downPressed()) {
+        this.skipActiveSpeechBubbles();
+      }
+      inputKeys.isDisabled = tempDisabled;
+    });
+  }
+
+  skipActiveSpeechBubbles(): void {
+    for (const speaker in this.speechBubbles) {
+      if (this.speechBubbles.hasOwnProperty(speaker)) {
+        const speechBubble = this.speechBubbles[speaker];
+        if (speechBubble.isActive()) speechBubble.skip();
+      }
     }
   }
 
@@ -42,11 +62,6 @@ export class Dialog extends Phaser.GameObjects.Rectangle {
       this.speechBubbles[key].remove();
     }
     this.emit('done');
-  }
-
-  testDialog(): void {
-
-    this.startDialog([]);
   }
 }
 

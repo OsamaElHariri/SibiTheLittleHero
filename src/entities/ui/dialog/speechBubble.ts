@@ -50,6 +50,15 @@ export class SpeechBubble extends Phaser.GameObjects.Sprite {
         this.setText(fullText);
     }
 
+    skip(): void {
+        if (this.fullText)
+            this.cursorIndex = this.fullText.length - 1;
+    }
+
+    isActive():boolean {
+        return this.cursorIndex <= this.fullText.length
+    }
+
     setText(text: string, config?: SpeechBubbleConfigs): void {
         this.fullText = text;
         this.updateSize(text);
@@ -71,7 +80,7 @@ export class SpeechBubble extends Phaser.GameObjects.Sprite {
         }
     }
 
-    updateSize(text: string): void {
+    private updateSize(text: string): void {
         if (text.length < 40) {
             this.setTexture('SpeechBubbleSmall');
         } else if (text.length < 65) {
