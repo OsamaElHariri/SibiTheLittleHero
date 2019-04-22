@@ -47,6 +47,15 @@ export class IntroScene extends Phaser.Scene {
 
         this.createTweens();
         this.playDawnScene();
+
+        this.input.keyboard.on('keydown', (key)=> {
+            if (!this.isTransitioning && key.keyCode == Phaser.Input.Keyboard.KeyCodes.SPACE) {
+                this.isTransitioning = true;
+                this.cameras.main.fade(500, 0, 0, 0, true, (cam, progress: number) => {
+                    if (progress == 1) this.scene.start('MainScene')
+                });
+            }
+        });
     }
 
     createTweens() {

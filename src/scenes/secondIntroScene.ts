@@ -1,5 +1,6 @@
 export class SecondIntroScene extends Phaser.Scene {
-    nightBackground: Phaser.GameObjects.Sprite;
+    private nightBackground: Phaser.GameObjects.Sprite;
+    private isTransitioning: boolean = false;
     constructor() {
         super({
             key: "SecondIntroScene"
@@ -15,6 +16,15 @@ export class SecondIntroScene extends Phaser.Scene {
         this.time.addEvent({
             delay: holdDuration + fadeDuration,
             callback: () => this.fadeToMainScene()
+        });
+
+        this.input.keyboard.on('keydown', (key)=> {
+            if (!this.isTransitioning && key.keyCode == Phaser.Input.Keyboard.KeyCodes.SPACE) {
+                this.isTransitioning = true;
+                this.cameras.main.fade(500, 0, 0, 0, true, (cam, progress: number) => {
+                    if (progress == 1) this.scene.start('MainScene')
+                });
+            }
         });
     }
 
