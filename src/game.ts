@@ -3,6 +3,8 @@ import { LoaderScene } from "./scenes/loaderScene";
 import { MainScene } from './scenes/mainScene';
 import { BackgroundScene } from "./scenes/backgroundScene";
 import { SetupScene } from "./scenes/setupScene";
+import { IntroScene } from "./scenes/introScene";
+import { SecondIntroScene } from "./scenes/secondIntroScene";
 
 const config: GameConfig = {
   width: 800,
@@ -10,7 +12,7 @@ const config: GameConfig = {
   type: Phaser.AUTO,
   parent: "game",
   backgroundColor: '#303a59',
-  scene: [SetupScene, LoaderScene, MainScene, BackgroundScene],
+  scene: [SetupScene, LoaderScene, IntroScene, SecondIntroScene, MainScene, BackgroundScene],
   physics: {
     default: "arcade",
     arcade: {

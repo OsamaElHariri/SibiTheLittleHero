@@ -11,6 +11,13 @@ export class LoaderScene extends Phaser.Scene {
   }
 
   preload(): void {
+    this.load.image('DawnGathering', '../Assets/Sprites/Cutscene/DawnGathering.png');
+    this.load.image('NightCatastrophe', '../Assets/Sprites/Cutscene/NightCatastrophe.png');
+    this.load.image('Ground', '../Assets/Sprites/Cutscene/Ground.png');
+    this.load.image('LargeDrillDigArea', '../Assets/Sprites/Cutscene/LargeDrillDigArea.png');
+    this.load.spritesheet('LargeDrill', '../Assets/Sprites/Cutscene/LargeDrill.png',
+    { frameWidth: 738 / 2, frameHeight: 1074 / 2 });
+
     this.load.image('SibiMother', '../Assets/Sprites/Environment/SibiMother.png');
     this.load.image('RedGuy', '../Assets/Sprites/Environment/RedGuy.png');
     this.load.image('Cowboy', '../Assets/Sprites/Environment/Cowboy.png');
@@ -111,7 +118,7 @@ export class LoaderScene extends Phaser.Scene {
   fadeToOtherScene(): void {
     this.cameras.main.fade(500, 0, 0, 0, false, (camera, progress) => {
       if (progress == 1) {
-        this.scene.start('MainScene');
+        this.scene.start('IntroScene');
       }
     });
   }
