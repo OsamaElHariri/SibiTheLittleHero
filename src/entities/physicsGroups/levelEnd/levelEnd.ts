@@ -7,6 +7,7 @@ import { sibiMotherDialog } from './sibiMotherDialog';
 import { redGuyDialog } from './redGuyDialog';
 import { baronDialog } from './baronDialog';
 import { cowboyDialog } from "./cowboyDialog";
+import { BeamOfLight } from "./beamOfLight";
 
 export class LevelEnd extends Phaser.GameObjects.Rectangle {
     entityType: EntityType = EntityType.LevelEnd;
@@ -25,13 +26,6 @@ export class LevelEnd extends Phaser.GameObjects.Rectangle {
         this.mainScene = scene;
         this.config = configs;
         this.scene.add.existing(this);
-
-        let zoomInZone = new CameraZoomInZone({ scene: scene, x: x, y: y - 100, 
-            onEnter: () => this.onCloseToNpc() })
-            .setOrigin(0.5);
-        zoomInZone.x -= zoomInZone.width / 2;
-        scene.miscGroup.add(zoomInZone);
-        this.spawnedObjects.push(zoomInZone);
 
         let npc: Phaser.GameObjects.Sprite;
         switch (configs.endType) {
@@ -63,6 +57,11 @@ export class LevelEnd extends Phaser.GameObjects.Rectangle {
                     .setOrigin(0.5, 1)
                     .setScale(0.5);
                 break;
+            case LevelEndType.BeamOfLight:
+                this.spawnedObjects.push(
+                    new BeamOfLight(scene, this.x, this.y)
+                )
+                break;
         }
 
         if (npc) {
@@ -81,9 +80,20 @@ export class LevelEnd extends Phaser.GameObjects.Rectangle {
             });
         }
 
-        let moundSprite = this.scene.add.sprite(x, y, 'MoundTrap')
-            .setOrigin(0.5, 1);
-        this.spawnedObjects.push(moundSprite);
+        if (configs.endType != LevelEndType.BeamOfLight) {
+            let zoomInZone = new CameraZoomInZone({
+                scene: scene, x: x, y: y - 100,
+                onEnter: () => this.onCloseToNpc()
+            }).setOrigin(0.5);
+
+            zoomInZone.x -= zoomInZone.width / 2;
+            scene.miscGroup.add(zoomInZone);
+            this.spawnedObjects.push(zoomInZone);
+
+            let moundSprite = this.scene.add.sprite(x, y, 'MoundTrap')
+                .setOrigin(0.5, 1);
+            this.spawnedObjects.push(moundSprite);
+        }
     }
 
     onCloseToNpc(): void {
@@ -119,6 +129,7 @@ enum LevelEndType {
     RedGuy,
     Cowboy,
     Baron,
+    BeamOfLight
 }
 
 export class LevelEndConfigs {

@@ -276,12 +276,21 @@ export class MainScene extends Phaser.Scene {
   }
 
   goToLevel(level: number): void {
-    this.registry.set('Level', level);
-    this.cameras.main.fade(500, 0, 0, 0, false, (camera, progress) => {
-      if (progress == 1) {
-        this.backgroundScene.stop();
-        this.scene.restart();
-      }
-    });
+    if (level > 5) {
+      this.cameras.main.fade(500, 0, 0, 0, false, (camera, progress) => {
+        if (progress == 1) {
+          this.backgroundScene.stop();
+          this.scene.start('EndScene');
+        }
+      });
+    } else {
+      this.registry.set('Level', level);
+      this.cameras.main.fade(500, 0, 0, 0, false, (camera, progress) => {
+        if (progress == 1) {
+          this.backgroundScene.stop();
+          this.scene.restart();
+        }
+      });
+    }
   }
 }
