@@ -11,6 +11,7 @@ export class LoaderScene extends Phaser.Scene {
   }
 
   preload(): void {
+    this.load.image('Victorious', '../Assets/Sprites/Cutscene/Victorious.png');
     this.load.image('DawnGathering', '../Assets/Sprites/Cutscene/DawnGathering.png');
     this.load.image('NightCatastrophe', '../Assets/Sprites/Cutscene/NightCatastrophe.png');
     this.load.image('Ground', '../Assets/Sprites/Cutscene/Ground.png');
