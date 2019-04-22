@@ -48,7 +48,7 @@ export class IntroScene extends Phaser.Scene {
         this.createTweens();
         this.playDawnScene();
 
-        this.input.keyboard.on('keydown', (key)=> {
+        this.input.keyboard.on('keydown', (key) => {
             if (!this.isTransitioning && key.keyCode == Phaser.Input.Keyboard.KeyCodes.SPACE) {
                 this.isTransitioning = true;
                 this.cameras.main.fade(500, 0, 0, 0, true, (cam, progress: number) => {
@@ -114,14 +114,11 @@ export class IntroScene extends Phaser.Scene {
                 delay: 2000,
                 callbackScope: this,
                 callback: () => {
-                    this.cameras.main.fade(100, 0, 0, 0, true, (cam, progress: number) => {
-                        if (progress == 1) {
-                            this.time.addEvent({
-                                delay: 3000,
-                                callbackScope: this,
-                                callback: () => this.scene.start('SecondIntroScene')
-                            });
-                        }
+                    this.cameras.main.flash(1000000, 0, 0, 0, true);
+                    this.time.addEvent({
+                        delay: 3000,
+                        callbackScope: this,
+                        callback: () => this.scene.start('SecondIntroScene')
                     });
                 }
             });
