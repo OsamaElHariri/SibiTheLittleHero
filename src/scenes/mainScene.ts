@@ -44,6 +44,7 @@ export class MainScene extends Phaser.Scene {
   private fallThreshold: number;
   private respawnDelay: number = 500;
   private mistParticle: Phaser.GameObjects.Particles.ParticleEmitter;
+  private mistParticleForeground: Phaser.GameObjects.Particles.ParticleEmitter;
 
   constructor() {
     super({
@@ -110,7 +111,19 @@ export class MainScene extends Phaser.Scene {
       speed: { min: 30, max: 60 },
       angle: 180,
       quantity: 1,
-      frequency: 600,
+      frequency: 800,
+      emitZone: { source: new Phaser.Geom.Rectangle(0, 0, 100, 1200) }
+    });
+
+    let mistParticleForegroundManager = this.add.particles('MistCloud');
+    this.mistParticleForeground = mistParticleForegroundManager.setDepth(20).createEmitter({
+      scale: { min: 0.6, max: 1 },
+      alpha: { start: 0.2, end: 0 },
+      lifespan: 20000,
+      speed: { min: 50, max: 70 },
+      angle: 180,
+      quantity: 1,
+      frequency: 4000,
       emitZone: { source: new Phaser.Geom.Rectangle(0, 0, 100, 1200) }
     });
   }
@@ -218,6 +231,7 @@ export class MainScene extends Phaser.Scene {
 
   update(): void {
     this.mistParticle.setPosition(this.cameras.main.scrollX + 850, this.cameras.main.scrollY - 600);
+    this.mistParticleForeground.setPosition(this.cameras.main.scrollX + 850, this.cameras.main.scrollY - 600);
     if (this.player && this.player.y > this.fallThreshold) {
       this.player.kill();
       this.player = null;
