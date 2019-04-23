@@ -11,7 +11,7 @@ export class CameraZoomInZone extends Phaser.GameObjects.Rectangle {
     private onEnter: Function;
 
     constructor(params: { scene: MainScene, x: number, y: number, onEnter?: Function }) {
-        super(params.scene, params.x, params.y, 550, 200, 0xffffff);
+        super(params.scene, params.x, params.y, 550, 600, 0xffffff);
         this.mainScene = params.scene;
         this.onEnter = params.onEnter || function () { };
         this.setupPhysics();
