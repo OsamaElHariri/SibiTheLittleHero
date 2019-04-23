@@ -17,6 +17,7 @@ import { LevelEnd, LevelEndConfigs } from '../entities/physicsGroups/levelEnd/le
 import { Platform } from '../entities/physicsGroups/platforms/platform';
 
 export class MainScene extends Phaser.Scene {
+  private levelEditorActive: boolean = false;
 
   groupsNeedUpdate: Phaser.GameObjects.Group[] = [];
   miscGroup: Phaser.GameObjects.Group;
@@ -53,10 +54,11 @@ export class MainScene extends Phaser.Scene {
   }
 
   create(): void {
+    this.cameras.main.fadeIn(500);
     this.cameraTarget = null;
     this.createMist();
     this.createAnims();
-    this.cameras.main.fadeIn(500);
+
     this.backgroundScene = this.scene.launch('BackgroundScene');
     this.scene.moveAbove('BackgroundScene', 'MainScene');
     this.data.set('OverGroundHostileGroup', this.add.group({ runChildUpdate: true }));
@@ -72,24 +74,10 @@ export class MainScene extends Phaser.Scene {
     this.createSawBelts();
     this.miscGroup = this.add.group();
 
-    this.level = this.registry.get('Level') || 1;
-    this.events.emit('LevelStart', this.level);
-
-    new JsonHandler(this).instantiateFromJson(levels[this.level - 1]);
+    this.initLevel();
     this.spawnPlayer();
 
-    this.calculateFallThreshold();
-
-    // this.miscGroup.add(new LevelEditor(this));
-    this.miscGroup.add(this.cameraTarget);
-    this.groupsNeedUpdate = [];
-    this.groupsNeedUpdate.push(this.miscGroup);
-
-    this.groupsNeedUpdate.push(this.digSawGroup);
-    this.groupsNeedUpdate.push(this.rockMelterGroup);
-    this.groupsNeedUpdate.push(this.doubleDrillsGroup);
-    this.groupsNeedUpdate.push(this.drillPillarGroup);
-    this.groupsNeedUpdate.push(this.sawBeltGroup);
+    this.addGroupsThatNeedUpdate();
 
     this.events.on('PlayerDead', () => {
       this.time.addEvent({
@@ -100,6 +88,27 @@ export class MainScene extends Phaser.Scene {
         }
       });
     });
+  }
+
+  initLevel(): void {
+    this.level = this.registry.get('Level') || 1;
+    this.events.emit('LevelStart', this.level);
+    new JsonHandler(this).instantiateFromJson(levels[this.level - 1]);
+
+    this.calculateFallThreshold();
+  }
+
+  addGroupsThatNeedUpdate(): void {
+    if (this.levelEditorActive) this.miscGroup.add(new LevelEditor(this));
+    this.miscGroup.add(this.cameraTarget);
+    this.groupsNeedUpdate = [];
+    this.groupsNeedUpdate.push(this.miscGroup);
+
+    this.groupsNeedUpdate.push(this.digSawGroup);
+    this.groupsNeedUpdate.push(this.rockMelterGroup);
+    this.groupsNeedUpdate.push(this.doubleDrillsGroup);
+    this.groupsNeedUpdate.push(this.drillPillarGroup);
+    this.groupsNeedUpdate.push(this.sawBeltGroup);
   }
 
   createMist(): void {
@@ -118,7 +127,7 @@ export class MainScene extends Phaser.Scene {
     let mistParticleForegroundManager = this.add.particles('MistCloud');
     this.mistParticleForeground = mistParticleForegroundManager.setDepth(20).createEmitter({
       scale: { min: 0.6, max: 1 },
-      alpha: { start: 0.2, end: 0 },
+      alpha: { start: 0.1, end: 0 },
       lifespan: 20000,
       speed: { min: 50, max: 70 },
       angle: 180,
