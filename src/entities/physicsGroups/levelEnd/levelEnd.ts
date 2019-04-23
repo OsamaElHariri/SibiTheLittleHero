@@ -35,6 +35,11 @@ export class LevelEnd extends Phaser.GameObjects.Rectangle {
                 npc = this.scene.add.sprite(x, y - 12, 'SibiMother')
                     .setOrigin(0.5, 1)
                     .setScale(0.5);
+                this.spawnedObjects.push(
+                    this.scene.add.sprite(this.x - 25, this.y, 'BuriedCart')
+                        .setOrigin(1, 1)
+                        .setDepth(-2)
+                );
                 break;
             case LevelEndType.RedGuy:
                 this.dialogKey = 'RedGuy';
@@ -49,6 +54,11 @@ export class LevelEnd extends Phaser.GameObjects.Rectangle {
                 npc = this.scene.add.sprite(x, y - 12, 'Baron')
                     .setOrigin(0.5, 1)
                     .setScale(0.5);
+                this.spawnedObjects.push(
+                    this.scene.add.sprite(this.x - 35, this.y, 'OverturnedCart')
+                        .setOrigin(0, 1)
+                        .setDepth(-2)
+                );
                 break;
             case LevelEndType.Cowboy:
                 this.dialogKey = 'Cowboy';

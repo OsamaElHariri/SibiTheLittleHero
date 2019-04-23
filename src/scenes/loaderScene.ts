@@ -28,6 +28,7 @@ export class LoaderScene extends Phaser.Scene {
     this.load.image('WhiteCircle', '../Assets/Sprites/Environment/WhiteCircle.png');
     this.load.image('MistCloud', '../Assets/Sprites/Environment/MistCloud.png');
     this.load.image('OverturnedCart', '../Assets/Sprites/Environment/OverturnedCart.png');
+    this.load.image('BuriedCart', '../Assets/Sprites/Environment/BuriedCart.png');
     this.load.image('MineCart', '../Assets/Sprites/Environment/MineCart.png');
     this.load.image('CartTrack', '../Assets/Sprites/Environment/CartTrack.png');
     this.load.image('MineWall', '../Assets/Sprites/Environment/MineWall.png');
