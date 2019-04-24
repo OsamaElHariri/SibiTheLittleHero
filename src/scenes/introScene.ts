@@ -1,5 +1,5 @@
 export class IntroScene extends Phaser.Scene {
-    waitTime: number = 1900;
+    waitTime: number = 1400;
     dawnProgress = 0;
     drillProgress = 0;
     isTransitioning = false;
@@ -11,7 +11,9 @@ export class IntroScene extends Phaser.Scene {
     dawnTween: Phaser.Tweens.Tween;
     drillTween: Phaser.Tweens.Tween;
     largeDigArea: Phaser.GameObjects.Sprite;
-    static SecondIntroScene: any;
+    SecondIntroScene: any;
+    peacefulTune: Phaser.Sound.BaseSound;
+    drillSound: Phaser.Sound.BaseSound;
 
     constructor() {
         super({
@@ -46,6 +48,7 @@ export class IntroScene extends Phaser.Scene {
             .setOrigin(0);
 
         this.createTweens();
+        this.setupAudio();
         this.playDawnScene();
 
         this.input.keyboard.on('keydown', (key) => {
@@ -56,19 +59,24 @@ export class IntroScene extends Phaser.Scene {
                 });
             }
         });
-        this.setupAudio();
     }
 
     setupAudio(): void {
+        this.peacefulTune = this.sound.add('PeacefulNormalness', { loop: true, volume: 0.1 });
+        this.peacefulTune.play();
+        this.drillSound = this.sound.add('DrillSounds', { loop: true, volume: 0.05 });
+        this.drillSound.play();
         let isMuted: boolean = this.registry.get('Muted');
+
         if (isMuted) this.sound.pauseAll();
         else this.sound.resumeAll();
+
+        this.drillSound.pause();
 
         this.input.keyboard.on('keydown', (key: any) => {
             if (key.keyCode == Phaser.Input.Keyboard.KeyCodes.M) {
                 let isMuted: boolean = !this.registry.get('Muted');
                 if (isMuted) this.sound.pauseAll();
-                else this.sound.resumeAll();
                 this.registry.set('Muted', isMuted);
             }
         });
@@ -100,12 +108,14 @@ export class IntroScene extends Phaser.Scene {
 
     playDawnScene(): void {
         this.largeDrillBackground.setDepth(-1);
+        if (!this.registry.get('Muted')) this.peacefulTune.resume();
         this.time.addEvent({
             delay: this.waitTime,
             callbackScope: this,
             callback: () => {
+                this.peacefulTune.pause();
                 this.waitTime -= 200;
-                this.waitTime = Math.max(200, this.waitTime);
+                this.waitTime = Math.max(400, this.waitTime);
                 this.playDrillScene();
             },
         });
@@ -113,11 +123,13 @@ export class IntroScene extends Phaser.Scene {
 
     playDrillScene(): void {
         this.largeDrillBackground.setDepth(2);
+        if (!this.registry.get('Muted')) this.drillSound.resume();
         this.cameras.main.shake(this.waitTime, 0.01);
         this.time.addEvent({
             delay: this.waitTime,
             callbackScope: this,
             callback: () => {
+                this.drillSound.pause();
                 this.playDawnScene();
             },
         });
@@ -130,11 +142,15 @@ export class IntroScene extends Phaser.Scene {
                 delay: 2000,
                 callbackScope: this,
                 callback: () => {
+                    this.peacefulTune.stop();
+                    this.drillSound.stop();
                     this.cameras.main.flash(1000000, 0, 0, 0, true);
                     this.time.addEvent({
                         delay: 3000,
                         callbackScope: this,
-                        callback: () => this.scene.start('SecondIntroScene')
+                        callback: () => {
+                            this.scene.start('SecondIntroScene');
+                        }
                     });
                 }
             });

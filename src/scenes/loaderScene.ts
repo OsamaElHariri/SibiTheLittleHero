@@ -12,6 +12,9 @@ export class LoaderScene extends Phaser.Scene {
 
   preload(): void {
     this.load.audio('SibiBackgroundMusic', '../Assets/Audio/SibiBackgroundMusic.ogg');
+    this.load.audio('PeacefulNormalness', '../Assets/Audio/PeacefulNormalness.ogg');
+    this.load.audio('DrillSounds', '../Assets/Audio/DrillSounds.ogg');
+    this.load.audio('CatastropheHitsRise', '../Assets/Audio/CatastropheHitsRise.ogg');
 
     this.load.image('Victorious', '../Assets/Sprites/Cutscene/Victorious.png');
     this.load.image('DawnGathering', '../Assets/Sprites/Cutscene/DawnGathering.png');

@@ -1,4 +1,6 @@
 export class SecondIntroScene extends Phaser.Scene {
+    catastropheSound: Phaser.Sound.BaseSound;
+
     private nightBackground: Phaser.GameObjects.Sprite;
     private isTransitioning: boolean = false;
     constructor() {
@@ -8,6 +10,7 @@ export class SecondIntroScene extends Phaser.Scene {
     }
 
     create(): void {
+        this.setupAudio();
         this.nightBackground = this.add.sprite(0, -424, 'NightCatastrophe')
             .setOrigin(0);
         let fadeDuration: number = 4000;
@@ -26,11 +29,11 @@ export class SecondIntroScene extends Phaser.Scene {
                 });
             }
         });
-
-        this.setupAudio();
     }
-    
+
     setupAudio(): void {
+        this.catastropheSound = this.sound.add('CatastropheHitsRise', { loop: false, volume: 0.5 });
+        this.catastropheSound.play();
         let isMuted: boolean = this.registry.get('Muted');
         if (isMuted) this.sound.pauseAll();
         else this.sound.resumeAll();
@@ -47,8 +50,10 @@ export class SecondIntroScene extends Phaser.Scene {
 
     fadeToMainScene(): void {
         this.cameras.main.fade(500, 0, 0, 0, true, (cam, progress: number) => {
-            if (progress == 1)
+            if (progress == 1) {
                 this.scene.start('MainScene');
+                this.catastropheSound.destroy();
+            }
         });
     }
 }

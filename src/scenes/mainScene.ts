@@ -46,7 +46,7 @@ export class MainScene extends Phaser.Scene {
   private respawnDelay: number = 500;
   private mistParticle: Phaser.GameObjects.Particles.ParticleEmitter;
   private mistParticleForeground: Phaser.GameObjects.Particles.ParticleEmitter;
-  private backgroundLoop: boolean;
+  private backgroundLoop: any;
 
   constructor() {
     super({
@@ -115,7 +115,8 @@ export class MainScene extends Phaser.Scene {
   }
 
   setupAudio(): void {
-    this.backgroundLoop = this.sound.add('SibiBackgroundMusic', { loop: true, volume: 0.5 }).play();
+    this.backgroundLoop = this.sound.add('SibiBackgroundMusic', { loop: true, volume: 0.5 });
+    this.backgroundLoop.play();
     let isMuted: boolean = this.registry.get('Muted');
     if (isMuted) this.sound.pauseAll();
     else this.sound.resumeAll();
