@@ -46,6 +46,7 @@ export class MainScene extends Phaser.Scene {
   private respawnDelay: number = 500;
   private mistParticle: Phaser.GameObjects.Particles.ParticleEmitter;
   private mistParticleForeground: Phaser.GameObjects.Particles.ParticleEmitter;
+  private backgroundLoop: boolean;
 
   constructor() {
     super({
@@ -78,6 +79,8 @@ export class MainScene extends Phaser.Scene {
     this.spawnPlayer();
 
     this.addGroupsThatNeedUpdate();
+    
+    if (!this.backgroundLoop) this.setupAudio();
 
     this.events.on('PlayerDead', () => {
       this.time.addEvent({
@@ -109,6 +112,22 @@ export class MainScene extends Phaser.Scene {
     this.groupsNeedUpdate.push(this.doubleDrillsGroup);
     this.groupsNeedUpdate.push(this.drillPillarGroup);
     this.groupsNeedUpdate.push(this.sawBeltGroup);
+  }
+
+  setupAudio(): void {
+    this.backgroundLoop = this.sound.add('SibiBackgroundMusic', { loop: true, volume: 0.5 }).play();
+    let isMuted: boolean = this.registry.get('Muted');
+    if (isMuted) this.sound.pauseAll();
+    else this.sound.resumeAll();
+
+    this.input.keyboard.on('keydown', (key: any) => {
+      if (key.keyCode == Phaser.Input.Keyboard.KeyCodes.M) {
+        let isMuted: boolean = !this.registry.get('Muted');
+        if (isMuted) this.sound.pauseAll();
+        else this.sound.resumeAll();
+        this.registry.set('Muted', isMuted);
+      }
+    });
   }
 
   createMist(): void {
@@ -300,20 +319,19 @@ export class MainScene extends Phaser.Scene {
 
   goToLevel(level: number): void {
     if (level > 5) {
-      this.cameras.main.fade(500, 0, 0, 0, false, (camera, progress) => {
-        if (progress == 1) {
-          this.backgroundScene.stop();
-          this.scene.start('EndScene');
-        }
-      });
+      this.fadeOut(() => this.scene.start('EndScene'));
     } else {
       this.registry.set('Level', level);
-      this.cameras.main.fade(500, 0, 0, 0, false, (camera, progress) => {
-        if (progress == 1) {
-          this.backgroundScene.stop();
-          this.scene.restart();
-        }
-      });
+      this.fadeOut(() => this.scene.restart());
     }
+  }
+
+  private fadeOut(callback: Function): void {
+    this.cameras.main.fade(500, 0, 0, 0, false, (camera, progress) => {
+      if (progress == 1) {
+        this.backgroundScene.sleep().stop();
+        callback();
+      }
+    });
   }
 }

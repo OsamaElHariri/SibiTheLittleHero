@@ -56,6 +56,22 @@ export class IntroScene extends Phaser.Scene {
                 });
             }
         });
+        this.setupAudio();
+    }
+
+    setupAudio(): void {
+        let isMuted: boolean = this.registry.get('Muted');
+        if (isMuted) this.sound.pauseAll();
+        else this.sound.resumeAll();
+
+        this.input.keyboard.on('keydown', (key: any) => {
+            if (key.keyCode == Phaser.Input.Keyboard.KeyCodes.M) {
+                let isMuted: boolean = !this.registry.get('Muted');
+                if (isMuted) this.sound.pauseAll();
+                else this.sound.resumeAll();
+                this.registry.set('Muted', isMuted);
+            }
+        });
     }
 
     createTweens() {

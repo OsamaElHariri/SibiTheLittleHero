@@ -18,12 +18,29 @@ export class SecondIntroScene extends Phaser.Scene {
             callback: () => this.fadeToMainScene()
         });
 
-        this.input.keyboard.on('keydown', (key)=> {
+        this.input.keyboard.on('keydown', (key) => {
             if (!this.isTransitioning && key.keyCode == Phaser.Input.Keyboard.KeyCodes.SPACE) {
                 this.isTransitioning = true;
                 this.cameras.main.fade(500, 0, 0, 0, true, (cam, progress: number) => {
                     if (progress == 1) this.scene.start('MainScene')
                 });
+            }
+        });
+
+        this.setupAudio();
+    }
+    
+    setupAudio(): void {
+        let isMuted: boolean = this.registry.get('Muted');
+        if (isMuted) this.sound.pauseAll();
+        else this.sound.resumeAll();
+
+        this.input.keyboard.on('keydown', (key: any) => {
+            if (key.keyCode == Phaser.Input.Keyboard.KeyCodes.M) {
+                let isMuted: boolean = !this.registry.get('Muted');
+                if (isMuted) this.sound.pauseAll();
+                else this.sound.resumeAll();
+                this.registry.set('Muted', isMuted);
             }
         });
     }
