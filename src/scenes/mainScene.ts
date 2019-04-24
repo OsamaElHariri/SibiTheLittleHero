@@ -79,7 +79,7 @@ export class MainScene extends Phaser.Scene {
     this.spawnPlayer();
 
     this.addGroupsThatNeedUpdate();
-    
+
     if (!this.backgroundLoop) this.setupAudio();
 
     this.events.on('PlayerDead', () => {
@@ -320,15 +320,15 @@ export class MainScene extends Phaser.Scene {
 
   goToLevel(level: number): void {
     if (level > 5) {
-      this.fadeOut(() => this.scene.start('EndScene'));
+      this.fadeOut(() => this.scene.start('EndScene'), 255, 255, 255);
     } else {
       this.registry.set('Level', level);
       this.fadeOut(() => this.scene.restart());
     }
   }
 
-  private fadeOut(callback: Function): void {
-    this.cameras.main.fade(500, 0, 0, 0, false, (camera, progress) => {
+  private fadeOut(callback: Function, r?: number, g?: number, b?: number): void {
+    this.cameras.main.fade(500, r || 0, g || 0, b || 0, false, (camera, progress) => {
       if (progress == 1) {
         this.backgroundScene.sleep().stop();
         callback();

@@ -115,7 +115,7 @@ export class IntroScene extends Phaser.Scene {
             callback: () => {
                 this.peacefulTune.pause();
                 this.waitTime -= 200;
-                this.waitTime = Math.max(400, this.waitTime);
+                this.waitTime = Math.max(700, this.waitTime);
                 this.playDrillScene();
             },
         });

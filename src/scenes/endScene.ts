@@ -7,7 +7,7 @@ export class EndScene extends Phaser.Scene {
   }
 
   create(): void {
-    this.cameras.main.fadeIn(500);
+    this.cameras.main.fadeIn(500, 255, 255, 255);
     this.add.sprite(0, 0, 'Victorious')
       .setOrigin(0);
 
