@@ -1,5 +1,5 @@
 export class IntroScene extends Phaser.Scene {
-    waitTime: number = 1400;
+    waitTime: number = 2000;
     dawnProgress = 0;
     drillProgress = 0;
     isTransitioning = false;
@@ -85,7 +85,7 @@ export class IntroScene extends Phaser.Scene {
     createTweens() {
         this.drillTween = this.add.tween({
             targets: [this],
-            duration: 10000,
+            duration: 8600,
             delay: this.waitTime,
             drillProgress: {
                 getStart: () => 0,
@@ -96,7 +96,7 @@ export class IntroScene extends Phaser.Scene {
 
         this.dawnTween = this.add.tween({
             targets: [this],
-            duration: 10000,
+            duration: 8000,
             delay: this.waitTime,
             dawnProgress: {
                 getStart: () => 0,
@@ -115,7 +115,7 @@ export class IntroScene extends Phaser.Scene {
             callback: () => {
                 this.peacefulTune.pause();
                 this.waitTime -= 200;
-                this.waitTime = Math.max(700, this.waitTime);
+                this.waitTime = Math.max(1500, this.waitTime);
                 this.playDrillScene();
             },
         });
@@ -146,7 +146,7 @@ export class IntroScene extends Phaser.Scene {
                     this.drillSound.stop();
                     this.cameras.main.flash(1000000, 0, 0, 0, true);
                     this.time.addEvent({
-                        delay: 3000,
+                        delay: 2000,
                         callbackScope: this,
                         callback: () => {
                             this.scene.start('SecondIntroScene');
