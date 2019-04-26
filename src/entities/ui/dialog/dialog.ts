@@ -17,14 +17,10 @@ export class Dialog extends Phaser.GameObjects.Rectangle {
       this.speechBubbles[speaker.key].on('done', this.onSpeechBubbleDone, this);
     }
 
-    let inputKeys = InputKeys.getInstance();
-    this.scene.input.keyboard.on('keydown', () => {
-      let tempDisabled = inputKeys.isDisabled;
-      inputKeys.isDisabled = false;
-      if (inputKeys.downPressed()) {
+    this.scene.input.keyboard.on('keydown', (key) => {
+      if (key.keyCode == Phaser.Input.Keyboard.KeyCodes.DOWN || key.keyCode == Phaser.Input.Keyboard.KeyCodes.S) {
         this.skipActiveSpeechBubbles();
       }
-      inputKeys.isDisabled = tempDisabled;
     });
   }
 

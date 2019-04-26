@@ -22,7 +22,7 @@ export class SecondIntroScene extends Phaser.Scene {
         });
 
         this.input.keyboard.on('keydown', (key) => {
-            if (!this.isTransitioning && key.keyCode == Phaser.Input.Keyboard.KeyCodes.SPACE) {
+            if (!this.isTransitioning && (key.keyCode == Phaser.Input.Keyboard.KeyCodes.DOWN || key.keyCode == Phaser.Input.Keyboard.KeyCodes.S)) {
                 this.isTransitioning = true;
                 this.catastropheSound.stop();
                 this.cameras.main.fade(500, 0, 0, 0, true, (cam, progress: number) => {
