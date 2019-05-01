@@ -1,4 +1,4 @@
-import * as level1 from "../levels/Level1/level1_v9.json";
+import * as level1 from "../levels/Level1/level1_v10.json";
 import * as level2 from "../levels/Level2/level2_v7.json";
 import * as level3 from "../levels/Level3/level3_v9.json";
 import * as level4 from "../levels/Level4/level4_v8.json";
